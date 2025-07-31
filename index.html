@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Town Of Us: Companion</title>
+  <title>TOU Notepad</title>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -14,154 +14,46 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="p-6">
-  <div class="container mx-auto p-6 rounded-lg shadow-lg">
-    <div class="tab-nav">
-      <nav>
-        <p style="font-size: 12px; margin-bottom: 5px;">Credit to Malkiz, Quarties & OrzechMC for Font and Credit to Atony for all Role and Modifier Logos and ability images</p>
-        <b></b>
-        <a><button class="tab-button active" data-tab="wiki">Role Wiki</button></a>
-        <a><button class="tab-button" data-tab="roles">Shooting Notes</button></a>
-        <a><button class="tab-button" data-tab="notes">General Notes</button></a>
-      </nav>
-    </div>
+<body class="p-6 bg-gray-900 text-gray-100 font-[Inter]">
+  <div class="container mx-auto p-6 rounded-lg shadow-lg bg-gray-800">
+    <header class="text-center mb-8">
+      <h1 class="text-5xl font-bold font-[Amatic_SC] text-yellow-400">My Free-Form Notepad</h1>
+    </header>
 
-    <!-- Role Wiki Tab -->
-    <div id="wiki-tab" class="tab-content active">
-      <div class="wiki-search-filter">
-        <input type="text" id="search-input" placeholder="Search for a role or modifier...">
-        <select id="combined-filter-select">
-            <option value="All">All Categories & Types</option>
-            <optgroup label="Roles">
-                <option value="Crewmate">Crewmate Role</option>
-                <option value="Neutral">Neutral Role</option>
-                <option value="Impostor">Impostor Role</option>
-            </optgroup>
-            <optgroup label="Modifiers">
-                <option value="Crewmate Modifier">Crewmate Modifier</option>
-                <option value="Global Modifier">Global Modifier</option>
-                <option value="Impostor Modifier">Impostor Modifier</option>
-            </optgroup>
-            <optgroup label="Types">
-                <option value="Kill">Kill</option>
-                <option value="Support">Support</option>
-                <option value="Detection">Detection</option>
-                <option value="Utility">Utility</option>
-                <option value="Sabotage">Sabotage</option>
-                <option value="Passive">Passive</option>
-                <option value="Active">Active</option>
-                <option value="Death Trigger">Death Trigger</option>
-                <option value="Buff">Buff</option>
-                <option value="Debuff">Debuff</option>
-                <option value="Defense">Defense</option>
-                <option value="Information">Information</option>
-                <option value="Social">Social</option>
-                <option value="Win Condition">Win Condition</option>
-                <option value="Other">Other</option>
-            </optgroup>
-        </select>
+    <div class="grid grid-cols-1 gap-6">
+      <!-- Main Notepad Area -->
+      <div class="relative notepad-area-wrapper"> <!-- Removed h-[70vh] here -->
+          <!-- Ring Binder Visual -->
+          <div class="ring-binder">
+              <div class="ring"></div>
+              <div class="ring"></div>
+              <div class="ring"></div>
+              <div class="ring"></div>
+              <div class="ring"></div>
+              <div class="ring"></div>
+              <div class="ring"></div>
+              <div class="ring"></div>
+          </div>
+          <div class="notepad-paper-background p-4 rounded-lg shadow-md h-full flex flex-col">
+              <h2 class="text-3xl font-bold font-[Amatic_SC] text-yellow-400 mb-4 text-center">Current Note</h2>
+              <textarea id="mainNotepadArea" placeholder="Start writing your notes here... Type '{name} is {role}' to create a role card (e.g., 'Alice is Sheriff')." class="flex-grow w-full p-2 bg-transparent border-none focus:outline-none resize-y text-gray-800 text-lg leading-relaxed min-h-[300px]"></textarea> <!-- Added resize-y and min-h-[300px] -->
+              <div class="flex justify-end mt-4">
+                  <button id="newNoteButton" class="bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded-md hover:bg-yellow-500 transition duration-200">New Note</button>
+              </div>
+          </div>
       </div>
-      <div id="card-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    <!-- Role cards will be injected here by JavaScript -->
-</div>
-    </div>
 
-    <!-- Player Roles Tab -->
-    <div id="roles-tab" class="tab-content">
-      <h2 class="headers">Shooting Notes</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="playerRolesList">
-        <!-- Player entries will be added here by JavaScript -->
-      </div>
-      <div class="flex justify-center gap-4 mt-6">
-        <button id="addPlayerBtn" class="main-button">Add Player</button>
-        <button id="saveRolesBtn" class="main-button">Save Roles</button>
-        <button id="clearRolesBtn" class="main-button red">Clear Roles</button>
-      </div>
-    </div>
-
-    <!-- General Notes Tab -->
-    <div id="notes-tab" class="tab-content">
-      <h2 class="headers">General Notes</h2>
-      <textarea id="generalNotesTextarea" placeholder="Write your notes here..."></textarea>
-      <div class="flex justify-end mt-4">
-        <button id="saveGeneralNotesBtn" class="main-button green">Save Notes</button>
-      </div>
-    </div>
-  </div>
-
-<!-- Detailed Role/Modifier Modal (Hidden by default, shown by JS) -->
-
-
-<div id="detail-modal-overlay" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div id="detail-modal-content" class="bg-gray-900 rounded-lg p-6 w-full max-w-4xl relative overflow-y-auto max-h-[90vh] border-4 border-transparent">
-          <button id="modal-close-button" class="absolute top-4 right-4 text-gray-400 hover:text-white text-3xl font-bold">&times;</button>
-
-          <div class="modal-header-section flex flex-row items-left mb-6">
-                <img id="modal-icon" src="" alt="Role Icon" class="w-28 h-28 object-contain mb-4 transition-filter duration-300">
-                <div class="modal-header-text flex-col ml-4">
-                  <br>
-                  <h2 id="modal-name" class="text-4xl font-bold font-[Amatic_SC] font-30vh mb-1 flex-col"></h2>
-                
-                <br>
-                <p id="modal-team" class="text-lg font-semibold mb-2"></p>
-                </div>
-                
-            </div>
-
-
-          <div class="modal-body-section px-2 md:px-4">
-                <p id="modal-description" class="text-gray-300 text-base leading-relaxed mb-6 border-l-4 pl-4"></p>
-<h2 id="modal-name" class="text-4xl md:text-5xl font-bold font-[Amatic_SC]"></h2>
-
-<!-- index.html (Partial update, focus on modal-ability-table-container) -->
-
-                <!-- Abilities Section -->
-                <h3 class="modal-section-title text-cyan-400 mt-6 mb-2 text-2xl font-bold font-[Amatic_SC]">Abilities</h3>
-                <div id="modal-ability-table-container" class="my-4 p-2 md:p-4 bg-gray-800 rounded-lg">
-                    <table class="w-full text-left table-fixed">
-                        <thead>
-                            <tr class="border-b border-gray-700">
-                                <th class="w-1/4 py-2 px-1 md:px-2 text-xl font-bold font-[Amatic_SC] text-cyan-400">Icon</th>
-                                <th class="w-1/4 py-2 px-1 md:px-2 text-xl font-bold font-[Amatic_SC] text-cyan-400">Ability</th>
-                                <!-- NEW: Ability Description Header -->
-                                <th class="w-2/4 py-2 px-1 md:px-2 text-xl font-bold font-[Amatic_SC] text-cyan-400">Description</th>
-                            </tr>
-                        </thead>
-                        <tbody id="modal-ability-table-body">
-                            <!-- Ability rows will be injected here by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-
-
-<h3 id="modal-settings-section" class="modal-section-title text-yellow-400 mt-6 mb-2 text-2xl font-bold font-[Amatic_SC]">Game Options</h3>
-<div id="modal-options-table-container" class="space-y-4 p-2 md:p-4 bg-gray-800 rounded-lg">
-    <table class="w-full text-left table-fixed">
-        <thead>
-            <tr class="border-b border-gray-700">
-                <th class="w-1/4 py-2 px-1 md:px-2 text-xl font-bold font-[Amatic_SC] text-yellow-400">Option</th>
-                <th class="w-1/4 py-2 px-1 md:px-2 text-xl font-bold font-[Amatic_SC] text-yellow-400">Default</th>
-                <th class="w-1/4 py-2 px-1 md:px-2 text-xl font-bold font-[Amatic_SC] text-yellow-400">Type</th>
-                <th class="w-1/4 py-2 px-1 md:px-2 text-xl font-bold font-[Amatic_SC] text-yellow-400">Range</th>
-            </tr>
-        </thead>
-        <tbody id="modal-options-table-body">
-            </tbody>
-    </table>
-</div>
-
-            </div>
-    <!-- Custom Message Box Container -->
-  <div id="messageBoxOverlay" class="message-box-overlay">
-    <div class="message-box">
-        <p id="messageBoxText"></p>
-        <div class="message-box-buttons">
-            <button id="messageBoxConfirm" class="main-button">OK</button>
-            <button id="messageBoxCancel" class="main-button red hidden">Cancel</button>
+      <!-- Role Cards Display Area (below the notepad) -->
+      <div class="bg-gray-700 p-4 rounded-lg shadow-md flex flex-col">
+        <h2 class="text-3xl font-bold font-[Amatic_SC] text-yellow-400 mb-4 text-center">Observed Roles</h2>
+        <div id="roleCardsContainer" class="role-cards-grid custom-scrollable-container flex-grow">
+          <!-- Role cards will be inserted here by JavaScript -->
+          <p id="noRoleCardsMessage" class="text-center text-lg text-gray-400 font-[Amatic_SC] mt-4">No role observations yet. Type '{name} is {role}' in the notepad to add one!</p>
         </div>
+      </div>
     </div>
   </div>
 
- <script src="script.js" defer></script>
+  <script src="notes-script.js"></script>
 </body>
 </html>
