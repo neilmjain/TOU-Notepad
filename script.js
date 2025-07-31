@@ -7,53 +7,7 @@ function rgbFloatToHex(r, g, b) {
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-// Global variable to store the promise resolver for the message box
-let resolveMessageBoxPromise;
-
-// --- Custom Message Box Functionality ---
-const messageBoxOverlay = document.getElementById('messageBoxOverlay');
-const messageBoxText = document.getElementById('messageBoxText');
-const messageBoxConfirm = document.getElementById('messageBoxConfirm');
-const messageBoxCancel = document.getElementById('messageBoxCancel');
-
-// Check if elements exist before adding listeners to prevent errors
-if (messageBoxConfirm && messageBoxOverlay && messageBoxText && messageBoxCancel) {
-    function showMessageBox(message, isConfirm = false) {
-        messageBoxText.textContent = message;
-        messageBoxCancel.classList.toggle('hidden', !isConfirm);
-        messageBoxConfirm.textContent = isConfirm ? 'Confirm' : 'OK';
-        messageBoxOverlay.classList.add('active');
-
-        return new Promise(resolve => {
-            resolveMessageBoxPromise = resolve;
-        });
-    }
-
-    messageBoxConfirm.addEventListener('click', () => {
-        messageBoxOverlay.classList.remove('active');
-        if (resolveMessageBoxPromise) {
-            resolveMessageBoxPromise(true);
-        }
-    });
-
-    messageBoxCancel.addEventListener('click', () => {
-        messageBoxOverlay.classList.remove('active');
-        if (resolveMessageBoxPromise) {
-            resolveMessageBoxPromise(false);
-        }
-    });
-} else {
-    // Fallback for missing message box elements (will log to console instead of showing UI)
-    console.warn("Message box elements not found. Message box functionality will be limited.");
-    function showMessageBox(message, isConfirm = false) {
-        console.log(`MessageBox: ${message} (isConfirm: ${isConfirm})`);
-        return Promise.resolve(true); // Always confirm if UI is missing
-    }
-}
-// --- End Custom Message Box Functionality ---
-
-
-// --- Role/Team/Modifier Colors (from your provided C# snippet and data) ---
+// --- Role/Team/Modifier Colors (copied from original script.js) ---
 const teamColors = {
     "Crewmate": { dotColor: '#00ffff', boxBg: 'rgba(0, 255, 255, 0.2)' }, /* Cyan */
     "Impostor": { dotColor: '#ff0000', boxBg: 'rgba(255, 0, 0, 0.2)'}, /* Red */
@@ -63,7 +17,7 @@ const teamColors = {
     "Crewmate Modifier": { dotColor: '#00ffff', boxBg: 'rgba(0, 255, 255, 0.1)', boxShadow: '0 0 5px #00ffff' },
     "Global Modifier": { dotColor: '#9333ea', boxBg: 'rgba(147, 51, 234, 0.1)', boxShadow: '0 0 5px #9333ea' }, /* A purple-ish tone for Global Modifiers */
     "Impostor Modifier": { dotColor: '#ff0000', boxBg: 'rgba(255, 0, 0, 0.1)', boxShadow: '0 0 5px #ff0000' },
-    "Crewmate Alliance modifier": { dotColor: '#669966', boxBg: 'rgba(102, 153, 102, 0.1)', boxShadow: '0 0 5px #669966' }
+    "Crewmate Alliance modifier": { dotColor: '#669966', boxBg: 'rgba(102, 153, 102, 0.1)', border: '#669966', boxShadow: '0 0 5px #669966' }
 };
 
 const roleColors = {
@@ -131,7 +85,7 @@ const roleColors = {
     "Bomber": rgbFloatToHex(1.00, 0.00, 0.00),
     "Scavenger": rgbFloatToHex(1.00, 0.00, 0.00),
     "Traitor": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Warlock": rgbFloatToHex(1.00, 0.00, 0.00),
+    "Warlock": rgbFloatToHex(1.00, 0.00, 1.00),
     "Blackmailer": rgbFloatToHex(1.00, 0.00, 0.00),
     "Hypnotist": rgbFloatToHex(1.00, 0.00, 0.00),
     "Janitor": rgbFloatToHex(1.00, 0.00, 0.00),
@@ -177,11 +131,6 @@ const modifierColors = {
     "Spy Modifier": rgbFloatToHex(0.80, 0.64, 0.80)
 };
 
-
-// --- ALL ENTITIES DATA (Including SkillIcon Arrays and Ability Adjustments) ---
-// THIS DATA IS NOW INCLUDED DIRECTLY IN SCRIPT.JS FOR SIMPLICITY.
-// If you prefer to keep it in a separate file, remove this block
-// and ensure `allEntitiesData` is loaded globally before this script.
 const allEntitiesData = [
     // Crewmate Roles
     {
@@ -1401,717 +1350,215 @@ const allEntitiesData = [
     }
 ];
 
-
-// This object will map role/modifier names to their colors for text highlighting
-const entityNamesAndColors = [];
-const allValidEntityNamesSet = new Set();
-
-// Populate allValidEntityNamesSet and entityNamesAndColors after allEntitiesData is defined
-allEntitiesData.forEach(e => {
-    allValidEntityNamesSet.add(e.name);
-    if (e.name.startsWith("The ")) {
-        allValidEntityNamesSet.add(e.name.substring(4));
-    }
-    // Add specific cases for robustness
-    if (e.name === "Double Shot") allValidEntityNamesSet.add("Double Shot");
-    if (e.name === "Button Barry") allValidEntityNamesSet.add("Button Barry");
-
-    const color = e.category === 'Role' ? roleColors[e.name] : modifierColors[e.name];
-    if (color) {
-        entityNamesAndColors.push({ name: e.name, color: color });
-    }
-});
-
-const entityNamesForColorizing = entityNamesAndColors.filter(entity => {
-    const isGenericTeamName = ["Crewmate", "Impostor", "Neutral"].includes(entity.name);
-    return !isGenericTeamName;
-});
-
-entityNamesForColorizing.sort((a, b) => b.name.length - a.name.length);
-
-function colorizeRoleNamesInText(text) {
-    if (text === null || text === undefined) return '';
-    let coloredText = text;
-    for (const entity of entityNamesForColorizing) {
-        const escapedName = entity.name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-        const regex = new RegExp(`\\b${escapedName}\\b`, 'gi');
-        coloredText = coloredText.replace(regex, (match) => {
-            if (match.includes('<span style=')) {
-                return match;
-            }
-            return `<span style="color: ${entity.color}; font-family: 'Amatic SC', cursive; font-weight: 700;">${match}</span>`;
-        });
-    }
-    return coloredText;
-}
-
-/**
- * Generates the URL for a role icon.
- * Assumes role icons are named like 'Aurial.png' and located in 'img/roles/'.
- * @param {string} iconName - The base name of the role icon (e.g., 'Aurial').
- * @returns {string} The full URL to the role icon.
- */
+// --- Icon URL Generators ---
 function getRoleImageUrl(iconName) {
-    // Make sure your role images are in the 'img/roles/' folder and named like 'Aurial.png'
     return `Media/TownOfUs.Resources.RoleIcons.${iconName}.png`;
 }
-
-/**
- * Generates the URL for a modifier icon.
- * Assumes modifier icons are named like 'Telepath.png' and located in 'img/modifiers/'.
- * @param {string} iconName - The base name of the modifier icon (e.g., 'Telepath').
- * @returns {string} The full URL to the modifier icon.
- */
 function getModifierImageUrl(iconName) {
-    // Make sure your modifier images are in the 'img/modifiers/' folder and named like 'Telepath.png'
     return `Media/TownOfUs.Resources.ModifierIcons.${iconName}.png`;
 }
-
 function getAbilityImageUrl(abilitiesIconName) {
-    return `Media/${abilitiesIconName}`; // Assuming Ability Icons are like this
+    return `Media/${abilitiesIconName}`;
 }
 
-
-// --- Main Script Execution - Ensures DOM is ready ---
-document.addEventListener('DOMContentLoaded', () => {
-    // Get elements for the Role Wiki
-    const roleWikiCardGrid = document.getElementById('card-grid');
-    const searchInput = document.getElementById('search-input');
-    const combinedFilterSelect = document.getElementById('combined-filter-select');
-
-    // Get modal elements
-    const detailModalOverlay = document.getElementById('detail-modal-overlay');
-    const modalCloseButton = document.getElementById('modal-close-button');
-    const detailModalContent = document.getElementById('detail-modal-content'); // Changed from modalContent
-    const modalIcon = document.getElementById('modal-icon');
-    const modalName = document.getElementById('modal-name');
-    const modalTeam = document.getElementById('modal-team');
-    const modalDescription = document.getElementById('modal-description');
-    const modalAbilityTableContainer = document.getElementById('modal-ability-table-container');
-    const modalAbilityTableBody = document.getElementById('modal-ability-table-body');
-
-    // NEW: Get the table container and tbody elements for Game Options
-    const modalSettingsSection = document.getElementById('modal-settings-section'); // The H3 title
-    const modalOptionsTableContainer = document.getElementById('modal-options-table-container');
-    const modalOptionsTableBody = document.getElementById('modal-options-table-body');
-    // Get player roles elements
-    const playerRolesList = document.getElementById('playerRolesList');
-    const addPlayerBtn = document.getElementById('addPlayerBtn');
-    const saveRolesBtn = document.getElementById('saveRolesBtn');
-    const clearRolesBtn = document.getElementById('clearRolesBtn');
-
-    // Get general notes elements
-    const generalNotesTextarea = document.getElementById('generalNotesTextarea');
-    const saveGeneralNotesBtn = document.getElementById('saveGeneralNotesBtn');
-
-    // Get tab elements
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-
-     // --- Functions for Detail Modal ---
-
-/**
- * Populates the detail modal with data for a given entity (role or modifier)
- * and displays the modal.
- * @param {object} entity - The entity object containing name, description, team, abilities, options, etc.
- */
-function populateDetailModal(entity) {
-    // Ensure all necessary elements are found before proceeding
-    const detailModalOverlay = document.getElementById('detail-modal-overlay');
-    const detailModalContent = document.getElementById('detail-modal-content');
-    const modalName = document.getElementById('modal-name');
-    const modalTeam = document.getElementById('modal-team');
-    const modalIcon = document.getElementById('modal-icon');
-    const modalDescription = document.getElementById('modal-description');
-    const modalAbilityTableContainer = document.getElementById('modal-ability-table-container');
-    const modalAbilityTableBody = document.getElementById('modal-ability-table-body');
-    const modalSettingsSection = document.getElementById('modal-settings-section'); // The H3 title for Options
-    const modalOptionsTableContainer = document.getElementById('modal-options-table-container'); // Container for options table
-    const modalOptionsTableBody = document.getElementById('modal-options-table-body'); // The tbody for options
-    const abilitiesSectionTitle = document.getElementById('abilitiesSectionTitle'); // <--- ADD THIS LINE
-
-    if (!entity || !detailModalOverlay || !detailModalContent || !modalName || !modalTeam || !modalIcon || !modalDescription || !modalAbilityTableContainer || !modalAbilityTableBody || !modalSettingsSection || !modalOptionsTableContainer || !modalOptionsTableBody) {
-        console.error("One or more required modal elements not found or entity data is missing.");
-        return; // Exit if essential elements are missing or entity data is bad
-    }
-const dynamicHeaderColor = roleColors[entity.name] || teamColorStyle;
-
-    // Apply color to section titles
-    if (abilitiesSectionTitle) {
-        abilitiesSectionTitle.style.color = dynamicHeaderColor;
-    }
-    if (modalSettingsSection) { // This element is already captured as modalSettingsSection
-        modalSettingsSection.style.color = dynamicHeaderColor;
-    }
-
-    // Apply color to Abilities table headers
-    if (modalAbilityTableContainer) {
-        const abilityHeaders = modalAbilityTableContainer.querySelectorAll('th');
-        abilityHeaders.forEach(th => {
-            th.style.color = dynamicHeaderColor;
-        });
-    }
-
-    // Apply color to Options table headers
-    if (modalOptionsTableContainer) {
-        const optionHeaders = modalOptionsTableContainer.querySelectorAll('th');
-        optionHeaders.forEach(th => {
-            th.style.color = dynamicHeaderColor;
-        });
-    }
-
-    // Determine unique color for the entity (Role or Modifier) based on its name
-    const uniqueColor = roleColors[entity.name] || modifierColors[entity.name] || '#7e22ce'; // Default purple
-    modalAbilityTableContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-    // Set Role Name and Color (Amatic SC font)
-    modalName.textContent = entity.name;
-    modalName.style.color = uniqueColor;
-    modalName.style.fontSize = '8vh';
-    // Ensure the Amatic SC font class is on the HTML element.
-    // We add it here in JS too for robustness, though it's better on HTML directly for static parts.
-    if (!modalName.classList.contains('font-[Amatic_SC]')) {
-        modalName.classList.add('font-[Amatic_SC]');
-    }
-
-    // Set Team and Style
-    const teamStyle = teamColors[entity.team] || { dotColor: '#00FFFF', boxBg: 'rgba(0, 255, 255, 0.2)', boxShadow: '0 0 8px #00ffff' };
-    modalTeam.innerHTML = `
-        <span class="team-display-box" style="
-            background-color: ${teamStyle.boxBg};
-            box-shadow: ${teamStyle.boxShadow};
-            color: ${teamStyle.dotColor};
-            border: 1px solid ${teamStyle.dotColor};
-        ">
-            TEAM: ${entity.team.toUpperCase()}
-        </span>
-    `;
-
-    // Set Icon and Glow
-    const mainIconPath = entity.category === 'Role' ? getRoleImageUrl(entity.icon) : getModifierImageUrl(entity.icon);
-    modalIcon.src = mainIconPath;
-    modalIcon.alt = `${entity.name} Icon`;
-    modalIcon.style.filter = `drop-shadow(0 0 10px ${uniqueColor})`;
-
-    // Set Description (colorized)
-    modalDescription.innerHTML = typeof colorizeRoleNamesInText === 'function' ? colorizeRoleNamesInText(entity.description) : entity.description;
-    modalDescription.style.borderLeftColor = uniqueColor;
-
-
-    // --- Abilities Section (using a table, handling multiple abilities) ---
-     // ... (inside populateDetailModal function in script.js)
-
-// --- Abilities Section (using a table) ---
-modalAbilityTableBody.innerHTML = ''; // Clear previous content
-// Use the new 'abilities' array directly
-const abilities = Array.isArray(entity.abilities) ? entity.abilities : [];
-
-if (abilities.length > 0) {
-    modalAbilityTableContainer.style.display = 'block'; // Show the table container
-
-    abilities.forEach(ability => { // Loop directly over each ability object
-        const row = document.createElement('tr');
-        row.classList.add('border-b', 'border-gray-800');
-
-        // Icon Cell
-        const iconCell = document.createElement('td');
-        iconCell.classList.add('py-2', 'px-1', 'md:px-2', 'align-top');
-        const abilityIconImg = document.createElement('img');
-        // Use ability.icon (which should be the full path like 'TownOfUs.Resources.CrewButtons.InspectButton.png')
-        abilityIconImg.src = getAbilityImageUrl(ability.icon); // Assuming ability.icon is already a full path
-        abilityIconImg.alt = `${ability.name} Icon`;
-        abilityIconImg.classList.add('w-16', 'h-16', 'object-contain', 'flex-shrink-0');
-        // If you had a glow effect, re-add it here based on uniqueColor
-        // abilityIconImg.style.filter = `drop-shadow(0 0 6px ${uniqueColor})`;
-        abilityIconImg.onerror = function() { this.onerror=null; this.src='placeholder.png'; }; // Fallback image on error
-        iconCell.appendChild(abilityIconImg);
-        row.appendChild(iconCell);
-        // Ability Name Cell
-        const nameCell = document.createElement('td');
-        nameCell.classList.add('py-2', 'px-1', 'md:px-2', 'text-lg', 'font-semibold', 'align-top', 'font-[Amatic_SC]');
-        // Use ability.name
-        nameCell.textContent = ability.name;
-        nameCell.style.color = uniqueColor; // Apply unique color to ability name
-        row.appendChild(nameCell);
-
-        // Ability Description Cell
-        const descriptionCell = document.createElement('td');
-        descriptionCell.classList.add('py-2', 'px-1', 'md:px-2', 'text-sm', 'text-gray-400', 'align-top');
-        // Use ability.description
-        descriptionCell.textContent = ability.description;
-        row.appendChild(descriptionCell);
-
-        modalAbilityTableBody.appendChild(row);
-    });
-} else {
-    modalAbilityTableContainer.style.display = 'none'; // Hide container if no ability data
-}
-
-// ... (rest of your populateDetailModal function)
-modalOptionsTableContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-    // --- Options Section (using a table) ---
-    modalOptionsTableBody.innerHTML = ''; // Clear previous content
-    if (entity.options && entity.options.length > 0) {
-        modalSettingsSection.style.display = 'block'; // Show options title
-        modalOptionsTableContainer.style.display = 'block'; // Show options table container
-
-        entity.options.sort((a, b) => a.name.localeCompare(b.name)).forEach(option => {
-            const row = document.createElement('tr');
-            row.classList.add('border-b', 'border-gray-800');
-
-            // Option Name: Apply Amatic SC font
-            const nameCell = document.createElement('td');
-            nameCell.classList.add('py-2', 'px-1', 'md:px-2', 'font-semibold', 'text-gray-300', 'align-top');
-            nameCell.classList.add('font-[Amatic_SC]'); // Apply Amatic SC font to option names
-            nameCell.textContent = option.name;
-            row.appendChild(nameCell);
-
-            // Default Value
-            const defaultCell = document.createElement('td');
-            defaultCell.classList.add('py-2', 'px-1', 'md:px-2', 'text-gray-400', 'align-top');
-            defaultCell.textContent = option.default;
-            row.appendChild(defaultCell);
-
-            // Type
-            const typeCell = document.createElement('td');
-            typeCell.classList.add('py-2', 'px-1', 'md:px-2', 'text-gray-400', 'align-top');
-            typeCell.textContent = `(${option.type})`;
-            row.appendChild(typeCell);
-
-            // Range
-            const rangeCell = document.createElement('td');
-            rangeCell.classList.add('py-2', 'px-1', 'md:px-2', 'text-gray-400', 'align-top');
-            rangeCell.textContent = option.range && option.range !== 'N/A' ? `[${option.range}]` : '';
-            row.appendChild(rangeCell);
-
-            modalOptionsTableBody.appendChild(row);
-        });
-    } else {
-        modalSettingsSection.style.display = 'none';
-        modalOptionsTableContainer.style.display = 'none';
-    }
-
-    // Apply dynamic styles to the modal content box itself
-    detailModalContent.style.boxShadow = `0 0 20px ${uniqueColor + '60'}`;
-    detailModalContent.style.border = `2px solid ${uniqueColor}`;
-
-    // Set CSS variables for the scrollbar colors
-    detailModalContent.style.setProperty('--modal-scrollbar-thumb-color', uniqueColor);
-    detailModalContent.style.setProperty('--modal-scrollbar-track-color', `${uniqueColor}20`); // 20% opacity of uniqueColor
-
-    // Show the modal using 'active' class and prevent body scroll
-    detailModalOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-/**
- * Closes the detail modal and restores body scrolling.
- */
-function closeDetailModal() {
-    const detailModalOverlay = document.getElementById('detail-modal-overlay');
-    if (detailModalOverlay) {
-        detailModalOverlay.classList.remove('active');
-        document.body.style.overflow = ''; // Restore body scrolling
-    }
-}
-
-
-    // --- Event Listeners for Detail Modal ---
-
-    // Close button click
-    if (modalCloseButton) {
-        modalCloseButton.addEventListener('click', closeDetailModal);
-    }
-
-    // Close when clicking outside the modal content (on the overlay itself)
-    if (detailModalOverlay) {
-        detailModalOverlay.addEventListener('click', (event) => {
-            if (event.target === detailModalOverlay) {
-                closeDetailModal();
-            }
-        });
-    }
-
-    
-    /**
-     * Creates and returns a new player entry DOM element.
-     * @param {string} playerName - Initial player name.
-     * @param {string} role - Initial role.
-     * @returns {HTMLElement} The created player entry div.
-     */
-    function createPlayerEntry(playerName = '', role = '') {
-        const playerEntryDiv = document.createElement('div');
-        playerEntryDiv.className = 'player-entry';
-
-        const uniqueColorInitial = roleColors[role] || modifierColors[role] || '#7e22ce';
-
-        const initialImageUrl = (allEntitiesData.find(e => e.name === role) || {}).icon
-            ? (allEntitiesData.find(e => e.name === role).category === 'Role' ? getRoleImageUrl(role) : getModifierImageUrl(role))
-            : 'placeholder.png';
-
-        playerEntryDiv.innerHTML = `
-            <input type="text" placeholder="Player Name" value="${playerName}" class="player-name-input">
-            <input type="text" placeholder="Role (e.g., Impostor)" value="${role}" class="role-input" style="color: ${uniqueColorInitial};">
-            <img class="role-icon-small" src="${initialImageUrl}" alt="${role || 'Unknown Role'} Icon" onerror="this.onerror=null;this.src='placeholder.png';">
-            <button class="remove-player-btn">Remove</button>
-        `;
-
-        const playerNameInput = playerEntryDiv.querySelector('.player-name-input');
-        const roleInput = playerEntryDiv.querySelector('.role-input');
-        const roleIconImg = playerEntryDiv.querySelector('.role-icon-small');
-        const removeBtn = playerEntryDiv.querySelector('.remove-player-btn');
-
-        if (playerNameInput && roleInput) {
-        playerNameInput.addEventListener('input', () => {
-            // Check if the input value contains " is " (case-insensitive)
-            if (playerNameInput.value.toLowerCase().includes(' is ')) {
-                roleInput.focus(); // Shift focus to the role dropdown
-                // Optional: Remove " is " from the textbox after focusing, or keep it.
-                 playerNameInput.value = playerNameInput.value.replace(/ is /gi, '').trim();
-            }
-        });
-    }
-
-        const updatePlayerRoleIconAndStyles = async () => {
-            const rawRoleName = roleInput.value.trim();
-            let entityForDisplay = null;
-
-            entityForDisplay = allEntitiesData.find(entity =>
-                entity.name.toLowerCase() === rawRoleName.toLowerCase()
-            );
-
-            if (!entityForDisplay && rawRoleName) {
-                entityForDisplay = allEntitiesData.find(entity =>
-                    entity.icon && entity.icon.toLowerCase() === rawRoleName.toLowerCase().replace(/\s/g, '')
-                );
-            }
-
-            let newUniqueColor = '#7e22ce'; // Default
-            let newIconFilename = 'placeholder.png';
-
-            if (entityForDisplay) {
-                newUniqueColor = roleColors[entityForDisplay.name] || modifierColors[entityForDisplay.name] || teamColors[entityForDisplay.team].dotColor || newUniqueColor;
-
-                if (entityForDisplay.category === 'Role') {
-                    newIconFilename = getRoleImageUrl(entityForDisplay.icon);
-                } else if (entityForDisplay.category === 'Modifier') {
-                    newIconFilename = getModifierImageUrl(entityForDisplay.icon);
-                }
-            }
-
-            roleIconImg.src = newIconFilename;
-            roleIconImg.alt = `${entityForDisplay?.name || rawRoleName || 'Unknown Role'} Icon`;
-
-            roleIconImg.style.dropShadow = `0 0 10px ${newUniqueColor}, 0 0 25px ${newUniqueColor}66`;
-            roleIconImg.style.transition = 'box-shadow 0.3s ease-in-out';
-
-            roleInput.style.color = newUniqueColor;
-            roleInput.style.borderBottomColor = newUniqueColor;
-
-            playerEntryDiv.style.borderColor = newUniqueColor;
-            playerEntryDiv.style.backgroundColor = `${newUniqueColor}10`;
-            playerEntryDiv.style.filter = `drop-shadow(0 0 6px ${newUniqueColor})`;
-
-            playerEntryDiv.onmouseenter = () => {
-                playerEntryDiv.style.boxShadow = `0 0 30px ${newUniqueColor}AA, 0 0 40px ${newUniqueColor}88`;
-                playerEntryDiv.style.transform = 'translateY(-3px)';
-                playerEntryDiv.style.transition = 'box-shadow 0.2s ease-out, transform 0.2s ease-out';
-            };
-            playerEntryDiv.onmouseleave = () => {
-                playerEntryDiv.style.boxShadow = `0 0 20px ${newUniqueColor}80`;
-                playerEntryDiv.style.transform = 'translateY(0)';
-            };
-
-            if (!entityForDisplay) {
-                roleIconImg.style.boxShadow = '';
-                playerEntryDiv.style.backgroundColor = '';
-                playerEntryDiv.style.borderColor = '';
-                playerEntryDiv.style.boxShadow = '';
-                playerEntryDiv.onmouseenter = null;
-                playerEntryDiv.onmouseleave = null;
-                roleInput.style.color = '';
-                roleInput.style.borderBottomColor = '';
-            }
-        };
-
-        roleInput.addEventListener('input', () => {
-            updatePlayerRoleIconAndStyles(); 
-            savePlayerRoles();
-        });
-
-        playerNameInput.addEventListener('input', savePlayerRoles);
-
-        if(removeBtn) {
-        removeBtn.addEventListener('click', () => {
-    playerEntryDiv.remove();
-    });
-    }
-    // Add remove button functionality
-
-        updatePlayerRoleIconAndStyles(); // Call immediately on creation
-        return playerEntryDiv;
-    }
-
-    /**
-     * Saves all current player role entries to localStorage.
-     */
-    function savePlayerRoles() {
-        const playerEntries = [];
-        document.querySelectorAll('#playerRolesList .player-entry').forEach(entry => {
-            const playerName = entry.querySelector('.player-name-input').value;
-            const role = entry.querySelector('.role-input').value;
-            playerEntries.push({
-                playerName,
-                role
-            });
-        });
-        localStorage.setItem('amongUsCompanionRoles', JSON.stringify(playerEntries));
-    }
-
-    /**
-     * Loads player role entries from localStorage and populates the list.
-     */
-    function loadPlayerRoles() {
-        if (!playerRolesList) return; // Guard against missing element
-        playerRolesList.innerHTML = '';
-        const savedRoles = localStorage.getItem('amongUsCompanionRoles');
-        if (savedRoles) {
-            try {
-                const roles = JSON.parse(savedRoles);
-                if (roles.length > 0) {
-                    roles.forEach(player => {
-                        playerRolesList.appendChild(createPlayerEntry(player.playerName, player.role));
-                    });
-                } else {
-                    playerRolesList.appendChild(createPlayerEntry());
-                }
-            } catch (e) {
-                console.error("Error parsing saved roles:", e);
-                localStorage.removeItem('amongUsCompanionRoles');
-                playerRolesList.appendChild(createPlayerEntry());
-            }
-        } else {
-            playerRolesList.appendChild(createPlayerEntry());
-        }
-    }
-
-    if (addPlayerBtn) {
-        addPlayerBtn.addEventListener('click', () => {
-            playerRolesList.appendChild(createPlayerEntry());
-            playerRolesList.lastElementChild.querySelector('.player-name-input')?.focus(); // Safe focus
-            savePlayerRoles();
-        });
-    }
-
-    
-
-
-  // Clear Roles functionality
-  document.getElementById('clearRolesBtn').addEventListener('click', () => {
-    document.getElementById('playerRolesList').innerHTML = '';
-  });
-
-    // --- General Notes Tab Logic ---
-    function saveGeneralNotes() {
-        if (generalNotesTextarea) {
-            localStorage.setItem('amongUsCompanionGeneralNotes', generalNotesTextarea.value);
-        }
-    }
-
-    function loadGeneralNotes() {
-        if (generalNotesTextarea) {
-            generalNotesTextarea.value = localStorage.getItem('amongUsCompanionGeneralNotes') || '';
-        }
-    }
-
-    if (saveGeneralNotesBtn) {
-        saveGeneralNotesBtn.addEventListener('click', async () => {
-            saveGeneralNotes();
-            await showMessageBox('General notes saved locally!');
-        });
-    }
-
-    // --- Tab Switching Logic ---
-    function showTab(tabId) {
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        tabContents.forEach(content => content.classList.remove('active'));
-
-        const targetButton = document.querySelector(`[data-tab="${tabId}"]`);
-        const targetContent = document.getElementById(`${tabId}-tab`);
-
-        if (targetButton) targetButton.classList.add('active');
-        if (targetContent) targetContent.classList.add('active');
-
-        if (tabId === 'wiki') {
-            renderCards();
-        } else if (tabId === 'roles') {
-            loadPlayerRoles();
-        } else if (tabId === 'notes') {
-            loadGeneralNotes();
-        }
-    }
-
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            showTab(button.dataset.tab);
-        });
-    });
-
-    // Function to create a role/modifier card
-   // Function to create a role/modifier card
-    function createCard(entity) {
+// --- Card Creation Function ---
+function createRoleCardElement(playerName, roleEntity) {
     const card = document.createElement('div');
-    // Apply responsive grid layout for cards and styling
-    card.className = `role-card bg-gray-700 rounded-lg p-4 shadow-lg transition-transform transform hover:scale-105 cursor-pointer relative overflow-hidden`;
+    card.className = `role-card`; // Base classes for all cards
 
-    // Define uniqueColor at the beginning of createCard
-    const uniqueColor = roleColors[entity.name] || modifierColors[entity.name] || '#7e22ce';
-    const glowColor = uniqueColor;
+    const iconUrl = roleEntity.category === 'Role' ? getRoleImageUrl(roleEntity.icon) : getModifierImageUrl(roleEntity.icon);
 
-    // Apply dynamic styling for border and shadow
-    card.style.boxShadow = `0 0 15px ${glowColor}`;
-    card.style.setProperty('--card-scrollbar-thumb-color', uniqueColor);
-    card.style.setProperty('--card-scrollbar-track-color', 'rgba(31, 31, 31, 0.5)');
+    const teamKey = roleEntity.team.toLowerCase().replace(/\s/g, '-');
+    const teamStyle = teamColors[roleEntity.team] || { dotColor: '#999', boxBg: 'rgba(153, 153, 153, 0.2)', boxShadow: 'none' };
+    const roleColor = roleColors[roleEntity.name] || teamStyle.dotColor;
 
-    card.addEventListener('mouseenter', function() {
-        this.style.boxShadow = `0 0 20px ${uniqueColor + '90'}`;
-    });
-    card.addEventListener('mouseleave', function() {
-        this.style.boxShadow = `0 0 15px ${glowColor}`;
-    });
+    // Determine the text to display at the bottom of the card
+    const bottomText = roleEntity.team === "Crewmate" || "Imposter" || "Neutral" ? playerName : roleEntity.team;
 
-    const teamKey = entity.team.split(' ')[0]; // Extract primary team for color
-    const teamStyle = teamColors[teamKey] || teamColors[entity.team] || { dotColor: 'cyan', boxBg: 'rgba(0, 255, 255, 0.2)', boxShadow: '0 0 8px #00ffff' };
+    // Apply main card border and shadow based on role color
+    card.style.borderColor = roleColor;
+    card.style.boxShadow = `0 0 10px ${roleColor}80`;
 
-    // Use getAssetImagePath for the main icon too for consistency
-    const mainIconPath = entity.category === 'Role' ? getRoleImageUrl(entity.icon) : getModifierImageUrl(entity.icon);
-    const coloredDescription = colorizeRoleNamesInText(entity.description); // Apply colorization
-
-    // Card HTML structure
     card.innerHTML = `
-        <div class="role-card-header flex items-center mb-3">
-          <img src="${mainIconPath}" alt="${getModifierImageUrl(entity.icon)}" class="w-16 h-16 object-contain mr-4 "
-                   onerror="this.onerror=null;this.src='placeholder.png';"
-                   style="filter: drop-shadow(0 0 6px ${uniqueColor});">
-          <div class="text-container flex flex-col items-start">
-            <h2 class="text-2xl font-bold font-[Amatic_SC]" style="color: ${uniqueColor};">${entity.name.toUpperCase()}</h2>
-            <span class="team-display-box text-xs font-semibold px-2 py-1 rounded-full mt-1" style="
-                background-color: ${teamStyle.boxBg};
-                box-shadow: ${teamStyle.boxShadow};
-                color: ${teamStyle.dotColor};
-                border: 1px solid ${teamStyle.dotColor};
-            ">
-                TEAM: ${entity.team.toUpperCase()}
-            </span>
-          </div>
+        <button class="delete-role-card-btn absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl leading-none">&times;</button>
+        <div class="role-icon-container">
+            <img src="${iconUrl}" alt="${roleEntity.name} Icon" class="role-icon" onerror="this.onerror=null;this.src='https://placehold.co/60x60/000000/FFFFFF?text=NO+ICON'; this.style.filter='none';">
         </div>
-
-       <div class="description-abilities-settings border-t border-gray-600 pt-3 mt-3">
-            <p class="description-text text-gray-300 text-sm leading-relaxed mb-4 border-l-4 pl-3" style="border-color: ${uniqueColor};">
-                ${coloredDescription}
-            </p>
-
-            <div class="abilities-section">
-                <h3 class="text-cyan-400 text-base font-semibold mb-2 text-left">Abilities:</h3>
-                <div class="
-                    flex flex-col /* Stacks each ability item on a new line */
-                    gap-2 mt-2 p-2 
-                    
-                ">
-                ${
-                    // Check if entity.abilities exists and is an array, then map over it
-                    (Array.isArray(entity.abilities) && entity.abilities.length > 0)
-                    ? entity.abilities.map(ability => `
-                        <div class="
-                            flex flex-row items-center /* Icon and text on same line, vertically centered */
-                            
-                            p-1 rounded-md 
-                             border-2 border-transparent 
-                            transform transition-all duration-200 
-                            hover:scale-105 hover:bg-gray-700 hover:shadow-lg
-                        " style="
-                            box-shadow: 0 0 5px rgba(0,0,0,0.5);
-                            ;
-                        ">
-                            <img src="${getAbilityImageUrl (ability.icon)}" alt="${ability.name} Icon" 
-                                class="w-7 h-7 object-contain mr-1.5 drop-shadow-md" 
-                                onerror="this.onerror=null;this.src='assets/placeholder_image.png';" 
-                                style="filter: drop-shadow(0 0 3px ${uniqueColor});">
-                            <span id="ability-name" class="text-base font-semibold text-gray-200 leading-tight text-center flex-grow font:1rem"> 
-    ${ability.name}
-</span>
-                        </div>
-                    `).join('')
-                    : `<p class="text-center text-gray-400 italic text-sm py-4">No specific abilities listed.</p>`
-                }
-                </div>
-            </div>
+        <div class="role-info">
+            <h3 class="role-name" style="color: ${roleColor};">${roleEntity.name}</h3>
+            <p class="role-team ${teamKey}">${bottomText}</p>
         </div>
     `;
-    card.addEventListener('click', () => {
-        populateDetailModal(entity); // Pass the 'entity' object related to this card
-    });
+
+    // Add dynamic glow to the image itself
+    const imgElement = card.querySelector('.role-icon');
+    if (imgElement) {
+        imgElement.style.filter = `drop-shadow(0 0 5px ${roleColor})`;
+    }
+
     return card;
 }
 
 
-// Make sure roleColors, modifierColors, teamColors, and colorizeRoleNamesInText are defined
-// (they seem to be present in your existing script.js)
+// --- Notes Application Logic ---
+document.addEventListener('DOMContentLoaded', () => {
+    const mainNotepadArea = document.getElementById('mainNotepadArea');
+    const newNoteButton = document.getElementById('newNoteButton');
+    const roleCardsContainer = document.getElementById('roleCardsContainer');
+    const noRoleCardsMessage = document.getElementById('noRoleCardsMessage');
 
+    const LOCAL_STORAGE_NOTEPAD_KEY = 'currentNotepadContent';
+    const LOCAL_STORAGE_ROLE_CARDS_KEY = 'processedRoleCards'; // Stores { playerName, roleName, id }
 
-    // Function to render/filter cards
-    function renderCards() {
-        if (!roleWikiCardGrid || !searchInput || !combinedFilterSelect) {
-            console.error("Missing critical role wiki elements for rendering cards.");
-            return;
-        }
+    let autosaveTimeout;
+    const AUTOSAVE_DELAY = 200; // Reduced debounce delay for quicker card appearance
 
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedFilter = combinedFilterSelect.value;
+    // Array to store data for generated role cards
+    let processedRoleCards = [];
 
-        const filteredEntities = allEntitiesData.filter(entity => {
-            const matchesSearch = searchTerm === '' ||
-                entity.name.toLowerCase().includes(searchTerm) ||
-                entity.description.toLowerCase().includes(searchTerm) ||
-                (entity.ability && entity.ability.toLowerCase().includes(searchTerm)) || // Guard against null/undefined ability
-                entity.team.toLowerCase().includes(searchTerm) ||
-                (entity.types && entity.types.some(type => type.toLowerCase().includes(searchTerm))) || // Guard against null/undefined types
-                (entity.options && entity.options.some(opt =>
-                    opt.name.toLowerCase().includes(searchTerm) ||
-                    opt.description.toLowerCase().includes(searchTerm)
-                ));
+    function generateUniqueId() {
+        return crypto.randomUUID();
+    }
 
-            let matchesFilter = true;
-            if (selectedFilter !== "All") {
-                if (["Crewmate", "Neutral", "Impostor", "Alliance"].includes(selectedFilter)) {
-                    matchesFilter = entity.team.includes(selectedFilter);
-                } else if (["Crewmate Modifier", "Global Modifier", "Impostor Modifier", "Crewmate Alliance modifier"].includes(selectedFilter)) {
-                    matchesFilter = entity.team === selectedFilter;
-                } else {
-                    matchesFilter = entity.types && entity.types.includes(selectedFilter); // Guard against null/undefined types
+    function saveCurrentNotepadContent() {
+        localStorage.setItem(LOCAL_STORAGE_NOTEPAD_KEY, mainNotepadArea.value);
+    }
+
+    function saveProcessedRoleCards() {
+        localStorage.setItem(LOCAL_STORAGE_ROLE_CARDS_KEY, JSON.stringify(processedRoleCards));
+    }
+
+    function renderRoleCards() {
+        roleCardsContainer.innerHTML = ''; // Clear existing cards
+        if (processedRoleCards.length === 0) {
+            noRoleCardsMessage.classList.remove('hidden');
+        } else {
+            noRoleCardsMessage.classList.add('hidden');
+            processedRoleCards.forEach(cardData => {
+                const entity = allEntitiesData.find(e => e.name.toLowerCase() === cardData.roleName.toLowerCase()); // Case-insensitive match
+                if (entity) {
+                    const cardElement = createRoleCardElement(cardData.playerName, entity);
+                    cardElement.dataset.cardId = cardData.id; // Store the unique ID on the card element
+                    roleCardsContainer.appendChild(cardElement);
                 }
+            });
+            addDeleteCardListeners(); // Re-attach listeners after rendering
+        }
+    }
+
+    function addDeleteCardListeners() {
+        document.querySelectorAll('.delete-role-card-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const cardElement = event.target.closest('.role-card');
+                if (cardElement) {
+                    const cardIdToDelete = cardElement.dataset.cardId;
+                    processedRoleCards = processedRoleCards.filter(card => card.id !== cardIdToDelete);
+                    saveProcessedRoleCards();
+                    renderRoleCards(); // Re-render to reflect deletion
+                }
+            });
+        });
+    }
+
+
+    function createNewNote() {
+        mainNotepadArea.value = ''; // Clear textarea for new note
+        saveCurrentNotepadContent(); // Save the empty string
+        processedRoleCards = []; // Clear role cards
+        saveProcessedRoleCards(); // Save empty array
+        renderRoleCards(); // Update display
+        mainNotepadArea.focus(); // Focus on the textarea
+    }
+
+    // --- Role Card Processing Logic ---
+    function processNotepadContent() {
+        const currentText = mainNotepadArea.value;
+        const lines = currentText.split('\n');
+        let newNotepadContentLines = [];
+        let cardsAddedThisPass = false;
+
+        lines.forEach(line => {
+            const match = line.match(/^(.+?)\s+is\s+(.+)$/i); // Anchor regex to start/end of line
+            if (match) {
+                const playerName = match[1].trim();
+                const roleName = match[2].trim();
+
+                const foundEntity = allEntitiesData.find(e => e.name.toLowerCase() === roleName.toLowerCase());
+
+                if (foundEntity) {
+                    // Check for duplicate before adding
+                    const isDuplicate = processedRoleCards.some(card =>
+                        card.playerName.toLowerCase() === playerName.toLowerCase() &&
+                        card.roleName.toLowerCase() === foundEntity.name.toLowerCase()
+                    );
+
+                    if (!isDuplicate) {
+                        processedRoleCards.push({
+                            id: generateUniqueId(),
+                            playerName: playerName,
+                            roleName: foundEntity.name
+                        });
+                        cardsAddedThisPass = true;
+                    }
+                    // If it's a valid match, we don't add it back to newNotepadContentLines
+                } else {
+                    // If line doesn't match the pattern, keep it in the notepad
+                    newNotepadContentLines.push(line);
+                }
+            } else {
+                // If line doesn't match the pattern, keep it in the notepad
+                newNotepadContentLines.push(line);
             }
-            return matchesSearch && matchesFilter;
         });
 
-        roleWikiCardGrid.innerHTML = '';
-        if (filteredEntities.length === 0) {
-            roleWikiCardGrid.innerHTML = '<p class="col-span-full text-center text-lg text-gray-400 font-[Amatic_SC]">No roles or modifiers found matching your criteria.</p>';
-        } else {
-            filteredEntities.forEach(entity => {
-                roleWikiCardGrid.appendChild(createCard(entity));
-            });
+        // Update the main notepad area with only the unprocessed lines
+        const newContent = newNotepadContentLines.join('\n');
+        if (mainNotepadArea.value !== newContent) { // Only update if content changed to avoid cursor jump
+            const cursorPosition = mainNotepadArea.selectionStart;
+            mainNotepadArea.value = newContent;
+            // Try to restore cursor position, but it might jump if lines were removed before it
+            // This is a known challenge when modifying textarea content dynamically.
+            // For simplicity, we'll just set it to the end if it's no longer valid.
+            mainNotepadArea.setSelectionRange(newContent.length, newContent.length);
+        }
+
+
+        if (cardsAddedThisPass) {
+            saveProcessedRoleCards();
+            renderRoleCards();
+        }
+        saveCurrentNotepadContent(); // Always save notepad content
+    }
+
+    // --- Event Listeners ---
+
+    // Autosave and processing functionality for the main notepad area
+    mainNotepadArea.addEventListener('input', () => {
+        clearTimeout(autosaveTimeout);
+        autosaveTimeout = setTimeout(processNotepadContent, AUTOSAVE_DELAY);
+    });
+
+    // New Note Button
+    newNoteButton.addEventListener('click', createNewNote);
+
+    // --- Initial Load ---
+    const savedNotepadContent = localStorage.getItem(LOCAL_STORAGE_NOTEPAD_KEY);
+    if (savedNotepadContent !== null) {
+        mainNotepadArea.value = savedNotepadContent;
+    } else {
+        mainNotepadArea.value = '';
+    }
+
+    const savedRoleCards = localStorage.getItem(LOCAL_STORAGE_ROLE_CARDS_KEY);
+    if (savedRoleCards) {
+        try {
+            processedRoleCards = JSON.parse(savedRoleCards);
+        } catch (e) {
+            console.error("Error parsing saved role cards:", e);
+            processedRoleCards = []; // Reset if corrupted
         }
     }
+    renderRoleCards(); // Render any saved role cards on load
 
-    // Initial render based on default active tab (Wiki)
-    showTab('wiki');
-
-    // Event listeners for search and filter (Role Wiki)
-    if (searchInput) {
-        searchInput.addEventListener('input', renderCards);
-    }
-    if (combinedFilterSelect) {
-        combinedFilterSelect.addEventListener('change', renderCards);
-    }
-}); // End DOMContentLoaded
+    mainNotepadArea.focus(); // Focus on the notepad on load
+});
