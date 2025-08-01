@@ -230,7 +230,7 @@ body {
     border-radius: 9999px;
     white-space: nowrap;
     display: inline-block;
-    
+    color:white;
 }
 
 /* Dynamic Team Colors (from script.js teamColors) */
