@@ -15,9 +15,13 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="p-6 bg-gray-900 text-gray-100 font-[Inter]">
+   <video autoplay muted loop src="videoplayback.mp4">
+        <source src="videoplayback.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
   <div class="container mx-auto p-6 rounded-lg shadow-lg bg-gray-800">
     <header class="text-center mb-8">
-      <h1 class="text-5xl font-bold font-[Amatic_SC] text-yellow-400">TOU Notepad</h1>
+      <h1 style="color: aquamarine;" class="text-5xl font-bold font-[Amatic_SC] text-cyan-400">TOU Notepad</h1>
     </header>
 
     <div class="grid grid-cols-1 gap-6">
@@ -35,7 +39,6 @@
               <div class="ring"></div>
           </div>
           <div class="notepad-paper-background p-4 rounded-lg shadow-md h-full flex flex-col">
-              <h2 class="text-3xl font-bold font-[Amatic_SC] text-yellow-400 mb-4 text-center">Notepad</h2>
               <textarea id="mainNotepadArea" placeholder="Start writing your notes here... Type '{name} is {role}' to create a role card (e.g., 'Alice is Sheriff')." class="flex-grow w-full p-2 bg-transparent border-none focus:outline-none resize-y text-gray-800 text-lg leading-relaxed min-h-[300px]"></textarea> <!-- Added resize-y and min-h-[300px] -->
               <div class="flex justify-end mt-4">
                   <button id="newNoteButton" class="bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded-md hover:bg-yellow-500 transition duration-200">New Note</button>
@@ -44,7 +47,7 @@
       </div>
 
       <!-- Role Cards Display Area (below the notepad) -->
-      <div class="bg-gray-700 p-4 rounded-lg shadow-md flex flex-col">
+      <div style="background-color: rgb(39, 37, 37);" class="bg-gray-700 p-4 rounded-lg shadow-md flex flex-col">
         <h2 class="text-3xl font-bold font-[Amatic_SC] text-yellow-400 mb-4 text-center">Known Roles</h2>
         <div id="roleCardsContainer" class="role-cards-grid custom-scrollable-container flex-grow">
           <!-- Role cards will be inserted here by JavaScript -->
