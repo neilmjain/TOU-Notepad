@@ -36,6 +36,7 @@ const roleColors = {
     "Veteran": rgbFloatToHex(0.60, 0.50, 0.25),
     "Haunter": rgbFloatToHex(0.83, 0.83, 0.83),
     "Transporter": rgbFloatToHex(0.00, 0.93, 1.00),
+    "Mirrorcaster":'#5e80a2',
     "Medium": rgbFloatToHex(0.65, 0.50, 1.00),
     "Mystic": rgbFloatToHex(0.30, 0.60, 0.90),
     "Trapper": rgbFloatToHex(0.65, 0.82, 0.70),
@@ -1642,6 +1643,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mainNotepadArea.focus(); // Focus on the notepad on load
 });
+
 
 
 
