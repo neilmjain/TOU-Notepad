@@ -6,22 +6,44 @@
     font-display: swap;
 }
 @keyframes colorChangeShadow {
-    0% { box-shadow: 0 0 15px #ff0000; } /* Neon Red */
-    10% { box-shadow: 0 0 15px #ff8800; } /* Neon Red */
-    20% { box-shadow: 0 0 15px #fffb00; } /* Neon Cyan */
-    40% { box-shadow: 0 0 15px #00ff00; } /* Neon Green */
-    60% { box-shadow: 0 0 15px #00ffea; } /* Neon Green */
-    80% { box-shadow: 0 0 15px #007bff; } /* Neon Blue */
-    100% { box-shadow: 0 0 15px #ff00ff; } /* Neon Purple */
+    0%   { box-shadow: 0 0 15px #ff0000; }
+    10%  { box-shadow: 0 0 15px #ff6600; } /* Deep Orange */
+    20%  { box-shadow: 0 0 15px #ffaa00; } /* Orange-Yellow */
+    30%  { box-shadow: 0 0 15px #ffff00; } /* Yellow */
+    35%  { box-shadow: 0 0 15px #e5ff00; } /* Lime-Yellow */
+    40%  { box-shadow: 0 0 15px #ccff00; } /* Yellow-Green */
+    45%  { box-shadow: 0 0 15px #99ff00; } /* Green-Yellow */
+    50%  { box-shadow: 0 0 15px #00ff00; } /* Green */
+    60%  { box-shadow: 0 0 15px #00ffaa; } /* Green-Cyan */
+    70%  { box-shadow: 0 0 15px #00ffff; } /* Cyan */
+    80%  { box-shadow: 0 0 15px #007bff; } /* Blue */
+    90%  { box-shadow: 0 0 15px #ff00ff; } /* Purple */
+    95%  { box-shadow: 0 0 15px #ff0077; } /* Magenta */
+    98%  { box-shadow: 0 0 15px #ff0033; } /* Reddish Pink */
+    100% { box-shadow: 0 0 15px #ff0000; }
 }
  @keyframes colorChangeBorder {
-    0% { border-color:  #ff0000; } /* Neon Red */
-    10% { border-color: #ff8800; } /* Neon Red */
-    20% { border-color: #fffb00; } /* Neon Cyan */
-    40% { border-color: #00ff00; } /* Neon Green */
-    60% { border-color: #00ffea; } /* Neon Green */
-    80% { border-color: #007bff; } /* Neon Blue */
-    100% { border-color: #ff00ff; } /* Neon Purple */
+    0%   { border-color: #ff0000; }
+    10%  { border-color: #ff6600; }
+    20%  { border-color: #ffaa00; }
+    30%  { border-color: #ffff00; }
+    32%  { border-color: #f2ff00; }
+    34%  { border-color: #e5ff00; }
+    36%  { border-color: #ccff00; }
+    38%  { border-color: #b2ff00; }
+    40%  { border-color: #99ff00; }
+    42%  { border-color: #7fff00; }
+    44%  { border-color: #66ff00; }
+    46%  { border-color: #4cff00; }
+    48%  { border-color: #33ff00; }
+    50%  { border-color: #00ff00; }
+    60%  { border-color: #00ffaa; }
+    70%  { border-color: #00ffff; }
+    80%  { border-color: #007bff; }
+    90%  { border-color: #ff00ff; }
+    95%  { border-color: #ff0077; }
+    98%  { border-color: #ff0033; }
+    100% { border-color: #ff0000; }
 }
 video {
   position: fixed;
@@ -36,15 +58,16 @@ video {
 /* General Body and Container Styles */
 body {
     font-family: 'Amatic SC', sans-serif;
-    background-color: #d4d0c8;
+    background-color: #32322c;
     color: #333;
 }
 
 .container {
-    background-color: #e0e0d8;
-    border: 1px solid #c0c0b8;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    background-color:#32322c;
+    border: 2px solid;
+    animation: colorChangeBorder 10s infinite;
     opacity: 0.99;
+
 }
 
 /* Custom Scrollbar for Webkit browsers (Chrome, Safari) */
@@ -86,7 +109,7 @@ body {
 
 /* Main notepad paper background */
 .notepad-paper-background {
-    background-color: #fdfdf5;
+    background-color: #1e1e19;
     /* Only horizontal lines, aligning with 25px line-height */
     background-image: linear-gradient(to bottom, transparent 24px, #e0e0e0 27px, transparent 28px);
     background-size: 100% 25px; /* Repeat horizontally across 100% width, every 25px vertically */
@@ -97,6 +120,7 @@ body {
     flex-grow: 1;
     position: relative;
     z-index: 1;
+    animation: colorChangeShadow 10s infinite;
 }
 
 
@@ -163,7 +187,7 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Adjusted for more square cards */
     gap: 1rem;
     padding: 1rem;
-    background-color: rgba(31, 31, 31, 0.5);
+    background-color: #1e1e19;
     border-radius: 0.5rem;
     border: 1px solid rgba(51, 51, 51, 0.5);
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
@@ -199,7 +223,6 @@ body {
     width: 80px; /* Larger icon size */
     height: 80px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -294,7 +317,8 @@ button {
     letter-spacing: 0.5px;
 }
 .delete-role-card-btn{
-    font-size: 30px;
+    font-size: 60px;
+    align-items: top;
 }
 #newNoteButton {
     font-size: 1.2rem;
