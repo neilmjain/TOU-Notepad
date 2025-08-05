@@ -181,10 +181,10 @@ const allEntitiesData = [
         options: []
     },
     {
-        category: "Role", name: "Imposter", team: "Imposter",
+        category: "Role", name: "Impostor", team: "Impostor",
         description: "",
         abilities: [],
-        icon: 'Imposter',
+        icon: 'Impostor',
         types: ["Standard"],
         options: []
     },
@@ -1640,4 +1640,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mainNotepadArea.focus(); // Focus on the notepad on load
 });
+
 
