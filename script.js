@@ -136,7 +136,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Aurial", team: "Crewmate",
         description: "The Aurial is a Crewmate that can sense when players use an ability nearby. If any player near the Aurial uses a button ability, the Aurial will get an arrow pointing towards where that ability was used.",
-        abilities: [{ name: "Sense Interactions", icon: 'TownOfUs.Resources.RoleIcons.Aurial.png', description: "Senses when players use an ability nearby." }],
+        abilities: [],
         icon: 'Aurial',
         types: ["Detection", "Other"],
         options: [
@@ -150,8 +150,8 @@ const allEntitiesData = [
         category: "Role", name: "Detective", team: "Crewmate",
         description: "The Detective has a 2 step ability.\nThe first stage involves inspecting a crime scene. Once a crime scene is inspected they can then examine other players on cooldown to see if that player was at the scene of the crime.\nCrime scenes spawn at each dead body. They also get a detective report telling them the type of killer if they examine someone’s body.",
         abilities: [
-            { name: "Inspect", icon: 'TownOfUs.Resources.CrewButtons.InspectButton.png', description: "Inspects a crime scene to gather clues." },
-            { name: "Examine", icon: 'TownOfUs.Resources.CrewButtons.ExamineButton.png', description: "Examines players to check their presence at a crime scene." }
+            { name: "Inspect", icon: 'InspectButton.png', description: "Inspects a crime scene to gather clues." },
+            { name: "Examine", icon: 'ExamineButton.png', description: "Examines players to check their presence at a crime scene." }
         ],
         icon: 'Detective',
         types: ["Detection"],
@@ -167,8 +167,8 @@ const allEntitiesData = [
         category: "Role", name: "Engineer", team: "Crewmate",
         description: "The Engineer is a Crewmate that can fix sabotages from anywhere on the map.\nThey can use vents to get across the map easily.",
         abilities: [
-            { name: "Vent", icon: 'TownOfUs.Resources.CrewButtons.EngiVentButton.png', description: "Uses vents for quick movement." },
-            { name: "Fix Sabotage", icon: 'TownOfUs.Resources.CrewButtons.FixButton.png', description: "Fixes sabotages from any location." }
+            { name: "Vent", icon: 'EngiVentButton.png', description: "Uses vents for quick movement." },
+            { name: "Fix", icon: 'FixButton.png', description: "Fixes sabotages from any location." }
         ],
         icon: 'Engineer',
         types: ["Utility", "Movement"],
@@ -180,7 +180,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Medic", team: "Crewmate",
         description: "The Medic is a Crewmate that can give any player a shield that will make them immortal until the Medic dies.\nA Shielded player cannot be killed by anyone, unless by suicide.\nIf the Medic reports a dead body, they can get a report containing clues to the Killer's identity.\nA report can contain the color type (Darker/Lighter) of the killer if the body is not too old.",
-        abilities: [{ name: "Shield", icon: 'TownOfUs.Resources.CrewButtons.MedicButton.png', description: "Provides a shield to a player, making them immortal." }],
+        abilities: [{ name: "Shield", icon: 'MedicButton.png', description: "Provides a shield to a player, making them immortal." }],
         icon: 'Medic',
         types: ["Protective", "Support"],
         options: [
@@ -195,7 +195,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Sheriff", team: "Crewmate",
         description: "The Sheriff is a Crewmate that has the ability to eliminate the Impostors using their kill button.\nHowever, if they kill a Crewmate or a Neutral player they can't kill, they instead die themselves.",
-        abilities: [{ name: "Shoot", icon: 'TownOfUs.Resources.CrewButtons.SheriffShootButton.png', description: "Eliminates Impostors. Miskilling results in self-elimination." }],
+        abilities: [{ name: "Shoot", icon: 'SheriffShootButton.png', description: "Eliminates Impostors. Miskilling results in self-elimination." }],
         icon: 'Sheriff',
         types: ["Killing"],
         options: [
@@ -210,7 +210,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Snitch", team: "Crewmate",
         description: "The Snitch is a \nCrewmate that can get arrows pointing towards the Impostors, once all their tasks are finished.\nThe names of the Impostors will also show up as red on their screen.\nHowever, when they only have a single task left, the Impostors get an arrow pointing towards the Snitch.",
-        abilities: [{ name: "Reveal Imps", icon: 'TownOfUs.Resources.RoleIcons.Snitch.png', description: "Reveals Impostor locations after tasks are completed." }],
+        abilities: [],
         icon: 'Snitch',
         types: ["Information"],
         options: [
@@ -224,7 +224,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Swapper", team: "Crewmate",
         description: "The Swapper is a Crewmate that can swap the votes on 2 players during a meeting.\nAll the votes for the first player will instead be counted towards the second player and vice versa.",
-        abilities: [{ name: "Swap Players", icon: 'TownOfUs.Resources.SwapActive.png', description: "Swaps votes between two players during a meeting." }],
+        abilities: [{ name: "Swap", icon: 'SwapActive.png', description: "Swaps votes between two players during a meeting." }],
         icon: 'Swapper',
         types: ["Support", "Utility"],
         options: [
@@ -235,7 +235,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Transporter", team: "Crewmate",
         description: "The Transporter is a Crewmate that can change the locations of two random players at will.\nPlayers who have been transported are alerted with a blue flash on their screen.",
-        abilities: [{ name: "Transport", icon: 'TownOfUs.Resources.CrewButtons.TransportButton.png', description: "Changes the locations of two random players." }],
+        abilities: [{ name: "Transport", icon: 'TransportButton.png', description: "Changes the locations of two random players." }],
         icon: 'Transporter',
         types: ["Utility"],
         options: [
@@ -248,7 +248,7 @@ const allEntitiesData = [
      {
         category: "Role", name: "Haunter", team: "Crewmate",
         description: "Once a random Crewmate dies they become the Haunter. The Haunter has the ability to run around as a ghost and to do tasks. Once all tasks are finished they reveal the Impostors to all alive non-Impostors. However, if the Haunter is clicked they lose their ability to reveal Impostors and are once again a normal ghost. The Impostors also get a warning shortly before and as the Haunter finishes their tasks.",
-        abilities: [{ name: "Reveal Imps", icon: 'TownOfUs.Resources.RoleIcons.Haunter.png', description: "Reveals Impostors to all non-Impostors after tasks are finished." }],
+        abilities: [],
         icon: 'Haunter',
         types: ["Detection", "Utility", "Other"],
         options: [
@@ -262,7 +262,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Investigator", team: "Crewmate",
         description: "The Investigator can see player's footprints throughout the game. Swooper footprints are hidden.",
-        abilities: [{ name: "View Footprints", icon: 'TownOfUs.Resources.Footprint.png', description: "Can see players' footprints throughout the game." }],
+        abilities: [],
         icon: 'Investigator',
         types: ["Detection"],
         options: [
@@ -277,7 +277,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Lookout", team: "Crewmate",
         description: "The Lookout is a Crewmate that can watch other players during rounds. During meetings they will see all roles who interact with each watched player.",
-        abilities: [{ name: "Watch Player", icon: 'TownOfUs.Resources.CrewButtons.WatchButton.png', description: "Watches other players during rounds to see who interacts with them." }],
+        abilities: [{ name: "Watch", icon: 'WatchButton.png', description: "Watches other players during rounds to see who interacts with them." }],
         icon: 'Lookout',
         types: ["Detection"],
         options: [
@@ -290,7 +290,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Mystic", team: "Crewmate",
         description: "The Mystic is a Crewmate that gets an alert revealing when someone has died. On top of this, the Mystic briefly gets an arrow pointing in the direction of the body.",
-        abilities: [{ name: "Know Kills", icon: 'TownOfUs.Resources.RoleIcons.Mystic.png', description: "Receives alerts when someone dies and sees an arrow to the body." }],
+        abilities: [],
         icon: 'Mystic',
         types: ["Detection", "Other"],
         options: [
@@ -301,7 +301,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Seer", team: "Crewmate",
         description: "The Seer is a Crewmate that can reveal the alliance of other players. Based on settings, the Seer can find out whether a player is a Good or an Evil role. A player's name will change color depending on faction and role.",
-        abilities: [{ name: "Reveal Alliance", icon: 'TownOfUs.Resources.CrewButtons.SeerButton.png', description: "Reveals the alliance (Good/Evil) of other players." }],
+        abilities: [{ name: "Reveal", icon: 'SeerButton.png', description: "Reveals the alliance (Good/Evil) of other players." }],
         icon: 'Seer',
         types: ["Detection"],
         options: [
@@ -317,7 +317,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Spy", team: "Crewmate",
         description: "The Spy is a Crewmate Investigative role that gains extra information on the admin table. Not only does the Spy see how many people are in a room, but they will also see who is in every room. The Spy also has a toggle for a portable Admin Table with a limited battery charge.",
-        abilities: [{ name: "View Admin", icon: 'TownOfUs.Resources.AdminButton.png', description: "Views detailed information on the admin table, including who is in each room." }],
+        abilities: [{ name: "Admin", icon: 'AdminButton.png', description: "Views detailed information on the admin table, including who is in each room." }],
         icon: 'Spy',
         types: ["Detection", "Utility"],
         options: [
@@ -328,7 +328,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Tracker", team: "Crewmate",
         description: "The Tracker is a Crewmate that can track other players by tracking them during a round. Once they track someone, an arrow is continuously pointing to them, which updates in set intervals.",
-        abilities: [{ name: "Track Player", icon: 'TownOfUs.Resources.CrewButtons.TrackButton.png', description: "Continuously tracks a player with a persistent arrow." }],
+        abilities: [{ name: "Track", icon: 'TrackButton.png', description: "Continuously tracks a player with a persistent arrow." }],
         icon: 'Tracker',
         types: ["Detection"],
         options: [
@@ -342,7 +342,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Trapper", team: "Crewmate",
         description: "The Trapper is a Crewmate that can place traps around the map. When players enter a trap they trigger the trap. In the following meeting, all players who triggered a trap will have their role displayed to the Trapper. However, this is done so in a random order, not stating who entered the trap, nor what role a specific player is.",
-        abilities: [{ name: "Place Trap", icon: 'TownOfUs.Resources.CrewButtons.TrapButton.png', description: "Places traps that reveal roles of players who trigger them." }],
+        abilities: [{ name: "Trap", icon: 'TrapButton.png', description: "Places traps that reveal roles of players who trigger them." }],
         icon: 'Trapper',
         types: ["Detection", "Utility"],
         options: [
@@ -359,8 +359,8 @@ const allEntitiesData = [
         category: "Role", name: "Deputy", team: "Crewmate",
         description: "The Deputy is a Crewmate that can camp other players. Camped players will alert the Deputy when they are killed. The following meeting the Deputy then can attempt to shoot their killer. If they successfully shoot the killer, they will die, otherwise nothing happens.",
         abilities: [
-            { name: "Camp", icon: 'TownOfUs.Resources.CrewButtons.CampButton.png', description: "Camps players to be alerted if they are killed." },
-            { name: "Shoot", icon: 'TownOfUs.Resources.Shoot.png', description: "Attempts to shoot a killer in the following meeting." }
+            { name: "Camp", icon: 'CampButton.png', description: "Camps players to be alerted if they are killed." },
+            { name: "Shoot", icon: 'Shoot.png', description: "Attempts to shoot a killer in the following meeting." }
         ],
         icon: 'Deputy',
         types: ["Kill", "Detection"],
@@ -372,8 +372,8 @@ const allEntitiesData = [
         category: "Role", name: "Hunter", team: "Crewmate",
         description: "The Hunter is a Crewmate Killing role with the ability to track players and execute them if they do anything suspicious. Unlike the Sheriff, the Hunter does not die if they kill an innocent player, however the Hunter may only execute players who have given them probable cause.",
         abilities: [
-            { name: "Stalk", icon: 'TownOfUs.Resources.CrewButtons.StalkButton.png', description: "Stalks players to find suspicious activity." },
-            { name: "Kill", icon: 'TownOfUs.Resources.CrewButtons.HunterKillButton.png', description: "Executes players who have given probable cause." }
+            { name: "Stalk", icon: 'StalkButton.png', description: "Stalks players to find suspicious activity." },
+            { name: "Kill", icon: 'HunterKillButton.png', description: "Executes players who have given probable cause." }
         ],
         icon: 'Hunter',
         types: ["Kill", "Detection"],
@@ -391,8 +391,8 @@ const allEntitiesData = [
         category: "Role", name: "Jailor", team: "Crewmate",
         description: "The Jailor is a Crewmate that can jail Crewmates. During meetings all players can see when a Crewmate is jailed. When someone is jailed they cannot use any meeting ability and no meeting ability can be used on them. The Jailor may privately communicate with the jailee. If the Jailor then thinks the jailee is bad, they may then execute them. If the Jailor executes incorrectly, they lose the ability to jail.",
         abilities: [
-            { name: "Jail", icon: 'TownOfUs.Resources.CrewButtons.JailButton.png', description: "Jails Crewmates, preventing them from using meeting abilities." },
-            { name: "Execute", icon: 'TownOfUs.Resources.ExecuteClean.png', description: "Executes jailed players if deemed suspicious." }
+            { name: "Jail", icon: 'JailButton.png', description: "Jails Crewmates, preventing them from using meeting abilities." },
+            { name: "Execute", icon: 'ExecuteClean.png', description: "Executes jailed players if deemed suspicious." }
         ],
         icon: 'Jailor',
         types: ["Kill", "Utility"],
@@ -405,7 +405,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Veteran", team: "Crewmate",
         description: "The Veteran is a Crewmate that can go on alert. When the Veteran is on alert, anyone, whether Crew, Neutral or Impostor, if they interact with the Veteran, they die.",
-        abilities: [{ name: "Toggle Alert", icon: 'TownOfUs.Resources.CrewButtons.AlertButton.png', description: "Goes on alert, killing anyone who interacts with them." }],
+        abilities: [{ name: "Alert", icon: 'AlertButton.png', description: "Goes on alert, killing anyone who interacts with them." }],
         icon: 'Veteran',
         types: ["Kill", "Support"],
         options: [
@@ -419,7 +419,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Vigilante", team: "Crewmate",
         description: "The Vigilante is a Crewmate that can kill during meetings. During meetings, the Vigilante can choose to kill someone by guessing their role, however, if they guess incorrectly, they die instead.",
-        abilities: [{ name: "Guess Role", icon: 'TownOfUs.Resources.Guess.png', description: "Kills a player during meetings by guessing their role. Miskill results in self-elimination." }],
+        abilities: [{ name: "Guess", icon: 'Guess.png', description: "Kills a player during meetings by guessing their role. Miskill results in self-elimination." }],
         icon: 'Vigilante',
         types: ["Kill"],
         options: [
@@ -436,7 +436,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Altruist", team: "Crewmate",
         description: "The Altruist is a Crewmate that is capable of reviving dead players. The Altruist may attempt to revive all dead players from that round. When reviving the Altruist may not move and all killers will be pointed towards the Altruist. After a set period of time, all dead player's bodies within the Altruist's range will be resurrected, if the revival isn't interrupted. Once a revival is used, the Altruist, along with all revived players will not be able to button for the remainder of the game.",
-        abilities: [{ name: "Revive", icon: 'TownOfUs.Resources.CrewButtons.ReviveButton.png', description: "Revives dead players within a certain radius." }],
+        abilities: [{ name: "Revive", icon: 'ReviveButton.png', description: "Revives dead players within a certain radius." }],
         icon: 'Altruist',
         types: ["Support"],
         options: [
@@ -450,8 +450,8 @@ const allEntitiesData = [
         category: "Role", name: "Cleric", team: "Crewmate",
         description: "The Cleric is a Crewmate that can barrier or cleanse other players. When a player is barriered they cannot be killed for a set duration. When a player is cleansed all negative effects are removed, however, not all effects are removed instantly, some are instead removed at the beginning of the following meeting.",
         abilities: [
-            { name: "Barrier", icon: 'TownOfUs.Resources.CrewButtons.BarrierButton.png', description: "Barriers players, making them immune to kills for a duration." },
-            { name: "Cleanse", icon: 'TownOfUs.Resources.CrewButtons.CleanseButton.png', description: "Removes negative effects from players." }
+            { name: "Barrier", icon: 'BarrierButton.png', description: "Barriers players, making them immune to kills for a duration." },
+            { name: "Cleanse", icon: 'CleanseButton.png', description: "Removes negative effects from players." }
         ],
         icon: 'Cleric',
         types: ["Support"],
@@ -463,11 +463,29 @@ const allEntitiesData = [
         ]
     },
     {
+        category: "Role", name: "Mirrorcaster", team: "Crewmate",
+        description: "The Mirrorcaster is a Crewmate Protective role that can cast a Magic Mirror on a player to protect them. If attacked directly, the Mirrorcaster can then unleash onto another player.",
+        abilities: [
+            { name: "Magic Mirror", icon: 'MagicMirrorButton.png', description: "Protects the player from one direct attack.(It looks like Medic Shield)" },
+            { name: "Unleash", icon: 'UnleashButton.png', description: "Allows you to use the direct attack absorbed from the magic mirror on anyone." }
+        ],
+        icon: 'Mirrorcaster',
+        types: ["Support"],
+        options: [
+            { name: "Who Gets Notification", description: "Who gets notification", type: " Self / Mirrorcaster / Self + Mirrorcaster", default: "Mirrorcaster", range: "N/A" },
+            { name: "Mirror Cooldown", description: "The cooldown of the Mirrorcaster's Magic Mirror and Unleash buttons", type: "Time", default: "0", range: "0-60" },
+            { name: "Mirror Duration", description: "How long Magic Mirror lasts for", type: "Time", default: "30", range: "0-60" },
+            { name: "Know Attack Type", description: "Whether the Mirrorcaster knows what kind of attack was used", type: "Boolean", default: "True", range: "True - False" },
+            { name: "MultiUnleash", description: "Whether the Mirrorcaster can unleash multiple attacks at one time", type: "Boolean", default: "false", range: "True - False" },
+            { name: "Max Mirrors", description: "How many Magic Mirrors the Mirrorcaster has", type: "Integer", default: "5", range: "0-15" }
+        ]
+    },
+    {
         category: "Role", name: "Oracle", team: "Crewmate",
         description: "The Oracle is a Crewmate that can get another player to confess information to them. The Oracle has 2 abilities. The first, confess, makes a player confess saying that one of two players is good and will reveal their alignment when the Oracle dies. The second, bless, makes someone immune to dying during a meeting.",
         abilities: [
-            { name: "Confess", icon: 'TownOfUs.Resources.CrewButtons.ConfessButton.png', description: "Makes a player confess information, revealing alignments upon Oracle's death." },
-            { name: "Bless", icon: 'TownOfUs.Resources.CrewButtons.BlessButton.png', description: "Grants immunity from dying during a meeting." }
+            { name: "Confess", icon: 'ConfessButton.png', description: "Makes a player confess information, revealing alignments upon Oracle's death." },
+            { name: "Bless", icon: 'BlessButton.png', description: "Grants immunity from dying during a meeting." }
         ],
         icon: 'Oracle',
         types: ["Detection", "Support"],
@@ -481,7 +499,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Warden", team: "Crewmate",
         description: "The Warden is a Crewmate that can fortify other players. Fortified players cannot be interacted with. If someone tries to interact with or assassinate a fortified player, Both the Warden and the interactor receive an alert.",
-        abilities: [{ name: "Fortify Player", icon: 'TownOfUs.Resources.CrewButtons.FortifyButton.png', description: "Fortifies players, making them immune to interactions and assassinations." }],
+        abilities: [{ name: "Fortify", icon: 'FortifyButton.png', description: "Fortifies players, making them immune to interactions and assassinations." }],
         icon: 'Warden',
         types: ["Support"],
         options: [
@@ -492,7 +510,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Imitator", team: "Crewmate",
         description: "The Imitator is a Crewmate that can mimic dead crewamtes. During meetings the Imitator can select who they are going to imitate the following round from the dead. They can choose to use each dead players as many times as they wish.",
-        abilities: [{ name: "Imitate Role", icon: 'TownOfUs.Resources.CrewButtons.ImitatorSelect.png', description: "Mimics dead crewmates' roles during meetings." }],
+        abilities: [{ name: "Imitate", icon: 'ImitateSelect.png', description: "Mimics dead crewmates' roles during meetings." }],
         icon: 'Imitator',
         types: ["Utility", "Other"],
         options: [
@@ -503,7 +521,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Mayor", team: "Crewmate",
         description: "Once per game the Mayor can reveal themselves as the Mayor mid-meeting, once done so they gain an additional 2 votes.",
-        abilities: [{ name: "Reveal as Mayor", icon: 'TownOfUs.Resources.RevealClean.png', description: "Reveals self as Mayor to gain additional votes." }],
+        abilities: [{ name: "Reveal", icon: 'RevealClean.png', description: "Reveals self as Mayor to gain additional votes." }],
         icon: 'Mayor',
         types: ["Utility"],
         options: [
@@ -513,7 +531,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Medium", team: "Crewmate",
         description: "The Medium is a Crewmate that can see ghosts. During each round the Medium has an ability called Mediate. If the Medium uses this ability and no one is dead, nothing will happen. However, if someone is dead, the Medium and the dead player will be able to see each other and communicate from beyond the grave!",
-        abilities: [{ name: "Mediate", icon: 'TownOfUs.Resources.CrewButtons.MediateButton.png', description: "Communicates with dead players." }],
+        abilities: [{ name: "Mediate", icon: 'MediateButton.png', description: "Communicates with dead players." }],
         icon: 'Medium',
         types: ["Utility", "Detection"],
         options: [
@@ -528,8 +546,8 @@ const allEntitiesData = [
         category: "Role", name: "Plumber", team: "Crewmate",
         description: "The Plumber is a Crewmate that maintains vent systems. The Plumber can either flush vents, ejecting all players currently in vents, or block a vent, placing a barricade on the vent preventing it's use.",
         abilities: [
-            { name: "Flush", icon: 'TownOfUs.Resources.CrewButtons.FlushButton.png', description: "Ejects all players from vents." },
-            { name: "Barricade", icon: 'TownOfUs.Resources.CrewButtons.BarricadeButton.png', description: "Blocks a vent with a barricade." }
+            { name: "Flush", icon: 'FlushButton.png', description: "Ejects all players from vents." },
+            { name: "Barricade", icon: 'BarricadeButton.png', description: "Blocks a vent with a barricade." }
         ],
         icon: 'Plumber',
         types: ["Utility", "Sabotage"],
@@ -542,7 +560,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Politician", team: "Crewmate",
         description: "The Politician is a Crewmate that can campaign to other players. Once half or more of the Crewmates are campaigned to, the Politician can reveal themselves as the new Mayor. If less then half of the Crewmates have been campaigned to the reveal will fail and the Politician will be unable to campaign for 1 round.",
-        abilities: [{ name: "Campaign to Reveal", icon: 'TownOfUs.Resources.CrewButtons.CampaignButton.png', description: "Campaigns to other players to reveal as Mayor." }],
+        abilities: [{ name: "Campaign", icon: 'CampaignButton.png', description: "Campaigns to other players to reveal as Mayor." }],
         icon: 'Politician',
         types: ["Utility"],
         options: [
@@ -553,7 +571,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Prosecutor", team: "Crewmate",
         description: "The Prosecutor has 2 abilities, one is the ability for them to see all the votes (non-anonymous voting), the other, once per game during a meeting the Prosecutor can prosecute someone, making all other votes redundant and having whoever the Prosecutor selected exiled that meeting.",
-        abilities: [{ name: "Prosecute", icon: 'TownOfUs.Resources.RoleIcons.Prosecutor.png', description: "Can see all votes and can exile someone once per game." }],
+        abilities: [{ name: "Prosecute", icon: 'Prosecutor.png', description: "Can see all votes and can exile someone once per game." }],
         icon: 'Prosecutor',
         types: ["Utility", "Detection"],
         options: [
@@ -565,7 +583,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Amnesiac", team: "Neutral",
         description: "The Amnesiac is a Neutral role with no win condition.\nThey have zero tasks and are essentially roleless. However, they can remember a role by finding a dead player.\nOnce they remember their role, they go on to try win with their new win condition.",
-        abilities: [{ name: "Remember Role", icon: 'TownOfUs.Resources.NeutButtons.RememberButton.png', description: "Remembers a role by finding a dead player." }],
+        abilities: [{ name: "Remember", icon: 'RememberButton.png', description: "Remembers a role by finding a dead player." }],
         icon: 'Amnesiac',
         types: ["Information"],
         options: [
@@ -577,7 +595,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Guardian Angel", team: "Neutral",
         description: "The Guardian Angel is a Neutral role which aligns with the faction of their target.\nTheir job is to protect their target at all costs.\nIf their target loses, they lose.",
-        abilities: [{ name: "Protect Target", icon: 'TownOfUs.Resources.NeutButtons.ProtectButton.png', description: "Protects their target from being killed." }],
+        abilities: [{ name: "Protect", icon: 'ProtectButton.png', description: "Protects their target from being killed." }],
         icon: 'GuardianAngel',
         types: ["Protective"],
         options: [
@@ -596,8 +614,8 @@ const allEntitiesData = [
         category: "Role", name: "Mercenary", team: "Neutral",
         description: "The Mercenary is a Neutral role which can guard other players.\nGuarded players absorb abilities and convert it into currency. This currency can be used to bribe other players.\nIf a bribed player lives and goes onto win the game, the Mercenary does too.\nThe Mercenary does not need to survive themselves. They cannot win with Neutral Evils or Lovers.",
         abilities: [
-            { name: "Bribe", icon: 'TownOfUs.Resources.NeutButtons.BribeButton.png', description: "Uses currency to bribe other players." },
-            { name: "Guard", icon: 'TownOfUs.Resources.NeutButtons.GuardButton.png', description: "Guards players, converting absorbed abilities into currency." }
+            { name: "Bribe", icon: 'BribeButton.png', description: "Uses currency to bribe other players." },
+            { name: "Guard", icon: 'GuardButton.png', description: "Guards players, converting absorbed abilities into currency." }
         ],
         icon: 'Mercenary',
         types: ["Utility", "Support"],
@@ -611,7 +629,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Survivor", team: "Neutral",
         description: "The Survivor is a Neutral role which can win by simply surviving.\nHowever, if Lovers, or a Neutral Evil role wins the game, the Survivor loses.",
-        abilities: [{ name: "Safeguard", icon: 'TownOfUs.Resources.NeutButtons.VestButton.png', description: "Activates a vest to protect against kills." }],
+        abilities: [{ name: "Safeguard", icon: 'VestButton.png', description: "Activates a vest to protect against kills." }],
         icon: 'Survivor',
         types: ["Protective"],
         options: [
@@ -627,8 +645,8 @@ const allEntitiesData = [
         category: "Role", name: "Doomsayer", team: "Neutral",
         description: "The Doomsayer is a Neutral role with its own win condition.\nTheir goal is to assassinate 3 players to win. If there are only 2 other people alive, the Doomsayer only needs to assassinate the remainder of the players.\nThey have an additional observe ability that hints towards certain player's roles.",
         abilities: [
-            { name: "Observe", icon: 'TownOfUs.Resources.NeutButtons.ObserveButton.png', description: "Observes players to gain hints about their roles." },
-            { name: "Guess", icon: 'TownOfUs.Resources.Guess.png', description: "Assassinate players by guessing their role." }
+            { name: "Observe", icon: 'ObserveButton.png', description: "Observes players to gain hints about their roles." },
+            { name: "Guess", icon: 'Guess.png', description: "Assassinate players by guessing their role." }
         ],
         icon: 'Doomsayer',
         types: ["Killing", "Information"],
@@ -643,7 +661,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Executioner", team: "Neutral",
         description: "The Executioner is a Neutral role with its own win condition.\nTheir goal is to vote out a player, specified in the beginning of a game.\nIf that player gets voted out, they win the game.",
-        abilities: [], // No active ability as per description
+        abilities: [],
         icon: 'Executioner',
         types: ["Chaos", "Killing"],
         options: [
@@ -672,7 +690,9 @@ const allEntitiesData = [
     {
         category: "Role", name: "Phantom", team: "Neutral",
         description: "The Phantom \nis a Neutral role with its own win condition. They become half-invisible when they die and has to complete all their tasks without getting caught.",
-        abilities: [{ name: "Finish Tasks To Win", icon: 'TownOfUs.Resources.RoleIcons.Phantom.png', description: "Completes tasks to win the game while half-invisible after death." }],
+        abilities: [
+            { name: "Spook", icon: 'Spook.png', description: "Kill one person of your choosing" },
+        ],
         icon: 'Phantom',
         types: ["Stealth", "Utility"],
         options: [
@@ -685,8 +705,8 @@ const allEntitiesData = [
         category: "Role", name: "Inquisitor", team: "Neutral",
         description: "The Inquisitor is a Neutral Evil role that wins if their targets (Heretics) die.\nThe only information provided is their roles, and it\'s up to the Inquisitor to identify those players (marked with a dark pink-ish $ to the dead) and get them killed by any means neccesary.",
         abilities: [
-            { name: "Inquire", icon: 'TownOfUs.Resources.NeutButtons.InquireButton.png', description: "Inquires to identify targets (Heretics)." },
-            { name: "Vanquish", icon: 'TownOfUs.Resources.NeutButtons.InquisKillButton.png', description: "Eliminates identified targets." }
+            { name: "Inquire", icon: 'InquireButton.png', description: "Inquires to identify targets (Heretics)." },
+            { name: "Vanquish", icon: 'InquisKillButton.png', description: "Eliminates identified targets." }
         ],
         icon: 'Inquisitor',
         types: ["Killing", "Information"],
@@ -697,7 +717,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Soul Collector", team: "Neutral",
         description: "The Soul Collector is a Neutral role with its own win condition.\nThe Soul Collector kills be reaping players, reaped players do not leave behind a dead body, instead they leave a soul.\nThe Soul Collector needs to be the last killer alive to win the game.",
-        abilities: [{ name: "Reap", icon: 'TownOfUs.Resources.NeutButtons.ReapButton.png', description: "Reaps players, leaving behind a soul instead of a body." }],
+        abilities: [{ name: "Reap", icon: 'ReapButton.png', description: "Reaps players, leaving behind a soul instead of a body." }],
         icon: 'SoulCollector',
         types: ["Killing", "Utility"],
         options: [
@@ -710,8 +730,8 @@ const allEntitiesData = [
         category: "Role", name: "Arsonist", team: "Neutral",
         description: "The Arsonist is a Neutral role with its own win condition.\nThey have two abilities, one is to douse other players with gasoline.\nThe other is to ignite all doused players near them.\nThe Arsonist needs to be the last killer alive to win the game.",
         abilities: [
-            { name: "Douse", icon: 'TownOfUs.Resources.NeutButtons.DouseButton.png', description: "Douses players with gasoline." },
-            { name: "Ignite", icon: 'TownOfUs.Resources.NeutButtons.IgniteButton.png', description: "Ignites all doused players nearby." }
+            { name: "Douse", icon: 'DouseButton.png', description: "Douses players with gasoline." },
+            { name: "Ignite", icon: 'IgniteButton.png', description: "Ignites all doused players nearby." }
         ],
         icon: 'Arsonist',
         types: ["Killing"],
@@ -725,7 +745,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Juggernaut", team: "Neutral",
         description: "The Juggernaut is a Neutral role \nwith its own win condition. The Juggernaut\'s special ability is that their kill cooldown reduces with each kill.\nThis means in theory the Juggernaut can have a 0 second kill cooldown!\nThe Juggernaut needs to be the last killer alive to win the game.",
-        abilities: [{ name: "Kill", icon: 'TownOfUs.Resources.NeutButtons.JuggKillButton.png', description: "Kills with a cooldown that reduces with each kill." }],
+        abilities: [{ name: "Kill", icon: 'JuggKillButton.png', description: "Kills with a cooldown that reduces with each kill." }],
         icon: 'Juggernaut',
         types: ["Killing"],
         options: [
@@ -738,7 +758,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Plaguebearer", team: "Neutral",
         description: "The Plaguebearer is a Neutral role with its own win condition, as well as an ability to transform into another role.\nThe Plaguebearer has one ability, which allows them to infect other players.\nOnce infected, the infected player can go and infect other players via interacting with them.\nOnce all players are infected, the Plaguebearer becomes Pestilence. The Pestilence is a unkillable force which can only be killed by being voted out, even their lover dying won't kill them.\nThe Plaguebearer or Pestilence needs to be the last killer alive to win the game.",
-        abilities: [{ name: "Infect", icon: 'TownOfUs.Resources.NeutButtons.InfectButton.png', description: "Infects other players, spreading the plague." }],
+        abilities: [{ name: "Infect", icon: 'InfectButton.png', description: "Infects other players, spreading the plague." }],
         icon: 'Plaguebearer',
         types: ["Converting", "Killing"],
         options: [
@@ -751,7 +771,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Pestilence", team: "Neutral",
         description: "The Pestilence is a \nNeutral role with its own win condition. They can only be killed by being voted out, even their lover dying won't kill them.",
-        abilities: [{ name: "Kill", icon: 'TownOfUs.Resources.NeutButtons.PestKillButton.png', description: "Kills players, cannot be killed except by voting." }],
+        abilities: [{ name: "Kill", icon: 'PestKillButton.png', description: "Kills players, cannot be killed except by voting." }],
         icon: 'Pestilence',
         types: ["Killing", "Defense"],
         options: [
@@ -762,9 +782,9 @@ const allEntitiesData = [
         category: "Role", name: "Glitch", team: "Neutral",
         description: "The Glitch is a Neutral role with its own win condition.\nThe Glitch's aim is to kill everyone and be the last person standing.\nThe Glitch can Hack players, resulting in them being unable to report bodies and use abilities.\nHacking prevents the hacked player from doing anything but walk around the map.\nThe Glitch can Mimic someone, which results in them looking exactly like the other person.",
         abilities: [
-            { name: "Kill", icon: 'TownOfUs.Resources.NeutButtons.GlitchKillButton.png', description: "Eliminates other players." },
-            { name: "Hack", icon: 'TownOfUs.Resources.NeutButtons.HackButton.png', description: "Disables players' ability to report or use abilities." },
-            { name: "Mimic", icon: 'TownOfUs.Resources.NeutButtons.MimicButton.png', description: "Mimics another player's appearance." }
+            { name: "Kill", icon: 'GlitchKillButton.png', description: "Eliminates other players." },
+            { name: "Hack", icon: 'HackButton.png', description: "Disables players' ability to report or use abilities." },
+            { name: "Mimic", icon: 'MimicButton.png', description: "Mimics another player's appearance." }
         ],
         icon: 'Glitch',
         types: ["Killing", "Sabotage", "Deception"],
@@ -781,7 +801,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Vampire", team: "Neutral",
         description: "The Vampire is a Neutral role with its own \nwin condition. The Vampire can convert or kill other players by biting them.\nIf the bitten player was a Crewmate they will turn into a Vampire (unless there are 2 Vampires alive) Else they will kill the bitten player.",
-        abilities: [{ name: "Bite", icon: 'TownOfUs.Resources.NeutButtons.BiteButton.png', description: "Converts or kills players by biting them." }],
+        abilities: [{ name: "Bite", icon: 'BiteButton.png', description: "Converts or kills players by biting them." }],
         icon: 'Vampire',
         types: ["Converting", "Killing"],
         options: [
@@ -799,8 +819,8 @@ const allEntitiesData = [
         category: "Role", name: "Werewolf", team: "Neutral",
         description: "The Werewolf is a Neutral role with its own win condition.\nAlthough the Werewolf has a kill button, they can't use it unless they are Rampaged.\nOnce the Werewolf rampages they gain Impostor vision and the ability to kill.\nHowever, unlike most killers their kill cooldown is really short.\nThe Werewolf needs to be the last killer alive to win the game.",
         abilities: [
-            { name: "Rampage", icon: 'TownOfUs.Resources.NeutButtons.RampageButton.png', description: "Activates rampage mode, gaining Impostor vision and kill ability." },
-            { name: "Kill", icon: 'TownOfUs.Resources.NeutButtons.WolfKillButton.png', description: "Kills with a short cooldown while rampaging." }
+            { name: "Rampage", icon: 'RampageButton.png', description: "Activates rampage mode, gaining Impostor vision and kill ability." },
+            { name: "Kill", icon: 'WolfKillButton.png', description: "Kills with a short cooldown while rampaging." }
         ],
         icon: 'Werewolf',
         types: ["Killing", "Movement"],
@@ -815,7 +835,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Eclipsal", team: "Impostor",
         description: "The Eclipsal is an Impostor that can blind other players.\nBlinded players have no vision and their report buttons do not light up (but can still be used).",
-        abilities: [{ name: "Blind", icon: 'TownOfUs.Resources.ImpButtons.BlindButton.png', description: "Blinds other players, removing their vision." }],
+        abilities: [{ name: "Blind", icon: 'BlindButton.png', description: "Blinds other players, removing their vision." }],
         icon: 'Eclipsal',
         types: ["Sabotage"],
         options: [
@@ -828,7 +848,10 @@ const allEntitiesData = [
     {
         category: "Role", name: "Escapist", team: "Impostor",
         description: "The Escapist is an \nImpostor that can teleport to a different location. Once per round the Escapist can Mark a location which they can then escape to later in the round.",
-        abilities: [{ name: "Teleport", icon: 'TownOfUs.Resources.ImpButtons.RecallButton.png', description: "Marks a location and teleports back to it." }],
+        abilities: [
+            { name: "Mark", icon: 'MarkButton.png', description: "Marks a location" },
+            { name: "Recall", icon: 'RecallButton.png', description: "Teleports back to it." }
+            ],
         icon: 'Escapist',
         types: ["Movement"],
         options: [
@@ -840,7 +863,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Grenadier", team: "Impostor",
         description: "The Grenadier is an Impostor that can throw smoke grenades. During the game, the Grenadier has the option to throw down a smoke grenade which blinds Crewmates so they can't see. However, a sabotage and a smoke grenade can not be active at the same time.",
-        abilities: [{ name: "Flashbang", icon: 'TownOfUs.Resources.ImpButtons.FlashButton.png', description: "Throws smoke grenades to blind Crewmates." }],
+        abilities: [{ name: "Flash", icon: 'FlashButton.png', description: "Throws smoke grenades to blind Crewmates." }],
         icon: 'Grenadier',
         types: ["Kill"],
         options: [
@@ -855,8 +878,8 @@ const allEntitiesData = [
         category: "Role", name: "Morphling", team: "Impostor",
         description: "The Morphling is an Impostor that can Morph into another player. At the beginning of the game and after every meeting, they can choose someone to Sample. They can then Morph into that person at any time for a limited amount of time.",
         abilities: [
-            { name: "Sample", icon: 'TownOfUs.Resources.ImpButtons.SampleButton.png', description: "Samples a player to morph into them later." },
-            { name: "Morph", icon: 'TownOfUs.Resources.ImpButtons.MorphButton.png', description: "Temporarily morphs into a sampled player." }
+            { name: "Sample", icon: 'SampleButton.png', description: "Samples a player to morph into them later." },
+            { name: "Morph", icon: 'MorphButton.png', description: "Temporarily morphs into a sampled player." }
         ],
         icon: 'Morphling',
         types: ["Utility", "Sabotage"],
@@ -868,9 +891,39 @@ const allEntitiesData = [
         ]
     },
     {
+        category: "Role", name: "Ambassador", team: "Impostor",
+        description: "The Ambassador is an Impostor Power role that can retrain impostors into other impostor roles of the same caliber after a set amount of kills. Impostor Concealing/Support Roles can become other Concealing and Support roles, while Impostor Killing and Power roles can be any Non-Power roles.",
+        abilities: [
+            { name: "Retrain", icon: 'RetrainClean.png', description: "Retrains you or your imposter partner into a new role" },
+        ],
+        icon: 'Ambassador',
+        types: ["Utility", "Sabotage"],
+        options: [
+            { name: "Morphling", description: "The percentage probability of the Morphling appearing", type: "Percentage", "default": "0%", range: "N/A" },
+            { name: "Morph Cooldown", description: "The cooldown of the Morphling's Morph button", type: "Time", "default": "25s", range: "N/A" },
+            { name: "Morph Duration", description: "How long the Morph lasts for", type: "Time", "default": "10s", range: "N/A" },
+            { name: "Morphling can Vent", description: "Whether the Morphling can Vent", type: "Toggle", "default": "False", range: "N/A" }
+        ]
+    },
+    {
+        category: "Role", name: "Ambusher", team: "Impostor",
+        description: "The Ambusher is an Impostor Killing role that can pursue a player, getting an arrow to them. They may ambush the closest player next to them. If they manage to kill the player, they will drag their body into the shadows, teleporting back with the Ambusher.",
+        abilities: [
+            { name: "Ambush", icon: 'AmbushButton.png', description: "Teleport to kill the person then teleport back to where u were originally along with dragging the body with you" },
+        ],
+        icon: 'Ambusher',
+        types: ["Utility", "Sabotage"],
+        options: [
+            { name: "Morphling", description: "The percentage probability of the Morphling appearing", type: "Percentage", "default": "0%", range: "N/A" },
+            { name: "Morph Cooldown", description: "The cooldown of the Morphling's Morph button", type: "Time", "default": "25s", range: "N/A" },
+            { name: "Morph Duration", description: "How long the Morph lasts for", type: "Time", "default": "10s", range: "N/A" },
+            { name: "Morphling can Vent", description: "Whether the Morphling can Vent", type: "Toggle", "default": "False", range: "N/A" }
+        ]
+    },
+    {
         category: "Role", name: "Swooper", team: "Impostor",
         description: "The Swooper is an Impostor that can temporarily turn invisible.",
-        abilities: [{ name: "Turn Invisible", icon: 'TownOfUs.Resources.ImpButtons.SwoopButton.png', description: "Temporarily turns invisible." }],
+        abilities: [{ name: "Swoop", icon: 'SwoopButton.png', description: "Temporarily turns invisible." }],
         icon: 'Swooper',
         types: ["Utility"],
         options: [
@@ -884,9 +937,9 @@ const allEntitiesData = [
         category: "Role", name: "Venerer", team: "Impostor",
         description: "The Venerer is an Impostor that gains abilities through killing. After their first kill, the Venerer can camouflage themself. After their second kill, the Venerer can sprint. After their third kill, every other player is slowed while their ability is activated. All abilities are activated by the one button and have the same duration.",
         abilities: [
-            { name: "Camouflage", icon: 'TownOfUs.Resources.ImpButtons.CamoflageButton.png', description: "Camouflages self after first kill." },
-            { name: "Sprint", icon: 'TownOfUs.Resources.ImpButtons.CamoSprintButton.png', description: "Sprints after second kill." },
-            { name: "Freeze", icon: 'TownOfUs.Resources.ImpButtons.CamoSprintFreezeButton.png', description: "Slows other players after third kill." }
+            { name: "Camouflage", icon: 'CamouflageButton.png', description: "Camouflages self after first kill." },
+            { name: "Sprint", icon: 'CamoSprintButton.png', description: "Sprints after second kill." },
+            { name: "Freeze", icon: 'CamoSprintFreezeButton.png', description: "Slows other players after third kill." }
         ],
         icon: 'Venerer',
         types: ["Sabotage", "Utility"],
@@ -902,7 +955,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Bomber", team: "Impostor",
         description: "The Bomber is an Impostor who has the ability to plant bombs instead of kill. After a bomb is planted, the bomb will detonate a fixed time period as per settings. Once the bomb detonates it will kill all Crewmates (and Impostors!) inside the radius.",
-        abilities: [{ name: "Plant Bomb", icon: 'TownOfUs.Resources.ImpButtons.DetonatingButton.png', description: "Plants bombs that detonate and kill players within a radius." }],
+        abilities: [{ name: "Plant", icon: 'DetonatingButton.png', description: "Plants bombs that detonate and kill players within a radius." }],
         icon: 'Bomber',
         types: ["Kill", "Sabotage"],
         options: [
@@ -917,7 +970,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Scavenger", team: "Impostor",
         description: "The Scavenger is an Impostor who hunts down prey. With each successful hunt the Scavenger has a shortened kill cooldown. On an incorrect kill the Scavenger has a significantly increased kill cooldown.",
-        abilities: [{ name: "Kill", icon: 'TownOfUs.Resources.RoleIcons.Scavenger.png', description: "Kills with a cooldown shortened on successful hunts, increased on incorrect ones." }],
+        abilities: [],
         icon: 'Scavenger',
         types: ["Utility", "Sabotage"],
         options: [
@@ -931,7 +984,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Traitor", team: "Impostor",
         description: "If all Impostors die before a certain point in the game, a random Crewmate is selected to become the Traitor. The Traitor has no additional abilities and their job is simply to avenge the dead Impostors. Once this player has turned into the Traitor their alliance sits with the Impostors. The Traitor is offered a choice of up to 3 Impostor roles when they initially change roles.",
-        abilities: [{ name: "Select a Role", icon: 'TownOfUs.Resources.ImpButtons.TraitorSelect.png', description: "Selects an Impostor role to take on if all Impostors die." }],
+        abilities: [{ name: "Select", icon: 'TraitorSelect.png', description: "Selects an Impostor role to take on if all Impostors die." }],
         icon: 'Traitor',
         types: ["Other"],
         options: [
@@ -943,7 +996,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Warlock", team: "Impostor",
         description: "The Warlock is an Impostor that can charge up their kill button. Once activated the Warlock can use their kill button infinitely until they run out of charge. However, they do not need to fully charge their kill button to use it.",
-        abilities: [{ name: "Charge Kill", icon: 'TownOfUs.Resources.RoleIcons.Warlock.png', description: "Charges kill button for infinite kills until charge runs out." }],
+        abilities: [{ name: "Charge", icon: 'Warlock.png', description: "Charges kill button for infinite kills until charge runs out." }],
         icon: 'Warlock',
         types: ["Sabotage"],
         options: [
@@ -955,7 +1008,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Blackmailer", team: "Impostor",
         description: "The Blackmailer is an Impostor that can silence people in meetings. During each round, the Blackmailer can go up to someone and blackmail them. This prevents the blackmailed person from speaking and possibly voting during the next meeting.",
-        abilities: [{ name: "Blackmail", icon: 'TownOfUs.Resources.ImpButtons.BlackmailButton.png', description: "Silences people in meetings, preventing them from speaking and voting." }],
+        abilities: [{ name: "Blackmail", icon: 'BlackmailButton.png', description: "Silences people in meetings, preventing them from speaking and voting." }],
         icon: 'Blackmailer',
         types: ["Sabotage"],
         options: [
@@ -969,8 +1022,8 @@ const allEntitiesData = [
         category: "Role", name: "Hypnotist", team: "Impostor",
         description: "The Hypnotist is an Impostor that can hypnotize people. Once enough people are hypnotized, the Hypnotist can release Mass Hysteria. With Mass Hysteria released, all hypnotized players see all other players as either themselves, camouflaged or invisible. Once the Hypnotist dies Mass Hysteria is removed and people can see everyone normally again.",
         abilities: [
-            { name: "Hypnotize", icon: 'TownOfUs.Resources.ImpButtons.HypnotiseButton.png', description: "Hypnotizes people to prepare for Mass Hysteria." },
-            { name: "Mass Hysteria", icon: 'TownOfUs.Resources.HysteriaClean.png', description: "Releases Mass Hysteria, altering hypnotized players' vision." }
+            { name: "Hypnotize", icon: 'HypnotiseButton.png', description: "Hypnotizes people to prepare for Mass Hysteria." },
+            { name: "Mass Hysteria", icon: 'HysteriaClean.png', description: "Releases Mass Hysteria, altering hypnotized players' vision." }
         ],
         icon: 'Hypnotist',
         types: ["Sabotage"],
@@ -982,7 +1035,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Janitor", team: "Impostor",
         description: "The Janitor is an Impostor that can clean up bodies. Both their Kill and Clean ability have a shared cooldown, meaning they have to choose which one they want to use.",
-        abilities: [{ name: "Clean Body", icon: 'TownOfUs.Resources.ImpButtons.CleanButton.png', description: "Cleans up bodies." }],
+        abilities: [{ name: "Clean", icon: 'CleanButton.png', description: "Cleans up bodies." }],
         icon: 'Janitor',
         types: ["Utility"],
         options: [
@@ -992,7 +1045,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Miner", team: "Impostor",
         description: "The Miner is an Impostor that can create new vents. These vents only connect to each other, forming a new passway.",
-        abilities: [{ name: "Place Vent", icon: 'TownOfUs.Resources.ImpButtons.MineButton.png', description: "Creates new interconnected vents." }],
+        abilities: [{ name: "Mine", icon: 'MineButton.png', description: "Creates new interconnected vents." }],
         icon: 'Miner',
         types: ["Utility"],
         options: [
@@ -1003,7 +1056,7 @@ const allEntitiesData = [
     {
         category: "Role", name: "Undertaker", team: "Impostor",
         description: "The Undertaker is an Impostor that can drag and drop bodies.",
-        abilities: [{ name: "Drag Body", icon: 'TownOfUs.Resources.ImpButtons.DragButton.png', description: "Drags and drops bodies." }],
+        abilities: [{ name: "Drag", icon: 'DragButton.png', description: "Drags and drops bodies." }],
         icon: 'Undertaker',
         types: ["Utility"],
         options: [
@@ -1018,7 +1071,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Aftermath", team: "Crewmate Modifier",
         description: "Killing the Aftermath forces their killer to use their ability (if they have one and it's not in use).",
-        abilities: [{ name: "Force your Killer to Use Ability", icon: 'TownOfUs.Resources.ModifierIcons.AfterMath.png', description: "Forces killer to use their ability upon death." }],
+        abilities: [],
         icon: 'Aftermath',
         types: ["Passive", "Death Trigger"],
         options: [
@@ -1028,7 +1081,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Bait", team: "Crewmate Modifier",
         description: "Killing the Bait makes the killer auto self-report.",
-        abilities: [{ name: "Forces Your Killer to Report", icon: 'TownOfUs.Resources.ModifierIcons.Bait.png', description: "Forces killer to auto self-report upon death." }],
+        abilities: [],
         icon: 'Bait',
         types: ["Passive", "Death Trigger"],
         options: [
@@ -1040,7 +1093,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Celebrity", team: "Crewmate Modifier",
         description: "The Celebrity announces how, when and where they died the meeting after they die.",
-        abilities: [{ name: "Lets Everyone Know when and where you Died", icon: 'TownOfUs.Resources.ModifierIcons.Celebrity.png', description: "Announces death details to everyone after dying." }],
+        abilities: [],
         icon: 'Celebrity',
         types: ["Passive", "Death Trigger", "Information"],
         options: [
@@ -1050,7 +1103,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Diseased", team: "Crewmate Modifier",
         description: "Killing the Diseased increases the killer's kill cooldown.",
-        abilities: [{ name: "Forces your Killer to have longer Cooldown", icon: 'TownOfUs.Resources.ModifierIcons.Diseased.png', description: "Increases killer's cooldown upon death." }],
+        abilities: [],
         icon: 'Diseased',
         types: ["Passive", "Death Trigger", "Debuff"],
         options: [
@@ -1061,7 +1114,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Frosty", team: "Crewmate Modifier",
         description: "Killing the Frosty slows the killer for a short duration.",
-        abilities: [{ name: "Forces your Killer to Go Slower", icon: 'TownOfUs.Resources.ModifierIcons.Frosty.png', description: "Slows the killer for a short duration upon death." }],
+        abilities: [],
         icon: 'Frosty',
         types: ["Passive", "Death Trigger", "Debuff"],
         options: [
@@ -1073,7 +1126,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Multitasker", team: "Crewmate Modifier",
         description: "The Multitasker's tasks are transparent.",
-        abilities: [{ name: "Allows you to See through Task", icon: 'TownOfUs.Resources.ModifierIcons.Multitasker.png', description: "Makes tasks transparent for easier visibility." }],
+        abilities: [],
         icon: 'Multitasker',
         types: ["Passive", "Utility"],
         options: [
@@ -1083,7 +1136,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Taskmaster", team: "Crewmate Modifier",
         description: "The Taskmaster completes a random task on the completion of each meeting.",
-        abilities: [{ name: "Allows you to complete Tasks Faster", icon: 'TownOfUs.Resources.ModifierIcons.TaskMaster.png', description: "Completes a random task after each meeting." }],
+        abilities: [],
         icon: 'Taskmaster',
         types: ["Passive", "Utility"],
         options: [
@@ -1093,7 +1146,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Torch", team: "Crewmate Modifier",
         description: "The Torch's vision doesn't get reduced when the lights are sabotaged.",
-        abilities: [{ name: "Allows you to see more", icon: 'TownOfUs.Resources.ModifierIcons.Torch.png', description: "Maintains full vision during light sabotages." }],
+        abilities: [],
         icon: 'Torch',
         types: ["Passive", "Utility"],
         options: [
@@ -1104,7 +1157,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Noisemaker", team: "Crewmate Modifier",
         description: "After your death, you will show a red body indicator to everyone on the map.",
-        abilities: [{ name: "Show Red Body Indicator", icon: 'TownOfUs.Resources.ModifierIcons.Noisemaker.png', description: "Shows a red body indicator to everyone after death." }],
+        abilities: [],
         icon: 'Noisemaker',
         types: ["Passive", "Postmortem", "Detection"],
         options: [
@@ -1114,7 +1167,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Operative", team: "Crewmate Modifier",
         description: "Use cameras at anytime, anywhere with a limited battery charge.",
-        abilities: [{ name: "Portable Cameras", icon: 'TownOfUs.Resources.CamButton.png', description: "Accesses cameras anytime, anywhere with limited battery." }],
+        abilities: [{ name: "Portable Cameras", icon: 'CamButton.png', description: "Accesses cameras anytime, anywhere with limited battery." }],
         icon: 'Operative',
         types: ["Active", "Postmortem", "Utility"],
         options: [
@@ -1124,7 +1177,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Rotting", team: "Crewmate Modifier",
         description: "After a set amount of time, your body will rot away, preventing you from being reported",
-        abilities: [{ name: "Body Rot", icon: 'TownOfUs.Resources.ModifierIcons.Rotting.png', description: "Body rots away after time, preventing reports." }],
+        abilities: [],
         icon: 'Rotting',
         types: ["Passive", "Postmortem", "Utility"],
         options: [
@@ -1134,7 +1187,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Scientist", team: "Crewmate Modifier",
         description: "Access Vitals anytime, anywhere with a limited battery charge.",
-        abilities: [{ name: "Portable Vitals", icon: 'TownOfUs.Resources.VitalsButton.png', description: "Accesses vitals anytime, anywhere with limited battery." }],
+        abilities: [{ name: "Portable Vitals", icon: 'VitalsButton.png', description: "Accesses vitals anytime, anywhere with limited battery." }],
         icon: 'Scientist',
         types: ["Active", "Postmortem", "Utility"],
         options: [
@@ -1144,7 +1197,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Scout", team: "Crewmate Modifier",
         description: "While you can see twice as far as a regular Crewmate, your vision falters when lights are off.",
-        abilities: [{ name: "Enhanced Vision", icon: 'TownOfUs.Resources.ModifierIcons.Scout.png', description: "Has enhanced vision but falters when lights are off." }],
+        abilities: [],
         icon: 'Scout',
         types: ["Passive", "Postmortem", "Detection"],
         options: [
@@ -1155,7 +1208,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Button Barry", team: "Global Modifier",
         description: "Button Barry has the ability to call a meeting from anywhere on the map, even during sabotages. They have the same amount of meetings as a regular player.",
-        abilities: [{ name: "Portable Button", icon: 'TownOfUs.Resources.BarryButton.png', description: "Calls a meeting from anywhere, even during sabotages." }],
+        abilities: [{ name: "Portable Button", icon: 'BarryButton.png', description: "Calls a meeting from anywhere, even during sabotages." }],
         icon: 'ButtonBarry',
         types: ["Passive", "Utility"],
         options: [
@@ -1165,7 +1218,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Flash", team: "Global Modifier",
         description: "The Flash travels at a faster speed in comparison to a normal player.",
-        abilities: [{ name: "Go Faster", icon: 'TownOfUs.Resources.ModifierIcons.Flash.png', description: "Moves at a faster speed." }],
+        abilities: [],
         icon: 'Flash',
         types: ["Passive", "Buff"],
         options: [
@@ -1176,7 +1229,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Giant", team: "Global Modifier",
         description: "The Giant is a gigantic Crewmate, that has a decreased walk speed.",
-        abilities: [{ name: "Be Bigger and Slower", icon: 'TownOfUs.Resources.ModifierIcons.Giant.png', description: "Is larger and moves slower." }],
+        abilities: [],
         icon: 'Giant',
         types: ["Passive", "Buff"],
         options: [
@@ -1187,7 +1240,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Immovable", team: "Global Modifier",
         description: "The Immovable cannot be moved by meetings, transports and disperse.",
-        abilities: [{ name: "Stay in the same spot", icon: 'TownOfUs.Resources.ModifierIcons.Immovable.png', description: "Cannot be moved by meetings, transports, or disperse." }],
+        abilities: [],
         icon: 'Immovable',
         types: ["Passive", "Defense"],
         options: [
@@ -1197,7 +1250,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Lovers", team: "Global Modifier",
         description: "The Lovers are two players who are linked together. These two players get picked randomly between Crewmates and Impostors. They gain the primary objective to stay alive together. If they are both among the last 3 players, they win. In order to do so, they gain access to a private chat, only visible by them in between meetings. However, they can also win with their respective team, hence why the Lovers do not know the role of the other lover.",
-        abilities: [{ name: "Win with Lover", icon: 'TownOfUs.Resources.ModifierIcons.Lover.png', description: "Wins if both Lovers survive and are among the last 3 players." }],
+        abilities: [],
         icon: 'Lover',
         types: ["Passive", "Social", "Win Condition"],
         options: [
@@ -1211,7 +1264,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Mini", team: "Global Modifier",
         description: "The Mini is a tiny Crewmate.",
-        abilities: [{ name: "Be Smaller and Faster", icon: 'TownOfUs.Resources.ModifierIcons.Mini.png', description: "Is smaller and moves faster." }],
+        aabilities: [],
         icon: 'Mini',
         types: ["Passive", "Debuff"],
         options: [
@@ -1221,7 +1274,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Radar", team: "Global Modifier",
         description: "The Radar is a Crewmate who knows where the closest player is to them.",
-        abilities: [{ name: "See Closest Player", icon: 'TownOfUs.Resources.ModifierIcons.Radar.png', description: "Knows the location of the closest player." }],
+        abilities: [],
         icon: 'Radar',
         types: ["Passive", "Detection"],
         options: [
@@ -1231,7 +1284,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Satellite", team: "Global Modifier",
         description: "The Satellite has a 1 time use ability to detect all dead bodies.",
-        abilities: [{ name: "Detect Dead Bodies", icon: 'TownOfUs.Resources.BroadcastButton.png', description: "Detects all dead bodies once per game." }],
+        abilities: [{ name: "Detect", icon: 'BroadcastButton.png', description: "Detects all dead bodies once per game." }],
         icon: 'Satellite',
         types: ["Active", "Detection"],
         options: [
@@ -1242,7 +1295,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Shy", team: "Global Modifier",
         description: "The Shy becomes transparent when standing still for a short duration.",
-        abilities: [{ name: "Go Invisible", icon: 'TownOfUs.Resources.ModifierIcons.Shy.png', description: "Becomes transparent when standing still for a short duration." }],
+        abilities: [],
         icon: 'Shy',
         types: ["Passive", "Utility"],
         options: [
@@ -1255,7 +1308,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Sixth Sense", team: "Global Modifier",
         description: "The Sixth Sense is a Crewmate who can see who interacts with them.",
-        abilities: [{ name: "Know who interacts w/ you", icon: 'TownOfUs.Resources.ModifierIcons.SixthSense.png', description: "Knows who interacts with them." }],
+        abilities: [],
         icon: 'SixthSense',
         types: ["Passive", "Detection"],
         options: [
@@ -1265,7 +1318,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Sleuth", team: "Global Modifier",
         description: "The Sleuth is a Crewmate who gains knowledge from reporting dead bodies. During meetings the Sleuth can see the roles of all players in which they've reported.",
-        abilities: [{ name: "Know Bodies's Role", icon: 'TownOfUs.Resources.ModifierIcons.Sleuth.png', description: "Gains knowledge and sees roles of reported players." }],
+        abilities: [],
         icon: 'Sleuth',
         types: ["Passive", "Detection"],
         options: [
@@ -1275,7 +1328,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Tiebreaker", team: "Global Modifier",
         description: "If any vote is a draw, the Tiebreaker's vote will go through. If they voted another player, they will get voted out.",
-        abilities: [{ name: "Break Tie Vote", icon: 'TownOfUs.Resources.ModifierIcons.Tiebreaker.png', description: "Breaks tie votes, making their vote count in a draw." }],
+        abilities: [],
         icon: 'Tiebreaker',
         types: ["Active", "Utility"],
         options: [
@@ -1286,7 +1339,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Egotist", team: "Crewmate Alliance modifier",
         description: "As the Egotist, you can only win if Crewmates lose, but you can still win even in death. If no Crewmates remain after a meeting ends, you will leave in victory, but the game will continue. Egotist Snitch and Mayor also reveal themselves as evil to Neutrals and Impostors alike, and they do not get punished when killing Crewmates.",
-        abilities: [{ name: "Betray", icon: 'TownOfUs.Resources.ModifierIcons.Egotist.png', description: "Wins if Crewmates lose, even in death. Reveals as evil." }],
+        abilities: [],
         icon: 'Egotist',
         types: ["Passive", "Win Condition", "Information"],
         options: [
@@ -1297,7 +1350,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Disperser", team: "Impostor Modifier",
         description: "The Disperser is an Impostor who has a 1 time use ability to send all players to a random vent. This includes miner vents. Does not appear on Airship or Submerged.",
-        abilities: [{ name: "Disperse Players", icon: 'TownOfUs.Resources.DisperseButton.png', description: "Sends all players to a random vent (1-time use)." }],
+        abilities: [{ name: "Disperse", icon: 'DisperseButton.png', description: "Sends all players to a random vent (1-time use)." }],
         icon: 'Disperser',
         types: ["Active", "Sabotage"],
         options: [
@@ -1305,9 +1358,9 @@ const allEntitiesData = [
         ]
     },
     {
-        category: "Modifier", name: "Double Shot", team: "Impostor Modifier",
+        category: "Modifier", name: "Double Shot", team: "Impostor/Neutral Modifier",
         description: "Double Shot is an Impostor who gets an extra life when assassinating. Once they use their life they are indicated with a red flash and can no longer guess the person who they guessed wrong for the remainder of that meeting.",
-        abilities: [{ name: "Guess twice", icon: 'TownOfUs.Resources.Guess.png', description: "Gets an extra life when assassinating." }],
+        abilities: [{ name: "Guess", icon: 'Guess.png', description: "Gets an extra life when assassinating." }],
         icon: 'DoubleShot',
         types: ["Passive", "Kill", "Defense"],
         options: [
@@ -1317,7 +1370,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Saboteur", team: "Impostor Modifier",
         description: "The Saboteur is an Impostor with a passive sabotage cooldown reduction.",
-        abilities: [{ name: "Reduce Sabotage Cooldown", icon: 'TownOfUs.Resources.ModifierIcons.Saboteur.png', description: "Passively reduces sabotage cooldowns." }],
+        abilities: [],
         icon: 'Saboteur',
         types: ["Passive", "Sabotage"],
         options: [
@@ -1328,7 +1381,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Underdog", team: "Impostor Modifier",
         description: "The Underdog is an Impostor with a prolonged kill cooldown. When they are the only remaining Impostor, they will have their kill cooldown shortened.",
-        abilities: [{ name: "Less Kill Cooldown Solo", icon: 'TownOfUs.Resources.ModifierIcons.Underdog.png', description: "Has prolonged kill cooldown, shortened when solo Impostor." }],
+        abilities: [],
         icon: 'Underdog',
         types: ["Passive", "Kill", "Buff"],
         options: [
@@ -1341,7 +1394,7 @@ const allEntitiesData = [
     {
         category: "Modifier", name: "Telepath", team: "Impostor Modifier",
         description: "Know when your teammate kills (maybe where depending on settings), and depending on other settings, know when and/or where they die.",
-        abilities: [{ name: "Teammate Info", icon: 'TownOfUs.Resources.ModifierIcons.Telepath.png', description: "Knows when and where teammates kill or die." }],
+        abilities: [],
         icon: 'Telepath',
         types: ["Passive", "Postmortem", "Information"],
         options: [
@@ -1352,10 +1405,10 @@ const allEntitiesData = [
 
 // --- Icon URL Generators ---
 function getRoleImageUrl(iconName) {
-    return `Media/TownOfUs.Resources.RoleIcons.${iconName}.png`;
+    return `Media/${iconName}.png`;
 }
 function getModifierImageUrl(iconName) {
-    return `Media/TownOfUs.Resources.ModifierIcons.${iconName}.png`;
+    return `Media/${iconName}.png`;
 }
 function getAbilityImageUrl(abilitiesIconName) {
     return `Media/${abilitiesIconName}`;
@@ -1380,7 +1433,7 @@ function createRoleCardElement(playerName, roleEntity) {
     card.style.boxShadow = `0 0 10px ${roleColor}80`;
 
     card.innerHTML = `
-        <button class="delete-role-card-btn absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl leading-none">&times;</button>
+        <button class="delete-role-card-btn absolute top-0 right-2 text-red-500 hover:text-red-700 text-xl leading-none">&times;</button>
         <div class="role-icon-container">
             <img src="${iconUrl}" alt="${roleEntity.name} Icon" class="role-icon" onerror="this.onerror=null;this.src='https://placehold.co/60x60/000000/FFFFFF?text=NO+ICON'; this.style.filter='none';">
         </div>
