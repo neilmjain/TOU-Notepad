@@ -74,23 +74,25 @@ const roleColors = {
     "Mercenary": rgbFloatToHex(0.55, 0.40, 0.60),
     "Inquisitor": rgbFloatToHex(0.85, 0.26, 0.57),
 
-    "Impostor": rgbFloatToHex(1.00, 0.00, 0.00),
-    "ImpSoft": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Eclipsal": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Escapist": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Grenadier": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Morphling": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Swooper": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Venerer": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Bomber": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Scavenger": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Traitor": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Warlock": rgbFloatToHex(1.00, 0.00, 1.00),
-    "Blackmailer": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Hypnotist": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Janitor": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Miner": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Undertaker": rgbFloatToHex(1.00, 0.00, 0.00)
+    "Impostor": '#d73f42',
+    "ImpSoft": '#d73f42',
+    "Eclipsal": '#d73f42',
+    "Escapist": '#d73f42',
+    "Grenadier": '#d73f42',
+    "Morphling": '#d73f42',
+    "Ambassador": '#d73f42',
+    "Ambusher": '#d73f42',
+    "Swooper": '#d73f42',
+    "Venerer": '#d73f42',
+    "Bomber": '#d73f42',
+    "Scavenger": '#d73f42',
+    "Traitor": '#d73f42',
+    "Warlock": '#d73f42',
+    "Blackmailer": '#d73f42',
+    "Hypnotist": '#d73f42',
+    "Janitor": '#d73f42',
+    "Miner": '#d73f42',
+    "Undertaker": '#d73f42'
 };
 
 const modifierColors = {
@@ -123,11 +125,11 @@ const modifierColors = {
     "Operative": rgbFloatToHex(0.60, 0.03, 0.07),
     "Scout": rgbFloatToHex(0.27, 0.38, 0.34),
 
-    "Disperser": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Double Shot": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Saboteur": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Underdog": rgbFloatToHex(1.00, 0.00, 0.00),
-    "Telepath": rgbFloatToHex(1.00, 0.00, 0.00),
+    "Disperser": '#d73f42',
+    "Double Shot": '#d73f42',
+    "Saboteur": '#d73f42',
+    "Underdog": '#d73f42',
+    "Telepath": '#d73f42',
     "Spy Modifier": rgbFloatToHex(0.80, 0.64, 0.80)
 };
 
@@ -1640,5 +1642,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mainNotepadArea.focus(); // Focus on the notepad on load
 });
+
 
 
