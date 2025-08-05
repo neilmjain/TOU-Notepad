@@ -5,46 +5,7 @@
     font-style: normal;
     font-display: swap;
 }
-@keyframes colorChangeShadow {
-    0%   { box-shadow: 0 0 15px #ff0000; }
-    10%  { box-shadow: 0 0 15px #ff6600; } /* Deep Orange */
-    20%  { box-shadow: 0 0 15px #ffaa00; } /* Orange-Yellow */
-    30%  { box-shadow: 0 0 15px #ffff00; } /* Yellow */
-    35%  { box-shadow: 0 0 15px #e5ff00; } /* Lime-Yellow */
-    40%  { box-shadow: 0 0 15px #ccff00; } /* Yellow-Green */
-    45%  { box-shadow: 0 0 15px #99ff00; } /* Green-Yellow */
-    50%  { box-shadow: 0 0 15px #00ff00; } /* Green */
-    60%  { box-shadow: 0 0 15px #00ffaa; } /* Green-Cyan */
-    70%  { box-shadow: 0 0 15px #00ffff; } /* Cyan */
-    80%  { box-shadow: 0 0 15px #007bff; } /* Blue */
-    90%  { box-shadow: 0 0 15px #ff00ff; } /* Purple */
-    95%  { box-shadow: 0 0 15px #ff0077; } /* Magenta */
-    98%  { box-shadow: 0 0 15px #ff0033; } /* Reddish Pink */
-    100% { box-shadow: 0 0 15px #ff0000; }
-}
- @keyframes colorChangeBorder {
-    0%   { border-color: #ff0000; }
-    10%  { border-color: #ff6600; }
-    20%  { border-color: #ffaa00; }
-    30%  { border-color: #ffff00; }
-    32%  { border-color: #f2ff00; }
-    34%  { border-color: #e5ff00; }
-    36%  { border-color: #ccff00; }
-    38%  { border-color: #b2ff00; }
-    40%  { border-color: #99ff00; }
-    42%  { border-color: #7fff00; }
-    44%  { border-color: #66ff00; }
-    46%  { border-color: #4cff00; }
-    48%  { border-color: #33ff00; }
-    50%  { border-color: #00ff00; }
-    60%  { border-color: #00ffaa; }
-    70%  { border-color: #00ffff; }
-    80%  { border-color: #007bff; }
-    90%  { border-color: #ff00ff; }
-    95%  { border-color: #ff0077; }
-    98%  { border-color: #ff0033; }
-    100% { border-color: #ff0000; }
-}
+
 video {
   position: fixed;
   top: 0;
