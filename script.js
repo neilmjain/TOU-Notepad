@@ -146,6 +146,7 @@ const allEntitiesData = [
             { name: "Sense Duration", description: "The duration of the arrow to show an ability use", type: "Time", default: "10s", range: "N/A" }
         ]
     },
+    
     {
         category: "Role", name: "Detective", team: "Crewmate",
         description: "The Detective has a 2 step ability.\nThe first stage involves inspecting a crime scene. Once a crime scene is inspected they can then examine other players on cooldown to see if that player was at the scene of the crime.\nCrime scenes spawn at each dead body. They also get a detective report telling them the type of killer if they examine someone’s body.",
@@ -162,6 +163,30 @@ const allEntitiesData = [
             { name: "Time Where Detective Reports Will Have Role", description: "If a body has been dead for shorter than this amount, the Detective's report will contain the killer's role", type: "Time", default: "15s", range: "N/A" },
             { name: "Time Where Detective Reports Will Have Faction", description: "If a body has been dead for shorter than this amount, the Detective's report will contain the killer's faction", type: "Time", default: "30s", range: "N/A" }
         ]
+    },
+    {
+        category: "Role", name: "Crewmate", team: "Crewmate",
+        description: "",
+        abilities: [],
+        icon: 'Crewmate',
+        types: ["Standard"],
+        options: []
+    },
+    {
+        category: "Role", name: "Neutral", team: "Neutral",
+        description: "",
+        abilities: [],
+        icon: 'Neutral',
+        types: ["Standard"],
+        options: []
+    },
+    {
+        category: "Role", name: "Imposter", team: "Imposter",
+        description: "",
+        abilities: [],
+        icon: 'Imposter',
+        types: ["Standard"],
+        options: []
     },
     {
         category: "Role", name: "Engineer", team: "Crewmate",
@@ -1615,3 +1640,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mainNotepadArea.focus(); // Focus on the notepad on load
 });
+
