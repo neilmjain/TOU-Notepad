@@ -1,64 +1,882 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TOU Notepad</title>
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TOU Notepad</title>
+    <link rel="icon" style="border-radius: 8px;" type="image/png" href="Untitled design.png" />
+    <link rel="manifest" href="/site.webmanifest">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <style>
+        @font-face {
+            font-family: 'Amatic SC';
+            src: url('0a1915693ca58e3e-s.p.woff') format('woff');
+            font-weight: normal;
+        }
+
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1; /* Ensure video is behind other content */
+}
+
+        body {
+            background-color: #1e1e19;
+            font-family: 'Amatic SC', sans-serif;
+            letter-spacing: 1.4px;
+            color: #E2E8F0;
+        }
+
+        .container {
+            background-color: #32322c;
+            opacity: 0.99;
+            margin-top: 15px;
+            max-width: 3000px;
+            width: 95%;
+        }
+
+        .notepad-paper-background {
+            background-color: #232323;
+            background-image: linear-gradient(to bottom, transparent 24px, #e0e0e0 27px, transparent 28px);
+            background-size: 100% 25px;
+            background-position: 0 0;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            flex-grow: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .notepad-textarea {
+            background-color: transparent;
+            border: none;
+            font-size: 25px;
+            resize: both;
+            outline: none;
+            color: inherit;
+            min-height: 200px;
+        }
+
+        .custom-scrollable-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scrollable-container::-webkit-scrollbar-track {
+            background: #2a2a26;
+            border-radius: 10px;
+        }
+
+        .custom-scrollable-container::-webkit-scrollbar-thumb {
+            background-color: #404038;
+            border-radius: 10px;
+            border: 2px solid #2a2a26;
+        }
+
+        .tab-button {
+            padding: 8px 16px;
+            border-radius: 8px 8px 0 0;
+            background-color: #2a2a26;
+            color: #A0AEC0;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .tab-button:hover {
+            background-color: #404038;
+        }
+
+        .tab-button.active {
+            background-color: #404038;
+            color: #E2E8F0;
+            font-weight: 1000;
+        }
+
+        .close-tab-btn {
+            margin-left: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #F56565;
+            transition: color 0.2s;
+        }
+
+        .close-tab-btn:hover {
+            color: #F56565;
+        }
+
+        #addTabButton {
+            background-color: #2a2a26;
+            color: #E2E8F0;
+            border-radius: 9px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            padding-bottom: 10px;
+            font-weight: bold;
+            line-height: 1;
+            margin-left: 8px;
+            transition: background-color 0.2s;
+        }
+
+        #addTabButton:hover {
+            background-color: #404038;
+        }
+
+        .role-card-input-container {
+            display: none;
+            background-color: #2a2a26;
+        }
+
+        #rolesContentDiv {
+    display: flex;
+    flex-wrap: wrap;       /* allow wrapping to next line */
+    gap: 2rem;             /* spacing between cards */
+    justify-content: flex-start; /* align left, can also use center */
+}
+
+        .role-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.8rem;
+            background: rgba(40, 0, 0, 0.85);
+            border: 2px solid #ff1a1a;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            margin-left: 20px;
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(255, 0, 0, 0.4), inset 0 0 6px rgba(255, 0, 0, 0.2);
+            width: 180px;
+            flex-shrink: 0;
+        }
+
+        .role-card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), inset 0 0 8px rgba(255, 0, 0, 0.3);
+        }
+        
+        /* Removed role-card-content, role-card-info, role-card-text, role-card-bucket for new vertical layout */
+
+        .role-card-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+        }
+
+        .role-card-name {
+            font-weight: bold;
+            color: #fff;
+            font-size: 22px;
+            margin-bottom: 0.2rem;
+        }
+        .role-card-role {
+            font-weight: bold;
+            color: #ff1a1a;
+            font-size: 22px;
+            margin-top: 0.5rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .delete-role-card-button {
+    position: absolute;
+    top: -20px; /* slightly down from top */
+    right: 3px; /* slightly in from right */
+    color: #ff2e2e;
+    padding: 0rem 0.2rem;
+    font-size: 50px; /* larger size */
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    z-index: 10;
+}
+
+.delete-role-card-button:hover {
+    filter: drop-shadow(0 0 8px #ff4c4c);
+}
+
+        .role-card-detail {
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        
+        .menu-button {
+            padding: 8px;
+        }
+        #resetButton {
+            background-color: #900000;
+            color: rgb(252, 105, 105);
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            font-size: 22px;
+            letter-spacing: 1px;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+        .menu-item {
+            font-size: 22px;
+            color: #E2E8F0;
+            background-color: #2a2a26;
+            padding: 0.5rem 1rem;
+            transition: background-color 0.2s;
+        }
+        .menu-item:hover {
+            background-color: #404038;
+        }
+        #closeIframe {
+            background-color: #900000;
+            color: rgb(252, 105, 105);
+            font-weight: bold;
+            padding: 0.3rem 0.5rem;
+            font-size: 22px;
+            letter-spacing: 1px;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+        #closeIframe:hover {
+            background-color: #b30000;
+        }
+    </style>
 </head>
-<body class="p-6 bg-gray-900 text-gray-100 font-[Inter]">
-   <video autoplay muted loop src="videoplayback.mp4">
+<body>
+    <video autoplay muted loop src="videoplayback.mp4">
         <source src="videoplayback.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
-  <div class="container mx-auto p-6 rounded-lg shadow-lg bg-gray-800">
-    <header class="text-center mb-8">
-      <h1 style="color: white;" class="text-5xl font-bold font-[Amatic_SC] text-cyan-400">AMONG US NOTEPAD</h1>
-    </header>
-
-    <div class="grid grid-cols-1 gap-6">
-      <!-- Main Notepad Area -->
-      <div class="relative notepad-area-wrapper"> <!-- Removed h-[70vh] here -->
-          <!-- Ring Binder Visual -->
-          <div class="ring-binder">
-              <div class="ring"></div>
-              <div class="ring"></div>
-              <div class="ring"></div>
-              <div class="ring"></div>
-              <div class="ring"></div>
-              <div class="ring"></div>
-              <div class="ring"></div>
-              <div class="ring"></div>
-          </div>
-          <div class="notepad-paper-background p-4 rounded-lg shadow-md h-full flex flex-col">
-              <textarea id="mainNotepadArea" placeholder="Start writing your notes here... Type '{name} is {role}' to create a role card (e.g., 'Alice is Sheriff')." class="flex-grow w-full p-2 bg-transparent border-none focus:outline-none resize-y text-gray-800 text-lg leading-relaxed min-h-[300px]"></textarea> <!-- Added resize-y and min-h-[300px] -->
-              <div class="flex justify-end mt-4">
-                  <button id="newNoteButton" class="bg-yellow-400 text-gray-900 font-bold py-2 px-4 rounded-md hover:bg-yellow-500 transition duration-200">New Note</button>
-              </div>
-          </div>
-      </div>
-
-      <!-- Role Cards Display Area (below the notepad) -->
-      <div style="background-color: rgb(39, 37, 37);" class="bg-gray-700 p-4 rounded-lg shadow-md flex flex-col">
-        <h2 class="text-3xl font-bold font-[Amatic_SC] text-yellow-400 mb-4 text-center">Known Roles</h2>
-        <div id="roleCardsContainer" class="role-cards-grid custom-scrollable-container flex-grow">
-          <!-- Role cards will be inserted here by JavaScript -->
-          <p id="noRoleCardsMessage" class="text-center text-lg text-gray-400 font-[Amatic_SC] mt-4">No role observations yet. Type '{name} is {role}' in the notepad to add one!</p>
+<div class="container mx-auto p-8 rounded-lg shadow-xl relative z-10 w-[95%] sm:w-2/3 md:w-3/4 lg:w-2/3 xl:w-2/3 min-h-[75vh] flex flex-col justify-between">
+    <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center space-x-4">
+            <img src="MiraNotepadLogo.png" alt="TOU Logo" style="border-radius: 9px;" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24">
+            <h1><img src="toulogo.png" style="height: 120px;"></h1>
         </div>
-      </div>
+        <div class="relative inline-block text-left" id="dropdownMenu">
+            <button href="wiki.html" style="font-size: 25px; width: 100%;"target="_blank" role="menuitem" onclick="openIframe('wiki.html')"><img src="wikiButton.png" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24" style="filter: drop-shadow(0 0 2px black);"></button>
+            <div style="background-color: #2a2a26;" class="absolute right-0 mt-2 w-48 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 hidden z-40">
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script src="script.js"></script>
+    <div id="iframeOverlay" class="fixed inset-0 bg-black bg-opacity-75 hidden justify-center items-center z-50">
+        <div class="relative w-full h-full max-w-8xl max-h-4xl bg-gray-900 rounded-lg overflow-hidden">
+            <button id="closeIframe" class="absolute top-2 right-2 text-white bg-gray-700 p-2 rounded-full hover:bg-gray-600 z-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <iframe id="dynamicIframe" src="" class="w-full h-full border-none"></iframe>
+        </div>
+    </div>
+
+    <div class="flex items-end mb-4">
+        <div id="tabsContainer" class="flex flex-wrap space-x-2"></div>
+        <button id="addTabButton" class="add-tab-button">+</button>
+    </div>
+    
+    <div id="notesContentDiv" class="flex-grow flex flex-col notepad-paper-background p-4"></div>
+    
+    <div id="rolesContentDiv" class="flex-grow flex hidden overflow-y-auto p-4 custom-scrollable-container"></div>
+    
+    <div class="flex justify-end mt-4">
+        <button id="resetButton" class="bg-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600 transition duration-200">Reset</button>
+    </div>
+</div>
+<script>
+    // --- Main State Variables ---
+    let notesTabs = {};
+    let activeTab = 'Notes';
+    let tabCounter = 1;
+    let roleCards = [];
+
+    // --- DOM Elements ---
+    const tabsContainer = document.getElementById('tabsContainer');
+    const notesContentDiv = document.getElementById('notesContentDiv');
+    const rolesContentDiv = document.getElementById('rolesContentDiv');
+    const addTabButton = document.getElementById('addTabButton');
+    const resetButton = document.getElementById('resetButton');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const dynamicIframe = document.getElementById('dynamicIframe');
+    const iframeOverlay = document.getElementById('iframeOverlay');
+    const closeIframeButton = document.getElementById('closeIframe');
+    
+    // --- Regex for parsing role card input ---
+    const roleCardRegex = /(.+) is(?: (not|probably|likely))? (.+)/i;
+
+    // Function to convert RGB float values (0-1) to a hex color string (#RRGGBB).
+    function rgbFloatToHex(r, g, b) {
+        const toHex = (c) => {
+            const hex = Math.round(c * 255).toString(16);
+            return hex.length === 1 ? "0" + hex : hex;
+        };
+        return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    }
+
+    // --- Role/Team/Modifier Colors & Data ---
+    const roleColors = {
+        "Crewmate": rgbFloatToHex(0.00, 0.75, 1.00),
+        "Mayor": rgbFloatToHex(0.44, 0.31, 0.66),
+        "Sheriff": rgbFloatToHex(1.00, 1.00, 0.00),
+        "Engineer": rgbFloatToHex(1.00, 0.65, 0.04),
+        "Swapper": rgbFloatToHex(0.40, 0.90, 0.40),
+        "Investigator": rgbFloatToHex(0.00, 0.70, 0.70),
+        "Medic": rgbFloatToHex(0.00, 0.40, 0.00),
+        "Seer": rgbFloatToHex(1.00, 0.80, 0.50),
+        "Spy": rgbFloatToHex(0.80, 0.64, 0.80),
+        "Snitch": rgbFloatToHex(0.83, 0.69, 0.22),
+        "Altruist": rgbFloatToHex(0.40, 0.00, 0.00),
+        "Vigilante": rgbFloatToHex(1.00, 1.00, 0.60),
+        "Veteran": rgbFloatToHex(0.60, 0.50, 0.25),
+        "Haunter": rgbFloatToHex(0.83, 0.83, 0.83),
+        "Transporter": rgbFloatToHex(0.00, 0.93, 1.00),
+        "Mirrorcaster": '#5e80a2',
+        "Medium": rgbFloatToHex(0.65, 0.50, 1.00),
+        "Mystic": rgbFloatToHex(0.30, 0.60, 0.90),
+        "Trapper": rgbFloatToHex(0.65, 0.82, 0.70),
+        "Detective": rgbFloatToHex(0.30, 0.30, 1.00),
+        "Imitator": rgbFloatToHex(0.70, 0.85, 0.30),
+        "Prosecutor": rgbFloatToHex(0.70, 0.50, 0.00),
+        "Oracle": rgbFloatToHex(0.75, 0.00, 0.75),
+        "Aurial": rgbFloatToHex(0.70, 0.30, 0.60),
+        "Politician": rgbFloatToHex(0.40, 0.00, 0.60),
+        "Warden": rgbFloatToHex(0.60, 0.00, 1.00),
+        "Jailor": rgbFloatToHex(0.65, 0.65, 0.65),
+        "Hunter": rgbFloatToHex(0.16, 0.67, 0.53),
+        "Tracker": rgbFloatToHex(0.00, 0.60, 0.00),
+        "Lookout": rgbFloatToHex(0.20, 1.00, 0.40),
+        "Deputy": rgbFloatToHex(1.00, 0.80, 0.00),
+        "Plumber": rgbFloatToHex(0.80, 0.40, 0.00),
+        "Cleric": rgbFloatToHex(0.00, 1.00, 0.70),
+
+        "Neutral": rgbFloatToHex(0.50, 0.50, 0.50),
+        "Jester": rgbFloatToHex(1.00, 0.75, 0.80),
+        "Executioner": rgbFloatToHex(0.39, 0.23, 0.12),
+        "Glitch": rgbFloatToHex(0.00, 1.00, 0.00),
+        "Arsonist": rgbFloatToHex(1.00, 0.30, 0.00),
+        "Amnesiac": rgbFloatToHex(0.50, 0.70, 1.00),
+        "Juggernaut": rgbFloatToHex(0.55, 0.00, 0.30),
+        "Survivor": rgbFloatToHex(1.00, 0.90, 0.30),
+        "Protector": rgbFloatToHex(0.70, 1.00, 1.00),
+        "Plaguebearer": rgbFloatToHex(0.90, 1.00, 0.70),
+        "Pestilence": rgbFloatToHex(0.30, 0.30, 0.30),
+        "Werewolf": rgbFloatToHex(0.66, 0.40, 0.16),
+        "Doomsayer": rgbFloatToHex(0.00, 1.00, 0.50),
+        "Vampire": rgbFloatToHex(0.64, 0.16, 0.16),
+        "Soul Collector": rgbFloatToHex(0.60, 1.00, 0.80),
+        "Guardian Angel": rgbFloatToHex(0.70, 1.00, 1.00),
+        "Phantom": rgbFloatToHex(0.40, 0.16, 0.38),
+        "Mercenary": rgbFloatToHex(0.55, 0.40, 0.60),
+        "Inquisitor": rgbFloatToHex(0.85, 0.26, 0.57),
+
+        "Impostor": '#d73f42',
+        "ImpSoft": '#d73f42',
+        "Eclipsal": '#d73f42',
+        "Escapist": '#d73f42',
+        "Grenadier": '#d73f42',
+        "Morphling": '#d73f42',
+        "Ambassador": '#d73f42',
+        "Ambusher": '#d73f42',
+        "Swooper": '#d73f42',
+        "Venerer": '#d73f42',
+        "Bomber": '#d73f42',
+        "Scavenger": '#d73f42',
+        "Traitor": '#d73f42',
+        "Warlock": '#d73f42',
+        "Blackmailer": '#d73f42',
+        "Hypnotist": '#d73f42',
+        "Janitor": '#d73f42',
+        "Miner": '#d73f42',
+        "Undertaker": '#d73f42'
+    };
+
+    const modifierColors = {
+        "Bait": rgbFloatToHex(0.20, 0.70, 0.70),
+        "Aftermath": rgbFloatToHex(0.65, 1.00, 0.65),
+        "Diseased": rgbFloatToHex(0.50, 0.50, 0.50),
+        "Torch": rgbFloatToHex(1.00, 1.00, 0.60),
+        "Button Barry": rgbFloatToHex(0.70, 0.20, 0.80),
+        "Flash": rgbFloatToHex(1.00, 0.50, 0.50),
+        "Giant": rgbFloatToHex(1.00, 0.70, 0.30),
+        "Lover": rgbFloatToHex(1.00, 0.40, 0.80),
+        "Sleuth": rgbFloatToHex(0.50, 0.20, 0.20),
+        "Tiebreaker": rgbFloatToHex(0.60, 0.90, 0.60),
+        "Radar": rgbFloatToHex(1.00, 0.00, 0.50),
+        "Multitasker": rgbFloatToHex(1.00, 0.50, 0.30),
+        "Frosty": rgbFloatToHex(0.60, 1.00, 1.00),
+        "Sixth Sense": rgbFloatToHex(0.85, 1.00, 0.55),
+        "Shy": rgbFloatToHex(1.00, 0.70, 0.80),
+        "Mini": rgbFloatToHex(0.80, 1.00, 0.90),
+        "Camouflaged": rgbFloatToHex(0.50, 0.50, 0.50),
+        "Satellite": rgbFloatToHex(0.00, 0.60, 0.80),
+        "Egotist": rgbFloatToHex(0.40, 0.60, 0.40),
+        "Lovers": rgbFloatToHex(1.00, 0.40, 0.80),
+        "Taskmaster": rgbFloatToHex(0.58, 0.84, 0.93),
+        "Celebrity": rgbFloatToHex(1.00, 0.60, 0.60),
+        "Immovable": rgbFloatToHex(0.90, 0.90, 0.80),
+        "Rotting": rgbFloatToHex(0.67, 0.50, 0.41),
+        "Noisemaker": rgbFloatToHex(0.91, 0.41, 0.62),
+        "Scientist": rgbFloatToHex(0.00, 0.78, 0.41),
+        "Operative": rgbFloatToHex(0.60, 0.03, 0.07),
+        "Scout": rgbFloatToHex(0.27, 0.38, 0.34),
+
+        "Disperser": '#d73f42',
+        "Double Shot": '#d73f42',
+        "Saboteur": '#d73f42',
+        "Underdog": '#d73f42',
+        "Telepath": '#d73f42',
+        "Spy Modifier": rgbFloatToHex(0.80, 0.64, 0.80)
+    };
+
+    const allEntitiesData = [
+        { category: "Role", name: "Aurial", team: "Crewmate", description: "The Aurial is a Crewmate that can sense when players use an ability nearby...", abilities: [], icon: 'Aurial', types: ["Detection", "Other"], options: [] },
+        { category: "Role", name: "Detective", team: "Crewmate", description: "The Detective has a 2 step ability...", abilities: [], icon: 'Detective', types: ["Detection"], options: [] },
+        { category: "Role", name: "Crewmate", team: "Crewmate", description: "", abilities: [], icon: 'Crewmate', types: ["Standard"], options: [] },
+        { category: "Role", name: "Neutral", team: "Neutral", description: "", abilities: [], icon: 'Neutral', types: ["Standard"], options: [] },
+        { category: "Role", name: "Impostor", team: "Impostor", description: "", abilities: [], icon: 'Impostor', types: ["Standard"], options: [] },
+        { category: "Role", name: "Engineer", team: "Crewmate", description: "The Engineer is a Crewmate that can fix sabotages...", abilities: [], icon: 'Engineer', types: ["Utility", "Movement"], options: [] },
+        { category: "Role", name: "Medic", team: "Crewmate", description: "The Medic is a Crewmate that can give any player a shield...", abilities: [], icon: 'Medic', types: ["Protective", "Support"], options: [] },
+        { category: "Role", name: "Sheriff", team: "Crewmate", description: "The Sheriff is a Crewmate that has the ability to eliminate the Impostors...", abilities: [], icon: 'Sheriff', types: ["Killing"], options: [] },
+        { category: "Role", name: "Snitch", team: "Crewmate", description: "The Snitch is a Crewmate that can get arrows pointing towards the Impostors...", abilities: [], icon: 'Snitch', types: ["Information"], options: [] },
+        { category: "Role", name: "Swapper", team: "Crewmate", description: "The Swapper is a Crewmate that can swap the votes...", abilities: [], icon: 'Swapper', types: ["Support", "Utility"], options: [] },
+        { category: "Role", name: "Transporter", team: "Crewmate", description: "The Transporter is a Crewmate that can change the locations of two random players...", abilities: [], icon: 'Transporter', types: ["Utility"], options: [] },
+        { category: "Role", name: "Haunter", team: "Crewmate", description: "Once a random Crewmate dies they become the Haunter...", abilities: [], icon: 'Haunter', types: ["Detection", "Utility", "Other"], options: [] },
+        { category: "Role", name: "Investigator", team: "Crewmate", description: "The Investigator can see player's footprints throughout the game...", abilities: [], icon: 'Investigator', types: ["Detection"], options: [] },
+        { category: "Role", name: "Lookout", team: "Crewmate", description: "The Lookout is a Crewmate that can watch other players...", abilities: [], icon: 'Lookout', types: ["Detection"], options: [] },
+        { category: "Role", name: "Mystic", team: "Crewmate", description: "The Mystic is a Crewmate that gets an alert revealing when someone has died...", abilities: [], icon: 'Mystic', types: ["Detection", "Other"], options: [] },
+        { category: "Role", name: "Seer", team: "Crewmate", description: "The Seer is a Crewmate that can reveal the alliance of other players...", abilities: [], icon: 'Seer', types: ["Detection"], options: [] },
+        { category: "Role", name: "Vigilante", team: "Crewmate", description: "The Vigilante is a Crewmate with the ability to kill impostors...", abilities: [], icon: 'Vigilante', types: ["Killing"], options: [] },
+        { category: "Role", name: "Veteran", team: "Crewmate", description: "The Veteran is a Crewmate who can be alerted, killing anyone who tries to interact with them...", abilities: [], icon: 'Veteran', types: ["Killing"], options: [] },
+        { category: "Role", name: "Vampire", team: "Neutral", description: "The Vampire is a neutral role...", abilities: [], icon: 'Vampire', types: ["Killing", "Neutral"], options: [] },
+        { category: "Role", name: "Werewolf", team: "Neutral", description: "The Werewolf is a neutral role...", abilities: [], icon: 'Werewolf', types: ["Killing", "Neutral"], options: [] },
+        { category: "Role", name: "Doomsayer", team: "Neutral", description: "The Doomsayer is a neutral role...", abilities: [], icon: 'Doomsayer', types: ["Killing", "Neutral"], options: [] },
+        { category: "Role", name: "Jester", team: "Neutral", description: "The Jester is a Neutral role...", abilities: [], icon: 'Jester', types: ["Killing", "Neutral"], options: [] },
+        { category: "Role", name: "Executioner", team: "Neutral", description: "The Executioner is a Neutral role...", abilities: [], icon: 'Executioner', types: ["Killing", "Neutral"], options: [] },
+        { category: "Role", name: "Arsonist", team: "Neutral", description: "The Arsonist is a Neutral role...", abilities: [], icon: 'Arsonist', types: ["Killing", "Neutral"], options: [] },
+        { category: "Role", name: "Glitch", team: "Neutral", description: "The Glitch is a Neutral role...", abilities: [], icon: 'Glitch', types: ["Killing", "Neutral"], options: [] },
+        { category: "Role", name: "Juggernaut", team: "Neutral", description: "The Juggernaut is a Neutral role...", abilities: [], icon: 'Juggernaut', types: ["Killing", "Neutral"], options: [] },
+        { category: "Role", name: "Survivor", team: "Neutral", description: "The Survivor is a Neutral role...", abilities: [], icon: 'Survivor', types: ["Benign", "Neutral"], options: [] },
+        { category: "Role", name: "Amnesiac", team: "Neutral", description: "The Amnesiac is a Neutral role...", abilities: [], icon: 'Amnesiac', types: ["Benign", "Neutral"], options: [] },
+        { category: "Role", name: "Protector", team: "Neutral", description: "The Protector is a Neutral role...", abilities: [], icon: 'Protector', types: ["Benign", "Neutral"], options: [] },
+        { category: "Role", name: "Plaguebearer", team: "Neutral", description: "The Plaguebearer is a Neutral role...", abilities: [], icon: 'Plaguebearer', types: ["Benign", "Neutral"], options: [] },
+        { category: "Role", name: "Pestilence", team: "Neutral", description: "The Pestilence is a Neutral role...", abilities: [], icon: 'Pestilence', types: ["Benign", "Neutral"], options: [] },
+        { category: "Role", name: "Soul Collector", team: "Neutral", description: "The Soul Collector is a Neutral role...", abilities: [], icon: 'SoulCollector', types: ["Benign", "Neutral"], options: [] },
+        { category: "Role", name: "Guardian Angel", team: "Neutral", description: "The Guardian Angel is a Neutral role...", abilities: [], icon: 'GuardianAngel', types: ["Benign", "Neutral"], options: [] },
+        { category: "Role", name: "Phantom", team: "Neutral", description: "The Phantom is a Neutral role...", abilities: [], icon: 'Phantom', types: ["Benign", "Neutral"], options: [] },
+        { category: "Role", name: "Mercenary", team: "Neutral", description: "The Mercenary is a Neutral role...", abilities: [], icon: 'Mercenary', types: ["Benign", "Neutral"], options: [] },
+        { category: "Role", name: "Inquisitor", team: "Neutral", description: "The Inquisitor is a Neutral role...", abilities: [], icon: 'Inquisitor', types: ["Benign", "Neutral"], options: [] },
+        { category: "Role", name: "Impostor", team: "Impostor", description: "", abilities: [], icon: 'Impostor', types: ["Standard"], options: [] },
+        { category: "Role", name: "Grenadier", team: "Impostor", description: "The Grenadier is an Impostor that can throw flashbangs...", abilities: [], icon: 'Grenadier', types: ["Kill"], options: [] },
+        { category: "Role", name: "Morphling", team: "Impostor", description: "The Morphling is an Impostor that can Morph into another player...", abilities: [], icon: 'Morphling', types: ["Utility", "Sabotage"], options: [] },
+        { category: "Role", name: "Ambassador", team: "Impostor", description: "The Ambassador is an Impostor Power role...", abilities: [], icon: 'Ambassador', types: ["Utility", "Sabotage"], options: [] },
+        { category: "Role", name: "Ambusher", team: "Impostor", description: "The Ambusher is an Impostor Killing role...", abilities: [], icon: 'Ambusher', types: ["Utility", "Sabotage"], options: [] },
+        { category: "Role", name: "Swooper", team: "Impostor", description: "The Swooper is an Impostor that can temporarily turn invisible...", abilities: [], icon: 'Swooper', types: ["Utility"], options: [] },
+        { category: "Role", name: "Venerer", team: "Impostor", description: "The Venerer is an Impostor that gains abilities through killing...", abilities: [], icon: 'Venerer', types: ["Sabotage", "Utility"], options: [] },
+        { category: "Role", name: "Bomber", team: "Impostor", description: "The Bomber is an Impostor who has the ability to plant bombs...", abilities: [], icon: 'Bomber', types: ["Kill", "Sabotage"], options: [] },
+        { category: "Role", name: "Scavenger", team: "Impostor", description: "The Scavenger is an Impostor who hunts down prey...", abilities: [], icon: 'Scavenger', types: ["Utility", "Sabotage"], options: [] },
+        { category: "Role", name: "Traitor", team: "Impostor", description: "If all Impostors die before a certain point in the game, a random Crewmate is selected to become the Traitor...", abilities: [], icon: 'Traitor', types: ["Other"], options: [] },
+        { category: "Role", name: "Warlock", team: "Impostor", description: "The Warlock is an Impostor that can charge up their kill button...", abilities: [], icon: 'Warlock', types: ["Sabotage"], options: [] },
+        { category: "Role", name: "Blackmailer", team: "Impostor", description: "The Blackmailer is an Impostor that can silence players...", abilities: [], icon: 'Blackmailer', types: ["Sabotage"], options: [] },
+        { category: "Role", name: "Hypnotist", team: "Impostor", description: "The Hypnotist is an Impostor that can make players look at them...", abilities: [], icon: 'Hypnotist', types: ["Sabotage"], options: [] },
+        { category: "Role", name: "Janitor", team: "Impostor", description: "The Janitor is an Impostor that can dispose of bodies...", abilities: [], icon: 'Janitor', types: ["Sabotage"], options: [] },
+        { category: "Role", name: "Miner", team: "Impostor", description: "The Miner is an Impostor that can place mines...", abilities: [], icon: 'Miner', types: ["Sabotage"], options: [] },
+        { category: "Role", name: "Undertaker", team: "Impostor", description: "The Undertaker is an Impostor that can hide bodies...", abilities: [], icon: 'Undertaker', types: ["Sabotage"], options: [] },
+
+        // Modifiers
+        { category: "Modifier", name: "Bait", team: "Crewmate", description: "The Bait is a Crewmate modifier that baits impostors...", abilities: [], icon: 'Bait', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Aftermath", team: "Crewmate", description: "The Aftermath is a Crewmate modifier that activates after a kill...", abilities: [], icon: 'Aftermath', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Diseased", team: "Crewmate", description: "The Diseased is a Crewmate modifier...", abilities: [], icon: 'Diseased', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Torch", team: "Crewmate", description: "The Torch is a Crewmate modifier...", abilities: [], icon: 'Torch', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Button Barry", team: "Crewmate", description: "The Button Barry is a Crewmate modifier...", abilities: [], icon: 'ButtonBarry', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Flash", team: "Crewmate", description: "The Flash is a Crewmate modifier...", abilities: [], icon: 'Flash', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Giant", team: "Crewmate", description: "The Giant is a Crewmate modifier...", abilities: [], icon: 'Giant', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Lover", team: "Crewmate", description: "The Lover is a Crewmate modifier...", abilities: [], icon: 'Lover', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Sleuth", team: "Crewmate", description: "The Sleuth is a Crewmate modifier...", abilities: [], icon: 'Sleuth', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Tiebreaker", team: "Crewmate", description: "The Tiebreaker is a Crewmate modifier...", abilities: [], icon: 'Tiebreaker', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Radar", team: "Crewmate", description: "The Radar is a Crewmate modifier...", abilities: [], icon: 'Radar', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Multitasker", team: "Crewmate", description: "The Multitasker is a Crewmate modifier...", abilities: [], icon: 'Multitasker', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Frosty", team: "Crewmate", description: "The Frosty is a Crewmate modifier...", abilities: [], icon: 'Frosty', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Sixth Sense", team: "Crewmate", description: "The Sixth Sense is a Crewmate modifier...", abilities: [], icon: 'SixthSense', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Shy", team: "Crewmate", description: "The Shy is a Crewmate modifier...", abilities: [], icon: 'Shy', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Mini", team: "Crewmate", description: "The Mini is a Crewmate modifier...", abilities: [], icon: 'Mini', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Camouflaged", team: "Crewmate", description: "The Camouflaged is a Crewmate modifier...", abilities: [], icon: 'Camouflaged', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Satellite", team: "Crewmate", description: "The Satellite is a Crewmate modifier...", abilities: [], icon: 'Satellite', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Egotist", team: "Crewmate", description: "The Egotist is a Crewmate modifier...", abilities: [], icon: 'Egotist', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Lovers", team: "Crewmate", description: "The Lovers is a Crewmate modifier...", abilities: [], icon: 'Lovers', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Taskmaster", team: "Crewmate", description: "The Taskmaster is a Crewmate modifier...", abilities: [], icon: 'Taskmaster', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Celebrity", team: "Crewmate", description: "The Celebrity is a Crewmate modifier...", abilities: [], icon: 'Celebrity', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Immovable", team: "Crewmate", description: "The Immovable is a Crewmate modifier...", abilities: [], icon: 'Immovable', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Rotting", team: "Crewmate", description: "The Rotting is a Crewmate modifier...", abilities: [], icon: 'Rotting', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Noisemaker", team: "Crewmate", description: "The Noisemaker is a Crewmate modifier...", abilities: [], icon: 'Noisemaker', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Scientist", team: "Crewmate", description: "The Scientist is a Crewmate modifier...", abilities: [], icon: 'Scientist', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Operative", team: "Crewmate", description: "The Operative is a Crewmate modifier...", abilities: [], icon: 'Operative', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Scout", team: "Crewmate", description: "The Scout is a Crewmate modifier...", abilities: [], icon: 'Scout', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Disperser", team: "Impostor", description: "The Disperser is an Impostor modifier...", abilities: [], icon: 'Disperser', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Double Shot", team: "Impostor", description: "The Double Shot is an Impostor modifier...", abilities: [], icon: 'DoubleShot', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Saboteur", team: "Impostor", description: "The Saboteur is an Impostor modifier...", abilities: [], icon: 'Saboteur', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Underdog", team: "Impostor", description: "The Underdog is an Impostor modifier...", abilities: [], icon: 'Underdog', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Telepath", team: "Impostor", description: "The Telepath is an Impostor modifier...", abilities: [], icon: 'Telepath', types: ["Other"], options: [] },
+        { category: "Modifier", name: "Spy Modifier", team: "Crewmate", description: "The Spy Modifier is a Crewmate modifier...", abilities: [], icon: 'SpyModifier', types: ["Other"], options: [] }
+    ];
+
+    function getRoleImageUrl(iconName) {
+    // Make sure your role images are in the 'img/roles/' folder and named like 'Aurial.png'
+    return `Media/${iconName}.png`;
+}
+
+/**
+ * Generates the URL for a modifier icon.
+ * Assumes modifier icons are named like 'Telepath.png' and located in 'img/modifiers/'.
+ * @param {string} iconName - The base name of the modifier icon (e.g., 'Telepath').
+ * @returns {string} The full URL to the modifier icon.
+ */
+function getModifierImageUrl(iconName) {
+    // Make sure your modifier images are in the 'img/modifiers/' folder and named like 'Telepath.png'
+    return `Media/${iconName}.png`;
+}
+
+    function findRoleData(roleName) {
+        const normalizedRoleName = roleName.trim().toLowerCase();
+        return allEntitiesData.find(entity => entity.name.toLowerCase() === normalizedRoleName);
+    }
+
+    // --- Tab Management Functions ---
+    function saveTabs() {
+        localStorage.setItem('notesTabs', JSON.stringify(notesTabs));
+        localStorage.setItem('roleCards', JSON.stringify(roleCards));
+    }
+
+    function createTabButton(tabName) {
+        const button = document.createElement('button');
+        button.classList.add('tab-button');
+        button.textContent = tabName;
+        button.dataset.tabName = tabName;
+        button.onclick = () => switchTab(tabName);
+
+        if (tabName !== 'Notes' && tabName !== 'Roles') {
+            const closeBtn = document.createElement('span');
+            closeBtn.classList.add('close-tab-btn');
+            closeBtn.innerHTML = '&times;';
+            closeBtn.onclick = (e) => {
+                e.stopPropagation();
+                closeTab(tabName);
+            };
+            button.appendChild(closeBtn);
+        }
+
+        return button;
+    }
+
+    function switchTab(tabName) {
+        if (activeTab) {
+            const currentActiveButton = tabsContainer.querySelector(`.tab-button[data-tab-name="${activeTab}"]`);
+            if (currentActiveButton) {
+                currentActiveButton.classList.remove('active');
+            }
+        }
+        activeTab = tabName;
+        const newActiveButton = tabsContainer.querySelector(`.tab-button[data-tab-name="${activeTab}"]`);
+        if (newActiveButton) {
+            newActiveButton.classList.add('active');
+        }
+
+        renderContent();
+    }
+
+    function closeTab(tabName) {
+        if (tabName === 'Notes' || tabName === 'Roles') {
+            return;
+        }
+        delete notesTabs[tabName];
+        saveTabs();
+        if (activeTab === tabName) {
+            const tabNames = Object.keys(notesTabs);
+            const newActiveTab = tabNames[tabNames.length - 1] || 'Notes';
+            switchTab(newActiveTab);
+        }
+        loadTabs();
+    }
+
+    function getRoleCardHTML(card, index) {
+        const roleData = findRoleData(card.role);
+        const cardColor = roleData ? (roleData.category === "Role" ? roleColors[roleData.name] : modifierColors[roleData.name]) : '#A0AEC0';
+        let iconUrl = "";
+        if (roleData) {
+            if (roleData.category === "Role") {
+                iconUrl = getRoleImageUrl(roleData.name);
+            } else if (roleData.category === "Modifier") {
+                iconUrl = getModifierImageUrl(roleData.name);
+            }
+        }
+        // Updated: include background and box-shadow in the style attribute
+        return `
+            <div class="role-card" data-index="${index}" style="border-color:${cardColor}; background:rgba(0,0,0,0.65); box-shadow:0 0 12px ${cardColor}, inset 0 0 6px ${cardColor};">
+                <button class="delete-role-card-button" data-index="${index}">&times;</button>
+                <div class="role-card-name" contenteditable="true" onblur="updateRoleCard(${index}, 'name', this.innerText)">${card.name}</div>
+                <hr style="width:100%; border:0.5px solid #555; margin-bottom:0.2rem;">
+                <div class="role-card-role" style="color:${cardColor}; font-weight:700;"  contenteditable="true" onblur="updateRoleCard(${index}, 'role', this.innerText)">${card.role}</div>
+                <hr style="width:100%; border:0.5px solid #555; margin-bottom:0.2rem;">
+                <div class="role-card-icon" style="filter:drop-shadow(0 0 8px ${cardColor});" ${cardColor};">
+                    ${iconUrl ? `<img src="${iconUrl}" alt="${card.role}" style="max-width:100%; max-height:100%; object-fit:contain;">` : ""}
+                </div>
+            </div>
+        `;
+    }
+
+    function processTextareaForRoleCards(textarea) {
+        const lines = textarea.value.split('\n');
+        let updatedLines = [];
+        let cardAdded = false;
+
+        lines.forEach(line => {
+            const trimmedLine = line.trim();
+            if (trimmedLine) {
+                const match = trimmedLine.match(roleCardRegex);
+                if (match) {
+                    const name = match[1].trim();
+                    const qualifier = match[2] ? match[2].trim() : '';
+                    const role = match[3].trim();
+                    const roleData = findRoleData(role);
+                    
+                    if (roleData) { 
+                        const newCard = { name, qualifier, role };
+                        roleCards.push(newCard);
+                        cardAdded = true;
+                    } else {
+                        updatedLines.push(line);
+                    }
+                } else {
+                    updatedLines.push(line);
+                }
+            }
+        });
+
+        if (cardAdded) {
+            textarea.value = updatedLines.join('\n');
+            notesTabs[activeTab].content = textarea.value;
+            saveTabs();
+            // Only render Roles tab if active
+            if (activeTab === 'Roles') renderRolesTab();
+            // rolesContentDiv visibility is now managed only by renderContent()
+        }
+    }
+
+    function deleteRoleCard(index) {
+        roleCards.splice(index, 1);
+        saveTabs();
+        renderRolesTab();
+    }
+
+    function updateRoleCard(index, field, newValue) {
+        if (roleCards[index]) {
+            roleCards[index][field] = newValue.trim();
+            if (field === 'role') {
+                // Ensure case-insensitive matching with role data
+                const roleData = findRoleData(newValue.trim());
+                if (roleData) {
+                    roleCards[index].role = roleData.name; // Normalize to proper case
+                }
+            }
+            saveTabs();
+            renderRolesTab();
+        }
+    }
+
+    function renderNotepadTab() {
+        const content = notesTabs[activeTab].content;
+        notesContentDiv.innerHTML = `
+            <textarea id="notepadTextarea" class="notepad-textarea custom-scrollable-container w-full h-full">${content}</textarea>
+        `;
+        const textarea = document.getElementById('notepadTextarea');
+        if (textarea) {
+            textarea.oninput = (e) => {
+                notesTabs[activeTab].content = e.target.value;
+                processTextareaForRoleCards(textarea);
+            };
+        }
+    }
+
+    function renderRolesTab() {
+        if (roleCards.length === 0) {
+            rolesContentDiv.innerHTML = `
+                <div style="font-size:30px; align-items:center; margin-left:auto; margin-right:auto" class="text-center text-gray-500 font-weight-700 p-8">
+                    No role cards yet.
+                    <br>
+                    Type a role in any notepad to create one.
+                    <br>
+                    Example: <span class="text-white font-normal">Someone is probably Impostor</span>
+                    <br>
+                    or <span class="text-white font-normal">Someone is altruist</span>
+                </div>
+            `;
+        } else {
+            rolesContentDiv.innerHTML = roleCards.map((card, index) => getRoleCardHTML(card, index)).join('');
+            rolesContentDiv.style.backgroundColor = '#232323';
+            rolesContentDiv.style.borderRadius = '10px';
+            // Add expand/collapse for each role-card
+            const cards = rolesContentDiv.querySelectorAll('.role-card');
+            cards.forEach(cardEl => {
+                cardEl.addEventListener('click', (e) => {
+                    if (e.target.closest('.delete-role-card-button')) return; 
+                    cardEl.classList.toggle('expanded');
+                    let detail = cardEl.querySelector('.role-card-detail');
+                    if (!detail) {
+                        const index = cardEl.dataset.index;
+                        const card = roleCards[index];
+                        const roleData = findRoleData(card.role);
+                        if (roleData) {
+                            detail = document.createElement('div');
+                            detail.classList.add('role-card-detail');
+                            detail.style.marginTop = "0.5rem";
+                            detail.style.fontSize = "0.9rem";
+                            detail.style.color = "#ddd";
+                            detail.innerHTML = `
+                                <div><strong>Description:</strong> ${roleData.description || "No description available."}</div>
+                                <div><strong>Team:</strong> ${roleData.team}</div>
+                                <div><strong>Category:</strong> ${roleData.category}</div>
+                            `;
+                            cardEl.appendChild(detail);
+                        }
+                    } else {
+                        detail.remove();
+                    }
+                });
+            });
+        }
+    }
+
+    function renderContent() {
+        rolesContentDiv.classList.add('hidden'); // hide by default
+        notesContentDiv.classList.add('hidden'); // hide notes by default
+
+        if (activeTab === 'Roles') {
+            rolesContentDiv.classList.remove('hidden');
+            rolesContentDiv.style.display = 'flex'; // ensure notesContentDiv is block when switching back
+            renderRolesTab();
+        } else {
+            notesContentDiv.classList.remove('hidden');
+            rolesContentDiv.style.display = 'none'; // ensure rolesContentDiv is block when switching back
+            renderNotepadTab();
+        }
+    }
+
+    function loadTabs() {
+        tabsContainer.innerHTML = '';
+        const storedTabs = localStorage.getItem('notesTabs');
+        const storedRoleCards = localStorage.getItem('roleCards');
+
+        if (storedTabs) {
+            notesTabs = JSON.parse(storedTabs);
+        } else {
+            notesTabs = {
+                'Notes': { content: '' },
+                'Roles': { content: '' }
+            };
+        }
+        
+        if (storedRoleCards) {
+            roleCards = JSON.parse(storedRoleCards);
+        }
+
+        Object.keys(notesTabs).forEach(tabName => {
+            const button = createTabButton(tabName);
+            tabsContainer.appendChild(button);
+        });
+
+        if (!notesTabs['Notes']) {
+            notesTabs['Notes'] = { content: '' };
+        }
+        if (!notesTabs['Roles']) {
+            notesTabs['Roles'] = { content: '' };
+        }
+
+        switchTab(activeTab);
+    }
+
+    function resetAllNotes() {
+        if (confirm("Are you sure you want to reset all notes? This will delete all tabs except the default ones and clear all content.")) {
+            notesTabs = {
+                'Notes': { content: '' },
+                'Roles': { content: '' }
+            };
+            roleCards = [];
+            activeTab = 'Notes';
+            saveTabs();
+            loadTabs();
+        }
+    }
+
+    // --- Event Listeners ---
+    // Single delegated listener for role card delete buttons
+    rolesContentDiv.addEventListener('click', (e) => {
+        const deleteButton = e.target.closest('.delete-role-card-button');
+        if (deleteButton) {
+            const index = deleteButton.dataset.index;
+            deleteRoleCard(index);
+        }
+    });
+    addTabButton.addEventListener('click', () => {
+        const newTabName = `New Tab ${tabCounter++}`;
+        notesTabs[newTabName] = { content: '' };
+        saveTabs();
+        loadTabs();
+        switchTab(newTabName);
+    });
+
+    resetButton.addEventListener('click', resetAllNotes);
+
+    // --- Dropdown Menu and Iframe Functionality ---
+    dropdownMenu.addEventListener('click', (event) => {
+        const dropdownContent = dropdownMenu.querySelector('div');
+        if (event.target.tagName === 'A' || event.target.closest('A')) {
+            return;
+        }
+        dropdownContent.classList.toggle('hidden');
+    });
+
+    function openIframe(url) {
+        dynamicIframe.src = url;
+        iframeOverlay.classList.remove('hidden');
+        iframeOverlay.classList.add('flex');
+    }
+
+    closeIframeButton.addEventListener('click', () => {
+        iframeOverlay.classList.remove('flex');
+        iframeOverlay.classList.add('hidden');
+        dynamicIframe.src = '';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (!dropdownMenu.contains(event.target)) {
+            dropdownMenu.querySelector('div').classList.add('hidden');
+        }
+    });
+
+    // --- Initial Load ---
+    document.addEventListener('DOMContentLoaded', () => {
+        loadTabs();
+    });
+</script>
+
 </body>
 </html>
-
-
