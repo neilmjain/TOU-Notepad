@@ -11,6 +11,36 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <style>
+        /* Apparent dropdown for role cards */
+        .role-card-dropdown {
+            appearance: none;
+            border: none; /* remove border */
+            border-radius: 8px;
+            padding: 10px 20px; /* larger clickable area */
+            font-size: 20px; /* slightly bigger text */
+            background-color: transparent; /* let card background show */
+            color: #e2e2e2;
+            margin: 6px 0;
+            width: 90%;
+            box-shadow: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.12s;
+        }
+        .role-card-dropdown:focus, .role-card-dropdown:hover {
+            outline: none;
+            background-color: rgba(0,0,0,0.15);
+            color: #fff;
+        }
+        .role-card-dropdown-chevron {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            font-size: 15px;
+            color: var(--role-color, #ff1a1a);
+        }
         @font-face {
             font-family: 'Amatic SC';
             src: url('0a1915693ca58e3e-s.p.woff') format('woff');
@@ -166,7 +196,7 @@
             transition: transform 0.2s ease, box-shadow 0.3s ease;
             cursor: pointer;
             box-shadow: 0 0 12px rgba(255, 0, 0, 0.4), inset 0 0 6px rgba(255, 0, 0, 0.2);
-            width: 180px;
+            width: 170px;
             flex-shrink: 0;
         }
 
@@ -242,6 +272,13 @@
             background-color: #2a2a26;
             padding: 0.5rem 1rem;
             transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            border-radius:2px ;
+            box-sizing: border-box;
         }
         .menu-item:hover {
             background-color: #404038;
@@ -258,6 +295,79 @@
         }
         #closeIframe:hover {
             background-color: #b30000;
+        }
+         /* Add this new CSS block */
+    .role-card-dropdown-container {
+        position: left; /* Essential for positioning the menu inside the card */
+        width: 100%;
+        text-align: center;
+        margin-top: 5px;
+    }
+
+    .role-card-role-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* --- New Styles for Role Cycling Arrows --- */
+.role-card-cycle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%; 
+}
+
+.cycle-role-button {
+    background: none;
+    border: none;
+    color: var(--main-color, #E2E8F0); /* Inherits color from the role */
+    font-size: 1.5rem; 
+    cursor: pointer;
+    padding: 0 5px;
+    transition: color 0.2s;
+    line-height: 1; /* Ensures vertical alignment */
+}
+
+.cycle-role-button:hover {
+    color: #fff;
+}
+
+.role-card-role {
+    flex-grow: 1;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden; /* Prevent text from escaping if too long */
+    text-overflow: ellipsis; 
+}
+        /* --- Animations --- */
+        @keyframes poof-out {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
+            40% { transform: scale(1.08) rotate(-6deg); opacity: 0.9; }
+            100% { transform: scale(0.1) rotate(10deg); opacity: 0; filter: blur(6px); }
+        }
+
+        .animate-poof {
+            animation: poof-out 420ms cubic-bezier(.4,0,.2,1) forwards;
+        }
+
+        @keyframes tab-slide {
+            0% { opacity: 0; transform: translateY(8px) scale(0.98); }
+            60% { opacity: 1; transform: translateY(-4px) scale(1.01); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-tab {
+            animation: tab-slide 360ms cubic-bezier(.2,.9,.2,1) both;
+        }
+
+        @keyframes role-pulse {
+            0% { transform: scale(1); box-shadow: 0 0 8px rgba(0,0,0,0.0); }
+            40% { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+            100% { transform: scale(1); box-shadow: none; }
+        }
+        .animate-role-change {
+            animation: role-pulse 300ms cubic-bezier(.2,.8,.2,1) both;
         }
     </style>
 </head>
@@ -309,6 +419,10 @@
     let activeTab = 'Notes';
     let tabCounter = 1;
     let roleCards = [];
+    // Track any open floating menu so we can close it and ensure it stays on the top layer
+    let currentOpenFloatingMenu = null;
+
+    // ...existing code...
 
     // --- DOM Elements ---
     const tabsContainer = document.getElementById('tabsContainer');
@@ -452,62 +566,19 @@
     // Crewmate Roles
     {
         category: "Role", name: "Aurial", team: "Crewmate",
-        description: "The Aurial is a Crewmate that can sense when players use an ability nearby. If any player near the Aurial uses a button ability, the Aurial will get an arrow pointing towards where that ability was used.",
-        abilities: [],
         icon: 'Aurial',
-        types: ["Detection", "Other"],
-        options: [
-            { name: "Aurial", description: "The percentage probability of the Aurial appearing", type: "Percentage", default: "0%", range: "N/A" },
-            { name: "Radiate Colour Range", description: "The range of the Aurial's aura where they see the colour of the ability user", type: "Multiplier", default: "0.5x", range: "N/A" },
-            { name: "Radiate Max Range", description: "The max range of the Aurial's aura where they see ability uses", type: "Multiplier", default: "1.5x", range: "N/A" },
-            { name: "Sense Duration", description: "The duration of the arrow to show an ability use", type: "Time", default: "10s", range: "N/A" }
-        ]
     },
     {
         category: "Role", name: "Detective", team: "Crewmate",
-        description: "The Detective has a 2 step ability.\nThe first stage involves inspecting a crime scene. Once a crime scene is inspected they can then examine other players on cooldown to see if that player was at the scene of the crime.\nCrime scenes spawn at each dead body. They also get a detective report telling them the type of killer if they examine someone’s body.",
-        abilities: [
-            { name: "Inspect", icon: 'InspectButton.png', description: "Inspects a crime scene to gather clues." },
-            { name: "Examine", icon: 'ExamineButton.png', description: "Examines players to check their presence at a crime scene." }
-        ],
         icon: 'Detective',
-        types: ["Detection"],
-        options: [
-            { name: "Detective", description: "The percentage probability of the Detective appearing", type: "Percentage", default: "0%", range: "N/A" },
-            { name: "Examine Cooldown", description: "The cooldown of the Detective's Examine button", type: "Time", default: "25s", range: "N/A" },
-            { name: "Show Detective Reports", description: "Whether the Detective should get information when reporting a body", type: "Toggle", default: "True", range: "N/A" },
-            { name: "Time Where Detective Reports Will Have Role", description: "If a body has been dead for shorter than this amount, the Detective's report will contain the killer's role", type: "Time", default: "15s", range: "N/A" },
-            { name: "Time Where Detective Reports Will Have Faction", description: "If a body has been dead for shorter than this amount, the Detective's report will contain the killer's faction", type: "Time", default: "30s", range: "N/A" }
-        ]
     },
     {
         category: "Role", name: "Engineer", team: "Crewmate",
-        description: "The Engineer is a Crewmate that can fix sabotages from anywhere on the map.\nThey can use vents to get across the map easily.",
-        abilities: [
-            { name: "Vent", icon: 'EngiVentButton.png', description: "Uses vents for quick movement." },
-            { name: "Fix", icon: 'FixButton.png', description: "Fixes sabotages from any location." }
-        ],
         icon: 'Engineer',
-        types: ["Utility", "Movement"],
-        options: [
-            { name: "Engineer", description: "The percentage probability of the Engineer appearing", type: "Percentage", default: "0%", range: "N/A" },
-            { name: "Maximum Fixes", description: "The number of times the Engineer can fix a sabotage", type: "Number", default: "5", range: "N/A" }
-        ]
     },
     {
         category: "Role", name: "Medic", team: "Crewmate",
-        description: "The Medic is a Crewmate that can give any player a shield that will make them immortal until the Medic dies.\nA Shielded player cannot be killed by anyone, unless by suicide.\nIf the Medic reports a dead body, they can get a report containing clues to the Killer's identity.\nA report can contain the color type (Darker/Lighter) of the killer if the body is not too old.",
-        abilities: [{ name: "Shield", icon: 'MedicButton.png', description: "Provides a shield to a player, making them immortal." }],
         icon: 'Medic',
-        types: ["Protective", "Support"],
-        options: [
-            { name: "Medic", description: "The percentage probability of the Medic appearing", type: "Percentage", default: "0%", range: "N/A" },
-            { name: "Show Shielded Player", description: "Who should be able to see who is Shielded", type: "Self / Medic / Self + Medic", default: "Medic", range: "N/A" },
-            { name: "Who gets murder attempt indicator", description: "Who will receive an indicator when someone tries to Kill them", type: "Medic / Shielded / Nobody", default: "Medic", range: "N/A" },
-            { name: "Shield breaks on murder attempt", description: "Whether the Shield breaks when someone attempts to Kill them", type: "Toggle", default: "False", range: "N/A" },
-            { name: "Show Medic Reports", description: "Whether the Medic should get information \nwhen reporting a body", type: "Toggle", default: "True", range: "N/A" },
-            { name: "Time Where Medic Reports Will Have Color Type", description: "If a body has been dead for shorter than this amount, the Medic's report will have the type of color", type: "Time", default: "15s", range: "N/A" }
-        ]
     },
     {
         category: "Role", name: "Sheriff", team: "Crewmate",
@@ -939,7 +1010,7 @@
         options: [
             { name: "Mercenary", description: "The percentage probability of the Mercenary appearing", type: "Percentage", "default": "0%", range: "N/A" },
             { name: "Guard Cooldown", description: "The cooldown of the Mercenary's Guard button", type: "Time", "default": "10s", range: "N/A" },
-            { name: "Max Guards", description: "The maximum amount of Guards active at one time", type: "Number", "default": "3", range: "N/A" },
+            { name: "Max Guards", description: "The maximum amount of Guards active at one time", type: "Number", default: "3", range: "N/A" },
             { name: "Gold To Bribe", description: "The amount of gold required to bribe a player", type: "Number", "default": "3", range: "N/A" }
         ]
     },
@@ -972,7 +1043,7 @@
             { name: "Observe Cooldown", description: "The Cooldown of the Doomsayer's Observe button", type: "Time", "default": "10s", range: "N/A" },
             { name: "Doomsayer Guesses All At Once", description: "Whether the Doomsayer has to guess all 3 roles to win at once", type: "Toggle", "default": "True", range: "N/A" },
             { name: "(Experienced) Doomsayer Can't Observe", description: "The Doomsayer doesn't have the observe feature", type: "Toggle", "default": "False", range: "N/A" },
-            { name: "Doomsayer Win Ends Game", description: "Whether Doomsayer winning ends the game", type: "Toggle", "default": "True", range: "N/A" }
+                       { name: "Doomsayer Win Ends Game", description: "Whether Doomsayer winning ends the game", type: "Toggle", "default": "True", range: "N/A" }
         ]
     },
     {
@@ -1366,8 +1437,7 @@
         icon: 'Miner',
         types: ["Utility"],
         options: [
-            { name: "Miner", description: "The percentage probability of the Miner appearing", type: "Percentage", "default": "0%", range: "N/A" },
-            { name: "Mine Cooldown", description: "The cooldown of the Miner's Mine button", type: "Time", "default": "25s", range: "N/A" }
+            { name: "Miner", description: "The percentage probability of the Miner appearing", type: "Percentage", "default": "0%", range: "N/A" }
         ]
     },
     {
@@ -1741,6 +1811,49 @@ function getModifierImageUrl(iconName) {
         return allEntitiesData.find(entity => entity.name.toLowerCase() === normalizedRoleName);
     }
 
+    // --- New State Variable to track the currently visible role for each player ---
+
+// --- New Function: Get Consolidated Roles ---
+/**
+ * Finds the consolidated roles for a specific player name.
+ */
+function getConsolidatedRolesForPlayer(playerName) {
+    // NOTE: This assumes 'consolidateRoles()' is defined elsewhere and works correctly.
+    const consolidated = consolidateRoles(); 
+    return consolidated.find(p => p.name.toLowerCase() === playerName.toLowerCase());
+}
+
+// --- New Function: Cycle Role Index ---
+/**
+ * Updates the visible role index for a player and re-renders the card.
+ */
+function cyclePlayerRole(playerName, direction) {
+    const playerRolesData = getConsolidatedRolesForPlayer(playerName);
+    if (!playerRolesData || playerRolesData.roles.length <= 1) return;
+
+    const numRoles = playerRolesData.roles.length;
+    let currentIndex = playerActiveRoleIndex[playerName] || 0;
+
+    let newIndex = currentIndex + direction;
+
+    // Handle wrapping (circular array)
+    if (newIndex < 0) {
+        newIndex = numRoles - 1;
+    } else if (newIndex >= numRoles) {
+        newIndex = 0;
+    }
+
+    playerActiveRoleIndex[playerName] = newIndex;
+    
+    // Find the old card and replace it with the new one
+    const oldCard = rolesContentDiv.querySelector(`.role-card[data-player="${playerName}"]`);
+    if (oldCard) {
+        // Re-create the element using the new active role index
+        const newCard = createRoleCardElement(playerRolesData); 
+        rolesContentDiv.replaceChild(newCard, oldCard);
+    }
+}
+
     // --- Tab Management Functions ---
     function saveTabs() {
         localStorage.setItem('notesTabs', JSON.stringify(notesTabs));
@@ -1767,6 +1880,410 @@ function getModifierImageUrl(iconName) {
 
         return button;
     }
+    // --- New Function: Role Consolidation ---
+/**
+ * Groups all assigned roles from the roleCards array by player name.
+ * @returns {Array<Object>} An array of consolidated player objects.
+ */
+// --- New State Variable to track the currently visible role for each player ---
+let playerActiveRoleIndex = {};
+
+// --- Core Role Consolidation Logic (REQUIRED) ---
+/**
+ * Groups all assigned roles from the roleCards array by player name.
+ */
+function consolidateRoles() {
+    const playersMap = {};
+    if (!Array.isArray(roleCards)) return []; 
+    
+    roleCards.forEach(card => {
+        const playerName = card.player.trim().toLowerCase();
+        if (!playersMap[playerName]) {
+            playersMap[playerName] = { name: playerName, roles: [] };
+        }
+        if (Array.isArray(card.roles)) {
+            card.roles.forEach(r => {
+                playersMap[playerName].roles.push({ role: r.role, certainty: r.certainty });
+            });
+        } else if (card.role) {
+            playersMap[playerName].roles.push({ role: card.role, certainty: card.certainty });
+        }
+    });
+    // Sort roles by certainty
+    Object.values(playersMap).forEach(player => {
+        player.roles.sort((a, b) => {
+            if (a.certainty === 'not') return 1;
+            if (b.certainty === 'not') return -1;
+            return 0;
+        });
+    });
+    return Object.values(playersMap);
+}
+
+// --- Essential Helper Functions ---
+function getConsolidatedRolesForPlayer(playerName) {
+    const consolidated = consolidateRoles(); 
+    return consolidated.find(p => p.name.toLowerCase() === playerName.toLowerCase());
+}
+
+function deleteRoleCardByPlayerName(playerName) {
+    roleCards = roleCards.filter(card => card.player.trim().toLowerCase() !== playerName.toLowerCase());
+    delete playerActiveRoleIndex[playerName];
+    renderRoleCards();
+    saveTabs();
+}
+
+/**
+ * Updates the visible role index for a player and re-renders the card.
+ */
+function cyclePlayerRole(playerName, direction) {
+    const playerRolesData = getConsolidatedRolesForPlayer(playerName);
+    if (!playerRolesData || playerRolesData.roles.length <= 1) return;
+
+    const numRoles = playerRolesData.roles.length;
+    let currentIndex = playerActiveRoleIndex[playerName] || 0;
+
+    let newIndex = currentIndex + direction;
+
+    // Handle circular wrapping
+    if (newIndex < 0) {
+        newIndex = numRoles - 1;
+    } else if (newIndex >= numRoles) {
+        newIndex = 0;
+    }
+
+    playerActiveRoleIndex[playerName] = newIndex;
+    
+    // Find the old card and replace it with the newly generated card
+    const oldCard = rolesContentDiv.querySelector(`.role-card[data-player="${playerName}"]`);
+    if (oldCard) {
+        const newCard = createRoleCardElement(playerRolesData); 
+        rolesContentDiv.replaceChild(newCard, oldCard);
+    }
+}
+
+// --- Modified Function: Role Card Element Creation (Core Logic) ---
+function createRoleCardElement(playerData) {
+    const card = document.createElement('div');
+    card.classList.add('role-card');
+    card.dataset.player = playerData.name;
+    // ...existing code...
+
+    const activeIndex = typeof playerActiveRoleIndex[playerData.name] === 'number' ? playerActiveRoleIndex[playerData.name] : 0;
+    const activeRole = playerData.roles[activeIndex];
+    // Case-insensitive color lookup for roles and modifiers
+    let roleColor = '#ffffff';
+    const roleKey = activeRole.role ? activeRole.role.trim().toLowerCase() : '';
+    for (const key in roleColors) {
+        if (key.toLowerCase() === roleKey) {
+            roleColor = roleColors[key];
+            break;
+        }
+    }
+    if (roleColor === '#ffffff') {
+        for (const key in modifierColors) {
+            if (key.toLowerCase() === roleKey) {
+                roleColor = modifierColors[key];
+                break;
+            }
+        }
+    }
+    // Set --role-color for all children to inherit
+    card.style.setProperty('--role-color', roleColor);
+    card.style.setProperty('--main-color', roleColor);
+    card.style.borderColor = roleColor;
+    card.style.backgroundColor = `#000000`; // 7% opacity
+    card.style.boxShadow = `0 0 8px ${roleColor}33, inset 0 0 4px ${roleColor}22`;
+    // --- Delete Button ---
+    const deleteButton = document.createElement('span');
+    deleteButton.classList.add('delete-role-card-button');
+    deleteButton.innerHTML = '&times;';
+    deleteButton.dataset.player = playerData.name;
+    card.appendChild(deleteButton);
+    // --- Player Name ---
+    const nameDiv = document.createElement('div');
+    nameDiv.classList.add('role-card-name');
+    nameDiv.textContent = playerData.name;
+    card.appendChild(nameDiv);
+    // --- Role Icon ---
+    const roleData = findRoleData(activeRole.role);
+    const roleIconUrl = roleData 
+        ? (roleData.category === "Role" ? getRoleImageUrl(roleData.icon) : getModifierImageUrl(roleData.icon)) 
+        : 'Media/DefaultIcon.png';
+    const iconDiv = document.createElement('div');
+    iconDiv.classList.add('role-card-icon');
+    iconDiv.style.filter = `drop-shadow(0 0 8px ${roleColor})`;
+    iconDiv.innerHTML = `<img src="${roleIconUrl}" style="background:none;" class="w-full h-full object-contain" alt="${activeRole.role} icon" onerror="this.onerror=null;this.src='Media/DefaultIcon.png';">`;
+    card.appendChild(iconDiv);
+    // --- Role Display Container (Structure for Cycling & Dropdown) ---
+    const roleContainer = document.createElement('div');
+    roleContainer.classList.add('role-card-cycle-container');
+    if (playerData.roles.length > 1) {
+        // Custom dropdown: button + menu
+        const dropdownWrapper = document.createElement('div');
+        dropdownWrapper.style.position = 'relative';
+        dropdownWrapper.style.width = '100%';
+
+    const activeButton = document.createElement('button');
+    activeButton.classList.add('role-card-dropdown');
+    // make the chevron positioning work
+    activeButton.style.position = 'relative';
+    activeButton.style.display = 'flex';
+    activeButton.style.justifyContent = 'center';
+    activeButton.style.alignItems = 'center';
+    activeButton.style.gap = '8px';
+
+    // create a centered label container (icon + text)
+    const labelContainer = document.createElement('div');
+    labelContainer.style.display = 'inline-flex';
+    labelContainer.style.alignItems = 'center';
+    labelContainer.style.justifyContent = 'center';
+    labelContainer.style.gap = '8px';
+    labelContainer.style.flex = '1';
+
+    // small icon for the active role
+    const activeRoleData = findRoleData(playerData.roles[activeIndex].role);
+    const activeIconUrl = activeRoleData ? (activeRoleData.category === 'Role' ? getRoleImageUrl(activeRoleData.icon) : getModifierImageUrl(activeRoleData.icon)) : 'Media/DefaultIcon.png';
+    const activeIconImg = document.createElement('img');
+    activeIconImg.src = activeIconUrl;
+    activeIconImg.alt = playerData.roles[activeIndex].role + ' icon';
+    activeIconImg.style.width = '20px';
+    activeIconImg.style.height = '20px';
+    activeIconImg.style.objectFit = 'contain';
+    activeIconImg.style.verticalAlign = 'right';
+    activeIconImg.onerror = function() { this.onerror = null; this.src = 'Media/DefaultIcon.png'; };
+
+    const labelTextSpan = document.createElement('span');
+    labelTextSpan.textContent = playerData.roles[activeIndex].role + (playerData.roles[activeIndex].certainty ? ` (${playerData.roles[activeIndex].certainty})` : '');
+    labelTextSpan.style.fontSize = '20px';
+    labelTextSpan.style.fontWeight = '700';
+    labelTextSpan.style.textAlign = 'center';
+    labelTextSpan.style.lineHeight = '1';
+    labelTextSpan.style.color = roleColor; // color the selected role
+
+    labelContainer.appendChild(activeIconImg);
+    labelContainer.appendChild(labelTextSpan);
+
+    const chev = document.createElement('span');
+    chev.classList.add('role-card-dropdown-chevron');
+    chev.innerHTML = '\u25BC';
+    // append the centered label and chevron
+    activeButton.appendChild(labelContainer);
+    activeButton.appendChild(chev);
+
+    const menu = document.createElement('div');
+    menu.classList.add('dropdown-content');
+    menu.style.background = '#1f1f1f';
+    menu.style.borderRadius = '8px';
+    menu.style.marginTop = '6px';
+    menu.style.zIndex = '50';
+    menu.style.display = 'none';
+
+        playerData.roles.forEach((r, idx) => {
+            const item = document.createElement('div');
+            item.classList.add('menu-item');
+            item.style.cursor = 'pointer';
+            item.style.padding = '6px 8px';
+            // Determine color for this role
+            let itemColor = '#E2E8F0';
+            for (const key in roleColors) {
+                if (key.toLowerCase() === r.role.toLowerCase()) { itemColor = roleColors[key]; break; }
+            }
+            if (itemColor === '#E2E8F0') {
+                for (const key in modifierColors) {
+                    if (key.toLowerCase() === r.role.toLowerCase()) { itemColor = modifierColors[key]; break; }
+                }
+            }
+            item.style.color = itemColor;
+            // center icon + text together
+            item.style.display = 'flex';
+            item.style.alignItems = 'center';
+            item.style.justifyContent = 'center';
+
+            // add a very small icon to the menu item
+            const rData = findRoleData(r.role);
+            const iconUrl = rData ? (rData.category === 'Role' ? getRoleImageUrl(rData.icon) : getModifierImageUrl(rData.icon)) : 'Media/DefaultIcon.png';
+            const itemIcon = document.createElement('img');
+            itemIcon.src = iconUrl;
+            itemIcon.alt = r.role + ' icon';
+            itemIcon.style.width = '20px';
+            itemIcon.style.height = '20px';
+            itemIcon.style.objectFit = 'contain';
+            itemIcon.style.marginRight = '4px';
+            itemIcon.onerror = function() { this.onerror = null; this.src = 'Media/DefaultIcon.png'; };
+
+            const itemText = document.createElement('span');
+            itemText.textContent = r.role + (r.certainty ? ` (${r.certainty})` : '');
+            itemText.style.fontSize = '18px';
+            itemText.style.fontWeight = '600';
+
+            item.appendChild(itemIcon);
+            item.appendChild(itemText);
+
+            item.onclick = (e) => {
+                e.stopPropagation();
+                playerActiveRoleIndex[playerData.name] = idx;
+                // update the active label (icon + text)
+                // replace icon src
+                const newRoleData = findRoleData(r.role);
+                const newIconUrl = newRoleData ? (newRoleData.category === 'Role' ? getRoleImageUrl(newRoleData.icon) : getModifierImageUrl(newRoleData.icon)) : 'Media/DefaultIcon.png';
+                activeIconImg.src = newIconUrl;
+                activeIconImg.alt = r.role + ' icon';
+                labelTextSpan.textContent = r.role + (r.certainty ? ` (${r.certainty})` : '');
+                // recolor selected label
+                let selColor = '#fff';
+                for (const key in roleColors) { if (key.toLowerCase() === r.role.toLowerCase()) { selColor = roleColors[key]; break; } }
+                if (selColor === '#fff') {
+                    for (const key in modifierColors) { if (key.toLowerCase() === r.role.toLowerCase()) { selColor = modifierColors[key]; break; } }
+                }
+                labelTextSpan.style.color = selColor;
+                activeIconImg.style.filter = `drop-shadow(0 0 6px ${selColor})`;
+                menu.style.display = 'none';
+                // animate the card briefly to show the change
+                const parentCard = activeButton.closest('.role-card');
+                if (parentCard) {
+                    parentCard.classList.add('animate-role-change');
+                    parentCard.addEventListener('animationend', function _rc() { parentCard.classList.remove('animate-role-change'); parentCard.removeEventListener('animationend', _rc); });
+                }
+                if (activeTab === 'Roles') renderRolesTab();
+            };
+            menu.appendChild(item);
+        });
+
+        activeButton.onclick = (e) => {
+            e.stopPropagation();
+            // Close any other open menu
+            if (currentOpenFloatingMenu && currentOpenFloatingMenu !== menu) {
+                try { currentOpenFloatingMenu.remove(); } catch (err) {}
+                currentOpenFloatingMenu = null;
+            }
+
+            // If menu is already attached, remove it
+            if (menu.parentNode === document.body) {
+                menu.remove();
+                currentOpenFloatingMenu = null;
+                return;
+            }
+
+            // Position the floating menu based on button rect and append to body so it's on top layer
+            const rect = activeButton.getBoundingClientRect();
+            menu.style.display = 'block';
+            menu.style.position = 'absolute';
+            // Determine menu width: at least the button width, but clamp to reasonable max
+            const minW = Math.max(120, rect.width);
+            const maxW = 380; // don't let menu get too wide
+            const menuWidth = Math.min(minW, maxW);
+            menu.style.width = `${menuWidth}px`;
+            // place below the button; if not enough space, place above
+            const belowTop = rect.bottom + 6;
+            const estimatedHeight = Math.min(300, playerData.roles.length * 36 + 12);
+            if (belowTop + estimatedHeight > window.innerHeight) {
+                // place above
+                menu.style.top = `${Math.max(8, rect.top - estimatedHeight)}px`;
+            } else {
+                menu.style.top = `${Math.max(8, belowTop)}px`;
+            }
+            // clamp left so menu doesn't overflow the viewport
+            let left = rect.left;
+            if (left + menuWidth > window.innerWidth - 8) {
+                left = Math.max(8, window.innerWidth - menuWidth - 8);
+            }
+            menu.style.left = `${left}px`;
+            menu.style.zIndex = '10000';
+            menu.style.boxShadow = '0 8px 24px rgba(0,0,0,0.6)';
+            document.body.appendChild(menu);
+            currentOpenFloatingMenu = menu;
+        };
+
+        // attach the button and the (non-attached) menu placeholder to the card UI
+        dropdownWrapper.appendChild(activeButton);
+        roleContainer.appendChild(dropdownWrapper);
+    }
+    if (playerData.roles.length === 1) {
+        const singleRoleDiv = document.createElement('div');
+        singleRoleDiv.classList.add('role-card-role');
+        singleRoleDiv.textContent = activeRole.role;
+        roleContainer.appendChild(singleRoleDiv);
+    }
+    card.appendChild(roleContainer);
+    return card;
+}
+
+// --- New Function: Role Card Rendering ---
+function renderRoleCards() {
+    rolesContentDiv.innerHTML = '';
+    const consolidated = consolidateRoles();
+    
+    consolidated.forEach(playerData => {
+        const cardElement = createRoleCardElement(playerData);
+        rolesContentDiv.appendChild(cardElement);
+    });
+}
+
+// --- Modified Function: Render all role cards ---
+/**
+ * Clears the rolesContentDiv and re-renders all consolidated role cards.
+ */
+function renderRoleCards() {
+    rolesContentDiv.innerHTML = '';
+    
+    // 1. Consolidate roles by player
+    const consolidatedPlayers = consolidateRoles();
+
+    // 2. Render cards
+    consolidatedPlayers.forEach(playerData => {
+        // Get the index of the first role for the player (used for deletion/editing)
+        const firstRoleCard = roleCards.find(rc => rc.player.trim() === playerData.name.trim());
+        if (firstRoleCard) {
+            const originalIndex = roleCards.indexOf(firstRoleCard);
+            const cardElement = createRoleCardElement(playerData, originalIndex);
+            rolesContentDiv.appendChild(cardElement);
+        }
+    });
+
+    saveTabs();
+}
+
+// --- New Function: Dropdown Toggling ---
+/**
+ * Toggles the visibility of the dropdown content.
+ * @param {Event} e - The click event.
+ * @param {string} dropdownId - The ID of the dropdown content element.
+ */
+function toggleDropdown(e, dropdownId) {
+    e.stopPropagation(); // Prevent card click logic if any
+    
+    const content = document.getElementById(dropdownId);
+    
+    // Hide all other open dropdowns
+    document.querySelectorAll('.dropdown-content.show').forEach(openDropdown => {
+        if (openDropdown.id !== dropdownId) {
+            openDropdown.classList.remove('show');
+        }
+    });
+    
+    // Toggle the current dropdown
+    if (content) {
+        content.classList.toggle('show');
+    }
+}
+
+
+// --- New Global Click Listener for Hiding Dropdowns ---
+window.addEventListener('click', () => {
+    // Hide all dropdowns when clicking anywhere else on the page
+    document.querySelectorAll('.dropdown-content.show').forEach(openDropdown => {
+        openDropdown.classList.remove('show');
+    });
+});
+
+// Close any floating menu when clicking elsewhere
+window.addEventListener('click', (e) => {
+    if (currentOpenFloatingMenu) {
+        try { currentOpenFloatingMenu.remove(); } catch (err) {}
+        currentOpenFloatingMenu = null;
+    }
+});
 
     function switchTab(tabName) {
         if (activeTab) {
@@ -1800,7 +2317,7 @@ function getModifierImageUrl(iconName) {
 
     function getRoleCardHTML(card, index) {
         const roleData = findRoleData(card.role);
-        const cardColor = roleData ? (roleData.category === "Role" ? roleColors[roleData.name] : modifierColors[roleData.name]) : '#A0AEC0';
+        const cardColor = roleData ? roleColors[roleData.name] : '#A0AEC0';
         let iconUrl = "";
         if (roleData) {
             if (roleData.category === "Role") {
@@ -1824,24 +2341,56 @@ function getModifierImageUrl(iconName) {
         `;
     }
 
+
+    // Save processed role lines as objects for robust tracking
+    let savedRoleLines = [];
+
     function processTextareaForRoleCards(textarea) {
         const lines = textarea.value.split('\n');
         let updatedLines = [];
         let cardAdded = false;
-
+        const playerRolesMap = {};
+        const roleSourceMap = {};
+        // Track which lines were processed for deletion
+        const processedLineSet = new Set();
         lines.forEach(line => {
             const trimmedLine = line.trim();
             if (trimmedLine) {
                 const match = trimmedLine.match(roleCardRegex);
                 if (match) {
-                    const name = match[1].trim();
+                    const name = match[1].trim().toLowerCase();
                     const qualifier = match[2] ? match[2].trim() : '';
-                    const role = match[3].trim();
-                    const roleData = findRoleData(role);
-                    
-                    if (roleData) { 
-                        const newCard = { name, qualifier, role };
-                        roleCards.push(newCard);
+                    const rolePhrase = match[3].trim();
+
+                    // Split on ' or ' (support optional leading 'either') to allow multiple role candidates
+                    let roleCandidates = null;
+                    const eitherRegex = /^(?:either\s+)?(.+)$/i;
+                    if (/\bor\b/i.test(rolePhrase)) {
+                        // split on ' or ' occurrences
+                        roleCandidates = rolePhrase.split(/\s+or\s+/i).map(s => s.trim()).filter(Boolean);
+                    } else if (eitherRegex.test(rolePhrase)) {
+                        roleCandidates = [rolePhrase];
+                    }
+
+                    // Attempt to resolve each candidate to a known role/modifier
+                    const matchedRoles = [];
+                    if (Array.isArray(roleCandidates)) {
+                        roleCandidates.forEach(rc => {
+                            const rd = findRoleData(rc);
+                            if (rd) matchedRoles.push(rd.name);
+                        });
+                    }
+
+                    if (matchedRoles.length > 0) {
+                        // Save processed line and add all matched roles
+                        matchedRoles.forEach(mr => {
+                            savedRoleLines.push({ line, player: name, role: mr, certainty: qualifier });
+                            if (!playerRolesMap[name]) playerRolesMap[name] = [];
+                            if (!roleSourceMap[name]) roleSourceMap[name] = [];
+                            playerRolesMap[name].push({ role: mr, certainty: qualifier });
+                            roleSourceMap[name].push(line);
+                        });
+                        processedLineSet.add(line);
                         cardAdded = true;
                     } else {
                         updatedLines.push(line);
@@ -1851,15 +2400,34 @@ function getModifierImageUrl(iconName) {
                 }
             }
         });
-
+        // Build roleCards from all savedRoleLines, not just current parse
         if (cardAdded) {
-            textarea.value = updatedLines.join('\n');
+            // Group all savedRoleLines by player (case-insensitive), but keep original casing for display
+            const allPlayerRolesMap = {};
+            const allRoleSourceMap = {};
+            const playerNameDisplayMap = {};
+            savedRoleLines.forEach(obj => {
+                const playerKey = obj.player.toLowerCase();
+                // Use the latest casing for display
+                playerNameDisplayMap[playerKey] = obj.player;
+                if (!allPlayerRolesMap[playerKey]) allPlayerRolesMap[playerKey] = [];
+                if (!allRoleSourceMap[playerKey]) allRoleSourceMap[playerKey] = [];
+                // Only add if not already present (case-insensitive, same certainty)
+                const key = obj.role.toLowerCase() + '|' + obj.certainty;
+                if (!allPlayerRolesMap[playerKey].some(r => r.role.toLowerCase() + '|' + r.certainty === key)) {
+                    allPlayerRolesMap[playerKey].push({ role: obj.role, certainty: obj.certainty });
+                    allRoleSourceMap[playerKey].push(obj.line);
+                }
+            });
+            roleCards = [];
+            Object.entries(allPlayerRolesMap).forEach(([playerKey, roles]) => {
+                roleCards.push({ player: playerNameDisplayMap[playerKey], roles, sourceLines: allRoleSourceMap[playerKey] });
+            });
+            textarea.value = lines.filter(line => !processedLineSet.has(line)).join('\n');
             notesTabs[activeTab].content = textarea.value;
             saveTabs();
-            // Only render Roles tab if active
             if (activeTab === 'Roles') renderRolesTab();
-            // rolesContentDiv visibility is now managed only by renderContent()
-        }
+    }
     }
 
     function deleteRoleCard(index) {
@@ -1894,56 +2462,29 @@ function getModifierImageUrl(iconName) {
                 notesTabs[activeTab].content = e.target.value;
                 processTextareaForRoleCards(textarea);
             };
-        }
+    }
     }
 
     function renderRolesTab() {
-        if (roleCards.length === 0) {
+        const consolidated = consolidateRoles();
+        if (consolidated.length === 0) {
             rolesContentDiv.innerHTML = `
                 <div style="font-size:30px; align-items:center; margin-left:auto; margin-right:auto" class="text-center text-gray-500 font-weight-700 p-8">
-                    No role cards yet.
-                    <br>
-                    Type a role in any notepad to create one.
-                    <br>
-                    Example: <span class="text-white font-normal">Someone is probably Impostor</span>
-                    <br>
+                    No role cards yet.<br>
+                    Type a role in any notepad to create one.<br>
+                    Example: <span class="text-white font-normal">Someone is probably Impostor</span><br>
                     or <span class="text-white font-normal">Someone is altruist</span>
                 </div>
             `;
         } else {
-            rolesContentDiv.innerHTML = roleCards.map((card, index) => getRoleCardHTML(card, index)).join('');
+            rolesContentDiv.innerHTML = '';
+            consolidated.forEach(playerData => {
+                const cardElement = createRoleCardElement(playerData);
+                rolesContentDiv.appendChild(cardElement);
+            });
             rolesContentDiv.style.backgroundColor = '#232323';
             rolesContentDiv.style.borderRadius = '10px';
-            // Add expand/collapse for each role-card
-            const cards = rolesContentDiv.querySelectorAll('.role-card');
-            cards.forEach(cardEl => {
-                cardEl.addEventListener('click', (e) => {
-                    if (e.target.closest('.delete-role-card-button')) return; 
-                    cardEl.classList.toggle('expanded');
-                    let detail = cardEl.querySelector('.role-card-detail');
-                    if (!detail) {
-                        const index = cardEl.dataset.index;
-                        const card = roleCards[index];
-                        const roleData = findRoleData(card.role);
-                        if (roleData) {
-                            detail = document.createElement('div');
-                            detail.classList.add('role-card-detail');
-                            detail.style.marginTop = "0.5rem";
-                            detail.style.fontSize = "0.9rem";
-                            detail.style.color = "#ddd";
-                            detail.innerHTML = `
-                                <div><strong>Description:</strong> ${roleData.description || "No description available."}</div>
-                                <div><strong>Team:</strong> ${roleData.team}</div>
-                                <div><strong>Category:</strong> ${roleData.category}</div>
-                            `;
-                            cardEl.appendChild(detail);
-                        }
-                    } else {
-                        detail.remove();
-                    }
-                });
-            });
-        }
+    }
     }
 
     function renderContent() {
@@ -1954,10 +2495,16 @@ function getModifierImageUrl(iconName) {
             rolesContentDiv.classList.remove('hidden');
             rolesContentDiv.style.display = 'flex'; // ensure notesContentDiv is block when switching back
             renderRolesTab();
+            // animate the roles container briefly
+            rolesContentDiv.classList.add('animate-tab');
+            rolesContentDiv.addEventListener('animationend', function _end() { rolesContentDiv.classList.remove('animate-tab'); rolesContentDiv.removeEventListener('animationend', _end); });
         } else {
             notesContentDiv.classList.remove('hidden');
             rolesContentDiv.style.display = 'none'; // ensure rolesContentDiv is block when switching back
             renderNotepadTab();
+            // animate notes container briefly
+            notesContentDiv.classList.add('animate-tab');
+            notesContentDiv.addEventListener('animationend', function _end2() { notesContentDiv.classList.remove('animate-tab'); notesContentDiv.removeEventListener('animationend', _end2); });
         }
     }
 
@@ -1995,7 +2542,21 @@ function getModifierImageUrl(iconName) {
     }
 
     function resetAllNotes() {
-        if (confirm("Are you sure you want to reset all notes? This will delete all tabs except the default ones and clear all content.")) {
+        if (!confirm("Are you sure you want to reset all notes? This will delete all tabs except the default ones and clear all content.")) return;
+
+        // Add poof animation to each role card
+        const cards = Array.from(document.querySelectorAll('.role-card'));
+        cards.forEach((c, i) => {
+            // small stagger
+            setTimeout(() => c.classList.add('animate-poof'), i * 40);
+        });
+
+        // Add poof to textarea if present
+        const ta = document.getElementById('notepadTextarea');
+        if (ta) ta.classList.add('animate-poof');
+
+        // After animation finishes (short delay), clear state
+        setTimeout(() => {
             notesTabs = {
                 'Notes': { content: '' },
                 'Roles': { content: '' }
@@ -2004,18 +2565,36 @@ function getModifierImageUrl(iconName) {
             activeTab = 'Notes';
             saveTabs();
             loadTabs();
-        }
+        }, 480);
     }
 
     // --- Event Listeners ---
     // Single delegated listener for role card delete buttons
-    rolesContentDiv.addEventListener('click', (e) => {
-        const deleteButton = e.target.closest('.delete-role-card-button');
-        if (deleteButton) {
-            const index = deleteButton.dataset.index;
-            deleteRoleCard(index);
-        }
-    });
+    
+
+    // --- Modified Role Card Event Listener (Handles Delete and Cycling) ---
+rolesContentDiv.addEventListener('click', (e) => {
+    const deleteButton = e.target.closest('.delete-role-card-button');
+    const cycleButton = e.target.closest('.cycle-role-button');
+
+    // 1. Handle Delete (Removes all roles for the player)
+    if (deleteButton) {
+        const index = deleteButton.dataset.index;
+        deleteRoleCard(index);
+        e.stopPropagation();
+        return;
+    }
+
+    // 2. Handle Role Cycling
+    if (cycleButton) {
+        const playerName = cycleButton.dataset.player;
+        // Parse the direction from the button's data attribute
+        const direction = parseInt(cycleButton.dataset.direction); 
+        cyclePlayerRole(playerName, direction);
+        e.stopPropagation();
+        return;
+    }
+});
     addTabButton.addEventListener('click', () => {
         const newTabName = `New Tab ${tabCounter++}`;
         notesTabs[newTabName] = { content: '' };
@@ -2048,11 +2627,18 @@ function getModifierImageUrl(iconName) {
     });
 
     window.addEventListener('click', (event) => {
-        if (!dropdownMenu.contains(event.target)) {
-            dropdownMenu.querySelector('div').classList.add('hidden');
-        }
-    });
-
+    // Close wiki dropdown
+    if (!dropdownMenu.contains(event.target)) {
+        dropdownMenu.querySelector('div').classList.add('hidden');
+    }
+    
+    // Close role card dropdowns if clicking outside
+    if (!event.target.closest('.role-card-dropdown-container')) {
+        document.querySelectorAll('.dropdown-content.show').forEach(dropdown => {
+            dropdown.classList.remove('show');
+        });
+    }
+});
     // --- Initial Load ---
     document.addEventListener('DOMContentLoaded', () => {
         loadTabs();
