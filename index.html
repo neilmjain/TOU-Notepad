@@ -369,6 +369,30 @@
         .animate-role-change {
             animation: role-pulse 300ms cubic-bezier(.2,.8,.2,1) both;
         }
+
+        /* Card enter animation */
+        @keyframes card-enter {
+            0% { opacity: 0; transform: translateY(8px) scale(0.98); }
+            60% { opacity: 1; transform: translateY(-4px) scale(1.02); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-card-enter { animation: card-enter 300ms cubic-bezier(.2,.9,.2,1) both; }
+
+        /* Menu open animation */
+        @keyframes menu-open {
+            0% { opacity: 0; transform: translateY(-6px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-menu-open { animation: menu-open 180ms cubic-bezier(.2,.8,.2,1) both; }
+
+        /* Reset modal styles */
+        .reset-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9998; }
+        .reset-modal { position: fixed; z-index: 9999; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #111; color: #fff; border-radius: 10px; padding: 18px; width: 90%; max-width: 460px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .reset-modal h3 { margin: 0 0 6px 0; font-size: 20px; }
+        .reset-modal p { margin: 0 0 12px 0; color: #ddd; }
+        .reset-modal .btn { padding: 8px 12px; border-radius: 8px; cursor: pointer; border: none; }
+        .reset-modal .btn-cancel { background: #333; color: #fff; }
+        .reset-modal .btn-confirm { background: #c53030; color: #fff; }
     </style>
 </head>
 <body>
@@ -437,6 +461,19 @@
     
     // --- Regex for parsing role card input ---
     const roleCardRegex = /(.+) is(?: (not|probably|likely))? (.+)/i;
+
+    // Phrase -> roles mapping (exact phrases the user requested)
+    // Each regex captures the player name in group 1. Allow optional trailing punctuation.
+    const phraseRolePatterns = [
+        { re: /^(.+?)\s+spreads fear amongst the group[\.\!\?]?$/i, roles: ['Plaguebearer','Hypnotist','Miner','Ambusher','Prosecutor','Seer','Arsonist','Transporter'] },
+        { re: /^(.+?)\s+is well trained in hunting down prey[\.\!\?]?$/i, roles: ['Scavenger','Investigator','Tracker','Werewolf','Hunter','Lookout','Inquisitor','Swooper'] },
+        { re: /^(.+?)\s+has a insight for private information[\.\!\?]?$/i, roles: ['Blackmailer','Detective','Doomsayer','Mercenary','Oracle','Ambassador','Snitch','Trapper'] },
+        { re: /^(.+?)\s+hides to guard themselves or others[\.\!\?]?$/i, roles: ['Cleric','Escapist','Engineer','Grenadier','Guardian Angel','Medic','Mirrorcaster','Survivor','Warden'] },
+        { re: /^(.+?)\s+is capable of performing relentless attacks[\.\!\?]?$/i, roles: ['Deputy','Bomber','Jailor','Juggernaut','Vigilante','Sheriff','Warlock'] },
+        { re: /^(.+?)\s+has an altered perception of reality[\.\!\?]?$/i, roles: ['Aurial','Imitator','Eclipsal','Glitch','Morphling','Mystic','Spy'] },
+        { re: /^(.+?)\s+has a trick up their sleeve[\.\!\?]?$/i, roles: ['Swapper','Jester','Executioner','Traitor','Politician','Plumber','Venerer','Veteran'] },
+        { re: /^(.+?)\s+has an unusual obsession with dead bodies[\.\!\?]?$/i, roles: ['Altruist','Amnesiac','Medium','Soul Collector','Undertaker','Vampire'] }
+    ];
 
     // Function to convert RGB float values (0-1) to a hex color string (#RRGGBB).
     function rgbFloatToHex(r, g, b) {
@@ -2117,8 +2154,51 @@ function createRoleCardElement(playerData) {
             itemText.style.fontSize = '18px';
             itemText.style.fontWeight = '600';
 
-            item.appendChild(itemIcon);
-            item.appendChild(itemText);
+            // keep a content wrapper so we can place a small delete button to the right
+            const contentWrap = document.createElement('div');
+            contentWrap.style.display = 'inline-flex';
+            contentWrap.style.alignItems = 'center';
+            contentWrap.style.justifyContent = 'center';
+            contentWrap.appendChild(itemIcon);
+            contentWrap.appendChild(itemText);
+            item.appendChild(contentWrap);
+
+            // small delete button for this menu item
+            const delBtn = document.createElement('button');
+            delBtn.textContent = '\u2715'; // small cross
+            delBtn.title = 'Delete this role option';
+            delBtn.style.background = 'transparent';
+            delBtn.style.border = 'none';
+            delBtn.style.color = '#ff6b6b';
+            delBtn.style.fontSize = '14px';
+            delBtn.style.marginLeft = '10px';
+            delBtn.style.cursor = 'pointer';
+            delBtn.onclick = (ev) => {
+                ev.stopPropagation();
+                const playerKey = playerData.name.toLowerCase();
+                const roleKey = r.role;
+                const certaintyKey = r.certainty || '';
+                // remove only the first matching savedRoleLines entry
+                const idxToRemove = savedRoleLines.findIndex(obj => obj.player.toLowerCase() === playerKey && obj.role === roleKey && (obj.certainty || '') === certaintyKey);
+                if (idxToRemove !== -1) {
+                    savedRoleLines.splice(idxToRemove, 1);
+                    // Rebuild roleCards and refresh UI
+                    rebuildRoleCardsFromSaved();
+
+                    // After rebuild, if this player now has exactly one role, ensure active index is 0
+                    const consolidated = consolidateRoles();
+                    const p = consolidated.find(pp => pp.name.toLowerCase() === playerKey);
+                    if (p) {
+                        if (p.roles.length === 1) {
+                            playerActiveRoleIndex[playerData.name] = 0;
+                        }
+                    }
+                }
+                // Close menu
+                menu.style.display = 'none';
+                if (currentOpenFloatingMenu) { try { currentOpenFloatingMenu.remove(); } catch (err) {} currentOpenFloatingMenu = null; }
+            };
+            item.appendChild(delBtn);
 
             item.onclick = (e) => {
                 e.stopPropagation();
@@ -2193,6 +2273,8 @@ function createRoleCardElement(playerData) {
             menu.style.boxShadow = '0 8px 24px rgba(0,0,0,0.6)';
             document.body.appendChild(menu);
             currentOpenFloatingMenu = menu;
+            // animate menu open
+            menu.classList.add('animate-menu-open');
         };
 
         // attach the button and the (non-attached) menu placeholder to the card UI
@@ -2203,6 +2285,10 @@ function createRoleCardElement(playerData) {
         const singleRoleDiv = document.createElement('div');
         singleRoleDiv.classList.add('role-card-role');
         singleRoleDiv.textContent = activeRole.role;
+        // ensure single-role label uses the computed role color and consistent sizing
+        singleRoleDiv.style.color = roleColor;
+        singleRoleDiv.style.fontSize = '20px';
+        singleRoleDiv.style.fontWeight = '700';
         roleContainer.appendChild(singleRoleDiv);
     }
     card.appendChild(roleContainer);
@@ -2334,7 +2420,7 @@ window.addEventListener('click', (e) => {
                 <hr style="width:100%; border:0.5px solid #555; margin-bottom:0.2rem;">
                 <div class="role-card-role" style="color:${cardColor}; font-weight:700;"  contenteditable="true" onblur="updateRoleCard(${index}, 'role', this.innerText)">${card.role}</div>
                 <hr style="width:100%; border:0.5px solid #555; margin-bottom:0.2rem;">
-                <div class="role-card-icon" style="filter:drop-shadow(0 0 8px ${cardColor});" ${cardColor};">
+                <div class="role-card-icon" style="filter:drop-shadow(0 0 12px ${cardColor});" ${cardColor};">
                     ${iconUrl ? `<img src="${iconUrl}" alt="${card.role}" style="max-width:100%; max-height:100%; object-fit:contain;">` : ""}
                 </div>
             </div>
@@ -2344,6 +2430,30 @@ window.addEventListener('click', (e) => {
 
     // Save processed role lines as objects for robust tracking
     let savedRoleLines = [];
+
+    // Helper: rebuild roleCards array from savedRoleLines
+    function rebuildRoleCardsFromSaved() {
+        const allPlayerRolesMap = {};
+        const allRoleSourceMap = {};
+        const playerNameDisplayMap = {};
+        savedRoleLines.forEach(obj => {
+            const playerKey = obj.player.toLowerCase();
+            playerNameDisplayMap[playerKey] = obj.player;
+            if (!allPlayerRolesMap[playerKey]) allPlayerRolesMap[playerKey] = [];
+            if (!allRoleSourceMap[playerKey]) allRoleSourceMap[playerKey] = [];
+            const key = obj.role.toLowerCase() + '|' + obj.certainty;
+            if (!allPlayerRolesMap[playerKey].some(r => r.role.toLowerCase() + '|' + r.certainty === key)) {
+                allPlayerRolesMap[playerKey].push({ role: obj.role, certainty: obj.certainty });
+                allRoleSourceMap[playerKey].push(obj.line);
+            }
+        });
+        roleCards = [];
+        Object.entries(allPlayerRolesMap).forEach(([playerKey, roles]) => {
+            roleCards.push({ player: playerNameDisplayMap[playerKey], roles, sourceLines: allRoleSourceMap[playerKey] });
+        });
+        saveTabs();
+        if (activeTab === 'Roles') renderRolesTab();
+    }
 
     function processTextareaForRoleCards(textarea) {
         const lines = textarea.value.split('\n');
@@ -2356,16 +2466,40 @@ window.addEventListener('click', (e) => {
         lines.forEach(line => {
             const trimmedLine = line.trim();
             if (trimmedLine) {
+                // First check phrase-based patterns
+                let phraseMatched = false;
+                for (const pat of phraseRolePatterns) {
+                    const m = trimmedLine.match(pat.re);
+                    if (m) {
+                        phraseMatched = true;
+                        const playerName = m[1].trim();
+                        const playerKey = playerName.toLowerCase();
+                        // push each mapped role into savedRoleLines
+                        pat.roles.forEach(roleName => {
+                            savedRoleLines.push({ line, player: playerName, role: roleName, certainty: '' });
+                        });
+                        processedLineSet.add(line);
+                        cardAdded = true;
+                        break;
+                    }
+                }
+                if (phraseMatched) {
+                    // matched a phrase, skip the normal "X is Y" parsing for this line
+                    return;
+                }
                 const match = trimmedLine.match(roleCardRegex);
                 if (match) {
                     const name = match[1].trim().toLowerCase();
                     const qualifier = match[2] ? match[2].trim() : '';
                     const rolePhrase = match[3].trim();
 
-                    // Split on ' or ' (support optional leading 'either') to allow multiple role candidates
+                    // Split on commas or ' or ' (support optional leading 'either') to allow multiple role candidates
                     let roleCandidates = null;
                     const eitherRegex = /^(?:either\s+)?(.+)$/i;
-                    if (/\bor\b/i.test(rolePhrase)) {
+                    if (/,/.test(rolePhrase)) {
+                        // split on comma-separated roles
+                        roleCandidates = rolePhrase.split(/\s*,\s*/).map(s => s.trim()).filter(Boolean);
+                    } else if (/\bor\b/i.test(rolePhrase)) {
                         // split on ' or ' occurrences
                         roleCandidates = rolePhrase.split(/\s+or\s+/i).map(s => s.trim()).filter(Boolean);
                     } else if (eitherRegex.test(rolePhrase)) {
@@ -2462,6 +2596,70 @@ window.addEventListener('click', (e) => {
                 notesTabs[activeTab].content = e.target.value;
                 processTextareaForRoleCards(textarea);
             };
+            // Keydown handler: when Enter is pressed, attempt to process the current line immediately
+            textarea.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Enter') {
+                    // find current caret position and extract the current line
+                    const pos = textarea.selectionStart;
+                    const value = textarea.value;
+                    // find start of line
+                    let lineStart = value.lastIndexOf('\n', pos - 1);
+                    lineStart = lineStart === -1 ? 0 : lineStart + 1;
+                    let lineEnd = value.indexOf('\n', pos);
+                    lineEnd = lineEnd === -1 ? value.length : lineEnd;
+                    const lineText = value.slice(lineStart, lineEnd).trim();
+                    if (!lineText) return; // nothing to do
+
+                    // Check phrase patterns
+                    let matched = false;
+                    for (const pat of phraseRolePatterns) {
+                        const m = lineText.match(pat.re);
+                        if (m) {
+                            matched = true;
+                            const playerName = m[1].trim();
+                            pat.roles.forEach(roleName => {
+                                savedRoleLines.push({ line: lineText, player: playerName, role: roleName, certainty: '' });
+                            });
+                            break;
+                        }
+                    }
+
+                    // If not phrase matched, check the "X is Y" pattern and handle comma-separated lists
+                    if (!matched) {
+                        const m2 = lineText.match(roleCardRegex);
+                        if (m2) {
+                            matched = true;
+                            const playerName = m2[1].trim();
+                            const qualifier = m2[2] ? m2[2].trim() : '';
+                            let rolePhrase = m2[3].trim();
+                            // split on commas or ' or '
+                            let candidates = [];
+                            if (/\,/.test(rolePhrase)) candidates = rolePhrase.split(/\s*,\s*/).map(s => s.trim()).filter(Boolean);
+                            else if (/\bor\b/i.test(rolePhrase)) candidates = rolePhrase.split(/\s+or\s+/i).map(s => s.trim()).filter(Boolean);
+                            else candidates = [rolePhrase];
+                            candidates.forEach(rc => {
+                                // try to normalize using findRoleData, but still save the raw if not found
+                                const rd = findRoleData(rc);
+                                const roleName = rd ? rd.name : rc;
+                                savedRoleLines.push({ line: lineText, player: playerName, role: roleName, certainty: qualifier });
+                            });
+                        }
+                    }
+
+                    if (matched) {
+                        ev.preventDefault();
+                        // remove only the processed line from textarea
+                        const before = value.slice(0, lineStart);
+                        const after = value.slice(lineEnd);
+                        const newVal = (before + (after.startsWith('\n') ? after.slice(1) : after)).replace(/^\n/, '');
+                        textarea.value = newVal;
+                        notesTabs[activeTab].content = textarea.value;
+                        // rebuild role cards
+                        rebuildRoleCardsFromSaved();
+                        return false;
+                    }
+                }
+            });
     }
     }
 
@@ -2481,6 +2679,9 @@ window.addEventListener('click', (e) => {
             consolidated.forEach(playerData => {
                 const cardElement = createRoleCardElement(playerData);
                 rolesContentDiv.appendChild(cardElement);
+                // animate card enter
+                cardElement.classList.add('animate-card-enter');
+                cardElement.addEventListener('animationend', function _ce() { cardElement.classList.remove('animate-card-enter'); cardElement.removeEventListener('animationend', _ce); });
             });
             rolesContentDiv.style.backgroundColor = '#232323';
             rolesContentDiv.style.borderRadius = '10px';
@@ -2542,12 +2743,25 @@ window.addEventListener('click', (e) => {
     }
 
     function resetAllNotes() {
-        if (!confirm("Are you sure you want to reset all notes? This will delete all tabs except the default ones and clear all content.")) return;
+        // Show custom modal instead of native confirm
+        const backdrop = document.getElementById('resetModalBackdrop');
+        const modal = document.getElementById('resetModal');
+        if (backdrop && modal) {
+            backdrop.classList.remove('hidden');
+            modal.classList.remove('hidden');
+            // small entrance animation
+            modal.classList.add('animate-tab');
+            backdrop.classList.add('animate-tab');
+        } else {
+            // fallback to direct perform if modal not found
+            performReset();
+        }
+    }
 
+    function performReset() {
         // Add poof animation to each role card
         const cards = Array.from(document.querySelectorAll('.role-card'));
         cards.forEach((c, i) => {
-            // small stagger
             setTimeout(() => c.classList.add('animate-poof'), i * 40);
         });
 
@@ -2562,6 +2776,12 @@ window.addEventListener('click', (e) => {
                 'Roles': { content: '' }
             };
             roleCards = [];
+            // Clear saved parsed lines so re-typing old roles doesn't rehydrate cards
+            if (Array.isArray(savedRoleLines)) savedRoleLines.length = 0;
+            // Reset any active role indices
+            playerActiveRoleIndex = {};
+            // Close any open floating menu
+            if (currentOpenFloatingMenu) { try { currentOpenFloatingMenu.remove(); } catch (err) {} currentOpenFloatingMenu = null; }
             activeTab = 'Notes';
             saveTabs();
             loadTabs();
@@ -2643,6 +2863,30 @@ rolesContentDiv.addEventListener('click', (e) => {
     document.addEventListener('DOMContentLoaded', () => {
         loadTabs();
     });
+        // Wire up reset modal buttons after DOM ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // create modal elements if they don't exist (safety for edits)
+            if (!document.getElementById('resetModalBackdrop')) {
+                const b = document.createElement('div');
+                b.id = 'resetModalBackdrop';
+                b.className = 'reset-modal-backdrop hidden';
+                document.body.appendChild(b);
+            }
+            if (!document.getElementById('resetModal')) {
+                const m = document.createElement('div');
+                m.id = 'resetModal';
+                m.className = 'reset-modal hidden';
+                m.innerHTML = `<h3>Reset all notes?</h3><p>This will delete all tabs (except default ones) and clear all role cards. This cannot be undone.</p><div style="display:flex; gap:8px; justify-content:flex-end; margin-top:8px;"><button id="resetCancel" class="btn btn-cancel">Cancel</button><button id="resetConfirm" class="btn btn-confirm">Confirm Reset</button></div>`;
+                document.body.appendChild(m);
+            }
+
+            const backdrop = document.getElementById('resetModalBackdrop');
+            const modal = document.getElementById('resetModal');
+            const cancel = document.getElementById('resetCancel');
+            const confirm = document.getElementById('resetConfirm');
+            if (cancel) cancel.onclick = () => { if (backdrop) backdrop.classList.add('hidden'); if (modal) modal.classList.add('hidden'); };
+            if (confirm) confirm.onclick = () => { if (backdrop) backdrop.classList.add('hidden'); if (modal) modal.classList.add('hidden'); performReset(); };
+        });
 </script>
 
 </body>
