@@ -18,7 +18,7 @@
             border-radius: 8px;
             padding: 10px 20px; /* larger clickable area */
             font-size: 20px; /* slightly bigger text */
-            background-color: transparent; /* let card background show */
+            background-color: #1f1f1f; /* let card background show */
             color: #e2e2e2;
             margin: 6px 0;
             width: 90%;
@@ -32,15 +32,7 @@
             background-color: rgba(0,0,0,0.15);
             color: #fff;
         }
-        .role-card-dropdown-chevron {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            font-size: 15px;
-            color: var(--role-color, #ff1a1a);
-        }
+        /* dropdown chevron removed as it overlapped text */
         @font-face {
             font-family: 'Amatic SC';
             src: url('0a1915693ca58e3e-s.p.woff') format('woff');
@@ -2101,12 +2093,8 @@ function createRoleCardElement(playerData) {
     labelContainer.appendChild(activeIconImg);
     labelContainer.appendChild(labelTextSpan);
 
-    const chev = document.createElement('span');
-    chev.classList.add('role-card-dropdown-chevron');
-    chev.innerHTML = '\u25BC';
-    // append the centered label and chevron
+    // append the centered label (no chevron to avoid overlapping text)
     activeButton.appendChild(labelContainer);
-    activeButton.appendChild(chev);
 
     const menu = document.createElement('div');
     menu.classList.add('dropdown-content');
