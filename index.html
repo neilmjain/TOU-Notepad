@@ -385,6 +385,37 @@
         .reset-modal .btn { padding: 8px 12px; border-radius: 8px; cursor: pointer; border: none; }
         .reset-modal .btn-cancel { background: #333; color: #fff; }
         .reset-modal .btn-confirm { background: #c53030; color: #fff; }
+        /* Floating notepad pane (movable, always-on-top within page) */
+        .floating-pane {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 420px;
+            height: 420px;
+            background: #171717;
+            border-radius: 10px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 100000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .floating-pane.hidden { display: none; }
+        .floating-pane .fp-header {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 10px;
+            cursor: move;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+        }
+        .floating-pane .fp-header .title { font-weight: 700; color: #fff; font-size: 16px; }
+        .floating-pane .fp-controls { display:flex; gap:8px; }
+        .floating-pane .fp-controls button { background:transparent; border:1px solid rgba(255,255,255,0.06); color:#fff; padding:4px 8px; border-radius:6px; cursor:pointer; }
+        .floating-pane .fp-body { flex:1; overflow:auto; padding:8px; background: transparent; }
     </style>
 </head>
 <body>
@@ -427,7 +458,24 @@
     
     <div class="flex justify-end mt-4">
         <button id="resetButton" class="bg-red-500 text-white font-bold py-2 px-4 rounded-md hover:bg-red-600 transition duration-200">Reset</button>
+        <button id="pipToggleButton" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200 ml-2">PiP Notepad</button>
     </div>
+</div>
+<!-- Hidden canvas + video for Notepad Picture-in-Picture -->
+<canvas id="pipCanvas" width="640" height="360" style="display:none"></canvas>
+<!-- offscreen but present video element: some browsers require the video to be present/played before PiP -->
+<video id="pipVideo" muted playsinline style="position:fixed; left:-10000px; top:0; width:1px; height:1px; opacity:0;"></video>
+
+<!-- Floating notepad pane (will move the notes container into this element while floating) -->
+<div id="floatingNotepad" class="floating-pane hidden" aria-hidden="true">
+    <div class="fp-header" id="fpHeader" role="toolbar">
+        <div class="title">Notepad (Floating)</div>
+        <div class="fp-controls">
+            <button id="fpDockBtn" title="Dock back">Dock</button>
+            <button id="fpCloseBtn" title="Close">Close</button>
+        </div>
+    </div>
+    <div class="fp-body" id="fpContent"></div>
 </div>
 <script>
     // --- Main State Variables ---
@@ -636,6 +684,21 @@
             { name: "Tasks Remaining When Revealed", description: "The number of tasks remaining when the Snitch is revealed to Impostors", type: "Number", default: "1", range: "N/A" },
             { name: "Snitch Sees Impostors in Meetings", description: "Whether the Snitch sees the Impostor's names red in Meetings", type: "Toggle", default: "True", range: "N/A" },
             { name: "Snitch Sees Traitor", description: "Whether the Snitch sees the \nTraitor", type: "Toggle", default: "True", range: "N/A" }
+        ]
+    },
+    {
+        category: "Role", name: "Chef", team: "Neutral",
+        description: "The Sheriff is a Crewmate that has the ability to eliminate the Impostors using their kill button.\nHowever, if they kill a Crewmate or a Neutral player they can't kill, they instead die themselves.",
+        abilities: [{ name: "Shoot", icon: 'SheriffShootButton.png', description: "Eliminates Impostors. Miskilling results in self-elimination." }],
+        icon: 'Chef',
+        types: ["Evil"],
+        options: [
+            { name: "Sheriff", description: "The percentage probability of the Sheriff appearing", type: "Percentage", default: "0%", range: "N/A" },
+            { name: "Sheriff Miskill Kills Crewmate", description: "Whether the other player is killed if the Sheriff Misfires", type: "Toggle", default: "False", range: "N/A" },
+            { name: "Sheriff Kills Neutral Evil Roles", description: "Whether the Sheriff is able to kill a Neutral Evil Role", type: "Toggle", default: "False", range: "N/A" },
+            { name: "Sheriff Kills Neutral Killing Roles", description: "Whether the Sheriff is able to kill a Neutral Killing Role", type: "Toggle", default: "False", range: "N/A" },
+            { name: "Sheriff Kill Cooldown", description: "The cooldown on the Sheriff's kill button", type: "Time", default: "25s", range: "N/A" },
+            { name: "Sheriff can report who they've killed", description: "Whether the Sheriff is able to report their own kills", type: "Toggle", default: "True", range: "N/A" }
         ]
     },
     {
@@ -2631,8 +2694,146 @@ window.addEventListener('click', (e) => {
                                 const roleName = rd ? rd.name : rc;
                                 savedRoleLines.push({ line: lineText, player: playerName, role: roleName, certainty: qualifier });
                             });
+                            // If PiP canvas is active, ensure input updates are reflected there
+                            textarea.addEventListener('input', () => {
+                                if (window._pipActive) {
+                                    window._pipDirty = true;
+                                }
+                            });
                         }
                     }
+
+                    // --- Picture-in-Picture for Notepad (DOM capture via html2canvas) ---
+                    let pipCanvas = document.getElementById('pipCanvas');
+                    let pipVideo = document.getElementById('pipVideo');
+                    let pipStream = null;
+                    let pipInterval = null;
+                    window._pipActive = false;
+                    window._pipDirty = false;
+
+                    // Capture one frame of the container into the provided canvas using html2canvas
+                    async function pipCaptureFrameOnce(container, canvas) {
+                        const tmp = await html2canvas(container, { backgroundColor: null, useCORS: true });
+                        const ctx = canvas.getContext('2d');
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(tmp, 0, 0, canvas.width, canvas.height);
+                    }
+
+                    async function startNotepadPiP() {
+                        try {
+                            if (!document.pictureInPictureEnabled && !('requestPictureInPicture' in HTMLVideoElement.prototype)) {
+                                alert('Picture-in-Picture is not supported in this browser.');
+                                return;
+                            }
+                            const container = document.getElementById('notesContentDiv');
+                            if (!container) {
+                                alert('Open the Notes tab to enable Notepad PiP.');
+                                return;
+                            }
+                            if (typeof html2canvas !== 'function') {
+                                alert('html2canvas is not loaded; cannot capture the notepad container.');
+                                return;
+                            }
+                            pipCanvas = document.getElementById('pipCanvas');
+                            pipVideo = document.getElementById('pipVideo');
+
+                            // compute target size for canvas (limit width for performance)
+                            const rect = container.getBoundingClientRect();
+                            const targetW = Math.min(960, Math.max(320, Math.round(rect.width)));
+                            const scale = targetW / Math.max(1, rect.width);
+                            const targetH = Math.max(200, Math.round(rect.height * scale));
+                            pipCanvas.width = targetW;
+                            pipCanvas.height = targetH;
+
+                            // initial capture
+                            await pipCaptureFrameOnce(container, pipCanvas);
+
+                            // captureStream at moderate fps
+                            const fps = 6;
+                            pipStream = pipCanvas.captureStream(fps);
+                            pipVideo.srcObject = pipStream;
+                            await pipVideo.play().catch(()=>{});
+                            console.log('Requesting Picture-in-Picture...');
+                            await pipVideo.requestPictureInPicture();
+                            window._pipActive = true;
+
+                            // when PiP is closed, cleanup
+                            pipVideo.addEventListener('leavepictureinpicture', () => {
+                                stopNotepadPiP();
+                            }, { once: true });
+
+                            // update frames periodically
+                            if (pipInterval) clearInterval(pipInterval);
+                            pipInterval = setInterval(() => {
+                                pipCaptureFrameOnce(container, pipCanvas).catch(err => console.warn('pip capture err', err));
+                            }, 1000 / fps);
+
+                            const btn = document.getElementById('pipToggleButton');
+                            if (btn) btn.textContent = 'Exit PiP';
+                        } catch (err) {
+                            console.error('startNotepadPiP error', err);
+                            const msg = (err && err.message) ? err.message : String(err);
+                            alert('Could not start Picture-in-Picture. See console for details.\n' + msg);
+                        }
+                    }
+
+                    async function stopNotepadPiP() {
+                        try {
+                            if (pipVideo && document.pictureInPictureElement === pipVideo) {
+                                try { await document.exitPictureInPicture(); } catch (e) { /* ignore */ }
+                            }
+                        } finally {
+                            window._pipActive = false;
+                            window._pipDirty = false;
+                            if (pipInterval) { clearInterval(pipInterval); pipInterval = null; }
+                            if (pipVideo) { try { pipVideo.pause(); pipVideo.srcObject = null; } catch (e) {} }
+                            if (pipStream) { pipStream.getTracks().forEach(t => t.stop()); pipStream = null; }
+                            const btn = document.getElementById('pipToggleButton');
+                            if (btn) btn.textContent = 'PiP Notepad';
+                        }
+                    }
+
+                    // Wire PiP toggle button after DOM loads
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const pipBtn = document.getElementById('pipToggleButton');
+                        if (!pipBtn) return;
+                        // disable if browser doesn't support PiP request on video + captureStream
+                        const supported = (('requestPictureInPicture' in HTMLVideoElement.prototype) || document.pictureInPictureEnabled) && ('captureStream' in HTMLCanvasElement.prototype || typeof HTMLCanvasElement.prototype.captureStream === 'function');
+                        if (!supported) {
+                            pipBtn.disabled = true;
+                            pipBtn.title = 'Picture-in-Picture not supported in this browser';
+                            pipBtn.style.opacity = '0.5';
+                            return;
+                        }
+                        pipBtn.onclick = async () => {
+                            if (!window._pipActive) {
+                                await startNotepadPiP();
+                            } else {
+                                await stopNotepadPiP();
+                            }
+                        };
+                        // Wire Floating Notepad toggle
+                        const floatBtn = document.createElement('button');
+                        floatBtn.id = 'floatToggleButton';
+                        floatBtn.className = 'bg-gray-800 text-white font-bold py-2 px-4 rounded-md hover:bg-gray-700 transition duration-200 ml-2';
+                        floatBtn.textContent = 'Float Notepad';
+                        // insert after pip button
+                        pipBtn.parentNode && pipBtn.parentNode.insertBefore(floatBtn, pipBtn.nextSibling);
+
+                        floatBtn.onclick = () => {
+                            if (!window._isFloating) createFloatingNotepad();
+                            else dockNotepad();
+                        };
+
+                        // Wire floating pane controls
+                        const fpDock = document.getElementById('fpDockBtn');
+                        const fpClose = document.getElementById('fpCloseBtn');
+                        if (fpDock) fpDock.onclick = dockNotepad;
+                        if (fpClose) fpClose.onclick = () => { dockNotepad(); document.getElementById('floatingNotepad').classList.add('hidden'); };
+                        // Make header draggable
+                        const hdr = document.getElementById('fpHeader');
+                        if (hdr) makeElementDraggable(document.getElementById('floatingNotepad'), hdr);
+                    });
 
                     if (matched) {
                         ev.preventDefault();
@@ -2648,6 +2849,86 @@ window.addEventListener('click', (e) => {
                     }
                 }
             });
+    }
+
+    // --- Floating notepad logic ---
+    window._isFloating = false;
+    window._notesOriginalParent = null;
+    window._notesOriginalNext = null;
+
+    function createFloatingNotepad() {
+        const notes = document.getElementById('notesContentDiv');
+        const floating = document.getElementById('floatingNotepad');
+        const fpContent = document.getElementById('fpContent');
+        if (!notes || !floating || !fpContent) return;
+        // save original location
+        window._notesOriginalParent = notes.parentNode;
+        window._notesOriginalNext = notes.nextSibling;
+        // move notes into floating content
+        fpContent.appendChild(notes);
+        floating.classList.remove('hidden');
+        floating.setAttribute('aria-hidden','false');
+        window._isFloating = true;
+        const floatBtn = document.getElementById('floatToggleButton'); if (floatBtn) floatBtn.textContent = 'Dock Notepad';
+    }
+
+    function dockNotepad() {
+        const notes = document.getElementById('notesContentDiv');
+        if (!notes) return;
+        const origParent = window._notesOriginalParent;
+        const origNext = window._notesOriginalNext;
+        if (origParent) {
+            origParent.insertBefore(notes, origNext);
+        }
+        const floating = document.getElementById('floatingNotepad');
+        if (floating) {
+            floating.classList.add('hidden');
+            floating.setAttribute('aria-hidden','true');
+        }
+        window._isFloating = false;
+        const floatBtn = document.getElementById('floatToggleButton'); if (floatBtn) floatBtn.textContent = 'Float Notepad';
+    }
+
+    function makeElementDraggable(el, handle) {
+        if (!el || !handle) return;
+        handle.style.cursor = 'move';
+        let isDown = false, startX = 0, startY = 0, startLeft = 0, startTop = 0;
+        handle.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            const rect = el.getBoundingClientRect();
+            startLeft = rect.left;
+            startTop = rect.top;
+            document.body.style.userSelect = 'none';
+        });
+        document.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            let left = startLeft + dx;
+            let top = startTop + dy;
+            // clamp to viewport
+            const maxLeft = window.innerWidth - el.offsetWidth - 8;
+            const maxTop = window.innerHeight - el.offsetHeight - 8;
+            left = Math.min(Math.max(8, left), Math.max(8, maxLeft));
+            top = Math.min(Math.max(8, top), Math.max(8, maxTop));
+            el.style.left = left + 'px';
+            el.style.top = top + 'px';
+            el.style.right = 'auto';
+            el.style.bottom = 'auto';
+            el.style.position = 'fixed';
+        });
+        document.addEventListener('mouseup', () => { if (isDown) { isDown = false; document.body.style.userSelect = ''; } });
+        // touch support
+        handle.addEventListener('touchstart', (ev) => {
+            const t = ev.touches[0];
+            isDown = true; startX = t.clientX; startY = t.clientY; const rect = el.getBoundingClientRect(); startLeft = rect.left; startTop = rect.top; document.body.style.userSelect = 'none';
+        }, { passive: true });
+        document.addEventListener('touchmove', (ev) => {
+            if (!isDown) return; const t = ev.touches[0]; const dx = t.clientX - startX; const dy = t.clientY - startY; let left = startLeft + dx; let top = startTop + dy; const maxLeft = window.innerWidth - el.offsetWidth - 8; const maxTop = window.innerHeight - el.offsetHeight - 8; left = Math.min(Math.max(8, left), Math.max(8, maxLeft)); top = Math.min(Math.max(8, top), Math.max(8, maxTop)); el.style.left = left + 'px'; el.style.top = top + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto'; el.style.position = 'fixed';
+        }, { passive: true });
+        document.addEventListener('touchend', () => { if (isDown) { isDown = false; document.body.style.userSelect = ''; } });
     }
     }
 

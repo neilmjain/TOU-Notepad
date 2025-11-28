@@ -1,0 +1,25 @@
+{
+  "name": "tou-notepad-electron",
+  "version": "0.1.0",
+  "description": "Electron wrapper for TOU-Notepad",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^39.2.4",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.neilmjain.tou-notepad",
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "files": [
+      "**/*"
+    ]
+  }
+}
