@@ -416,6 +416,13 @@
         .floating-pane .fp-controls { display:flex; gap:8px; }
         .floating-pane .fp-controls button { background:transparent; border:1px solid rgba(255,255,255,0.06); color:#fff; padding:4px 8px; border-radius:6px; cursor:pointer; }
         .floating-pane .fp-body { flex:1; overflow:auto; padding:8px; background: transparent; }
+        .side-nav { position: fixed; top: 50%; transform: translateY(-50%); z-index: 2000; width: 44px; height: 60px; display: flex; align-items: center; justify-content: center; }
+        .side-nav.left { left: 10px; }
+        .side-nav.right { right: 10px; }
+        .nav-arrow { width: 0; height: 0; border-top: 18px solid transparent; border-bottom: 18px solid transparent; cursor: pointer; filter: drop-shadow(0 0 4px rgba(0,0,0,0.6)); transition: transform 0.2s ease, filter 0.2s ease; }
+        .nav-arrow.left { border-right: 26px solid #ff1a1a; }
+        .nav-arrow.right { border-left: 26px solid #ff1a1a; }
+        .side-nav:hover .nav-arrow { transform: scale(1.12); filter: drop-shadow(0 0 8px rgba(255,26,26,0.8)); }
     </style>
 </head>
 <body>
@@ -423,6 +430,8 @@
         <source src="videoplayback.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
+    <a class="side-nav left" href="player.html" aria-label="Go to Player Tracker"><span class="nav-arrow left"></span></a>
+    <a class="side-nav right" href="player.html" aria-label="Go to Player Tracker"><span class="nav-arrow right"></span></a>
 <div class="container mx-auto p-8 rounded-lg shadow-xl relative z-10 w-[95%] sm:w-2/3 md:w-3/4 lg:w-2/3 xl:w-2/3 min-h-[75vh] flex flex-col justify-between">
     <div class="flex justify-between items-center mb-4">
         <div class="flex items-center space-x-4">

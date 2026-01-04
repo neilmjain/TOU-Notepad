@@ -15,7 +15,7 @@
         :root {
             --primary-red: #ff1a1a;
             --dark-bg: #1e1e19;
-            --card-bg: rgba(20, 0, 0, 0.9);
+            --card-bg: rgba(28, 27, 27, 0.9);
             --font-main: 'Amatic SC', sans-serif;
         }
 
@@ -67,8 +67,8 @@
         .player-card {
             background: var(--card-bg);
             --card-theme: var(--primary-red);
-            --card-shadow: rgba(255, 0, 0, 0.3);
-            border: 2px solid var(--card-theme);
+            --card-shadow: rgba(0, 0, 0, 0.279);
+            filter: drop-shadow(0 0 2px var(--card-theme));
             border-radius: 12px;
             display: flex;
             padding: 15px;
@@ -98,6 +98,7 @@
             flex-shrink: 0;
             position: relative; /* For absolute positioning of the target */
             cursor: pointer;
+            overflow: hidden;
         }
         .player-left {
             display: flex;
@@ -107,13 +108,62 @@
             margin-right: 15px;
             width: 60px;
         }
+        .status-toggle {
+            display: flex;
+            gap: 6px;
+        }
+        .btn-toggle {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            border: 1px solid #555;
+            background: #2a2a26;
+            color: #E2E8F0;
+            cursor: pointer;
+        }
+            .team-display-box {
+    display: inline-flex; /* Use inline-flex to wrap content and allow padding */
+    padding: 2px 0.5rem; /* Padding inside the box */
+    border-radius: 6px; /* Rounded corners */
+    font-family: 'Amatic SC', cursive; /* Apply the pixelated font */
+    font-weight: 300; /* Bold the text */
+    font-size: 12px; /* Adjust font size as needed */
+    line-height: 1; /* Keep line height tight for single line text */
+    text-align: center;
+    width: 50px;
+    height: 18px;
+    letter-spacing: 0.2px;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Subtle text shadow for pop */
+    transition: all 0.2s ease-in-out; /* Smooth transitions for color changes */
+    /* Dynamic background and box-shadow will be set by JavaScript */
+            }
+        .btn-toggle.active {
+            border-color: var(--card-theme);
+            box-shadow: 0 0 6px var(--card-shadow);
+        }
+        .btn-toggle.alive.active {
+            border-color: #50ff76;
+            box-shadow: 0 0 8px rgba(80, 242, 255, 0.5);
+            background: rgba(80, 255, 103, 0.372);
+            color: #50ff76;
+        }
+        .btn-toggle.dead.active {
+            border-color: #ff4d4d;
+            box-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+            background: rgba(255, 77, 77, 0.12);
+            color: #ffd4d4;
+        }
+        .player-card.dead {
+            opacity: 0.8;
+            filter: grayscale(0.6);
+            border-color: #555;
+            box-shadow: 0 0 10px rgba(0,0,0,0.4);
+        }
         .color-picker {
             width: 36px;
             height: 28px;
-            border: 1px solid var(--card-theme);
             border-radius: 8px;
             background: #1a1a1a;
-            box-shadow: 0 2px 6px var(--card-shadow);
             overflow: hidden;
         }
         .color-picker input[type="color"] {
@@ -135,14 +185,22 @@
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: background 0.2s;
+            transform: scale(0.96);
+            transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease;
             background: transparent;
             border-radius: 8px;
         }
 
         .player-icon:hover .guess-target-overlay {
-            background: rgba(0, 0, 0, 0.3);
             opacity: 1;
+            transform: scale(1);
+        }
+        @keyframes guessIntro {
+            0% { opacity: 0; transform: scale(0.85); filter: drop-shadow(0 0 0 rgba(255,255,255,0)); }
+            100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 6px rgba(255,255,255,0.25)); }
+        }
+        .player-icon:hover .guess-target-overlay img {
+            animation: guessIntro 300ms ease-out both;
         }
 
         .player-content {
@@ -186,49 +244,107 @@
         }
 
         .tag-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px;
             margin-top: 8px;
+            width: 100%;
         }
 
         .role-tag {
-            background: #2a2a26;
+            background: linear-gradient(180deg, #2b2b27 0%, #242421 100%);
             border: 1px solid rgba(255, 255, 255, 0.08);
             color: #fff;
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 6px;
-            font-size: 15px;
-            cursor: pointer;
+            font-size: 13px;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.25);
-            transition: background 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .role-tag:hover {
-            background: #353530;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+            background: #31312d;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+            transform: translateY(-1px);
         }
 
         .role-tag img {
-            width: 20px;
-            height: 20px;
+            width: 14px;
+            height: 14px;
             object-fit: contain;
             filter: drop-shadow(0 0 2px rgba(255,255,255,0.15));
         }
-
-        .role-tag .remove-x {
-            opacity: 0.6;
-            font-size: 16px;
-            margin-left: 2px;
-            transition: opacity 0.15s, color 0.15s;
+        .role-text {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
+        .role-tag .remove-x {
+            opacity: 0.7;
+            font-size: 16px;
+            margin-left: 4px;
+            transition: opacity 0.15s, color 0.15s;
+        }
         .role-tag:hover .remove-x {
             opacity: 1;
             color: #ff4d4d;
+        }
+        .roles-box {
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            margin-top: 8px;
+            background: transparent;
+        }
+        .team-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 10px;
+            border-radius: 8px;
+            border: 2px solid var(--team-color, #50f2ff);
+            color: var(--team-color, #50f2ff);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 0 8px var(--team-glow, rgba(80, 242, 255, 0.4));
+            background: var(--team-color);
+        
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        .role-item .team-pill {
+            font-size: 12px;
+            padding: 3px 8px;
+            border-width: 1.5px;
+            margin-top: 2px;
+            margin-bottom: 0;
+        }
+        .icon-stack {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            padding: 2px 4px;
+            min-height: 30px;
+        }
+        .role-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            margin-left: -10px;
+            position: relative;
+            z-index: 1;
+        }
+        .role-icon:first-child {
+            margin-left: 0;
         }
 
         /* Modal Styling */
@@ -268,7 +384,7 @@
             align-items: center;
             padding: 8px 12px;
             background: #1e1e19;
-            border: 2px solid #444;
+            border: 2px solid var(--teamColor);
             border-radius: 8px;
             cursor: pointer;
             transition: 0.2s;
@@ -306,9 +422,18 @@
         }
 
         .role-team {
-            font-size: 13px;
-            opacity: 0.8;
-            margin-top: 2px;
+            display: inline-flex; /* Use inline-flex to wrap content and allow padding */
+    padding: 0.25rem 0.75rem; /* Padding inside the box */
+    border-radius: 0.5rem; /* Rounded corners */
+    font-family: 'Amatic SC', cursive; /* Apply the pixelated font */
+    font-weight: 300; /* Bold the text */
+    font-size: 1rem; /* Adjust font size as needed */
+    line-height: 1; /* Keep line height tight for single line text */
+    text-align: center;
+    letter-spacing: 0.2px;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* Subtle text shadow for pop */
+    transition: all 0.2s ease-in-out; /* Smooth transitions for color changes */
+    /* Dynamic background and box-shadow will be set by JavaScript */
         }
 
         .delete-btn {
@@ -327,6 +452,13 @@
 
         @keyframes poof { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
         .poof { animation: poof 0.3s forwards; }
+        .side-nav { position: fixed; top: 50%; transform: translateY(-50%); z-index: 2000; width: 44px; height: 60px; display: flex; align-items: center; justify-content: center; }
+        .side-nav.left { left: 10px; }
+        .side-nav.right { right: 10px; }
+        .nav-arrow { width: 0; height: 0; border-top: 18px solid transparent; border-bottom: 18px solid transparent; cursor: pointer; filter: drop-shadow(0 0 4px rgba(0,0,0,0.6)); transition: transform 0.2s ease, filter 0.2s ease; }
+        .nav-arrow.left { border-right: 26px solid var(--primary-red); }
+        .nav-arrow.right { border-left: 26px solid var(--primary-red); }
+        .side-nav:hover .nav-arrow { transform: scale(1.12); filter: drop-shadow(0 0 8px var(--primary-red)); }
     </style>
 </head>
 <body>
@@ -334,6 +466,8 @@
     <video id="bg-video" autoplay muted loop>
         <source src="videoplayback.mp4" type="video/mp4">
     </video>
+    <a class="side-nav left" href="index.html" aria-label="Go to Notepad"><span class="nav-arrow left"></span></a>
+    <a class="side-nav right" href="index.html" aria-label="Go to Notepad"><span class="nav-arrow right"></span></a>
 
     <div class="main-container">
         <div class="flex justify-between items-center p-6 border-b border-gray-700">
@@ -1637,6 +1771,18 @@
     },
 ];
 
+const teamColors = {
+    "Crewmate": { dotColor: '#00ffff', boxBg: 'rgba(0, 255, 255, 0.2)' }, /* Cyan */
+    "Impostor": { dotColor: '#ff0000', boxBg: 'rgba(255, 0, 0, 0.2)'}, /* Red */
+    "Neutral": { dotColor: 'grey', boxBg: 'rgba(83, 83, 82, 0.2)'}, /* Yellow */
+    "Alliance": { dotColor: '#669966', boxBg: 'rgba(102, 153, 102, 0.2)' }, /* Alliance Green */
+    // Add modifiers if they need distinct colors:
+    "Crewmate Modifier": { dotColor: '#00ffff', boxBg: 'rgba(0, 255, 255, 0.1)', boxShadow: '0 0 5px #00ffff' },
+    "Global Modifier": { dotColor: '#9333ea', boxBg: 'rgba(147, 51, 234, 0.1)', boxShadow: '0 0 5px #9333ea' }, /* A purple-ish tone for Global Modifiers */
+    "Impostor Modifier": { dotColor: '#ff0000', boxBg: 'rgba(255, 0, 0, 0.1)', boxShadow: '0 0 5px #ff0000' },
+    "Crewmate Alliance modifier": { dotColor: '#669966', boxBg: 'rgba(102, 153, 102, 0.1)', boxShadow: '0 0 5px #669966' }
+};
+
 function rgbFloatToHex(r, g, b) {
     const toHex = (c) => {
         const hex = Math.round(c * 255).toString(16);
@@ -1827,45 +1973,121 @@ function getModifierImageUrl(iconName) {
             `;
         }
 
+            let crewmateBaseImg = null;
+            function ensureCrewmateBase() {
+                return new Promise((resolve, reject) => {
+                    if (crewmateBaseImg && crewmateBaseImg.complete) { resolve(); return; }
+                    if (!crewmateBaseImg) {
+                        crewmateBaseImg = new Image();
+                        crewmateBaseImg.src = 'Crewmate.png';
+                        crewmateBaseImg.crossOrigin = 'anonymous';
+                    }
+                    if (crewmateBaseImg.complete) { resolve(); return; }
+                    crewmateBaseImg.onload = () => resolve();
+                    crewmateBaseImg.onerror = reject;
+                });
+            }
+            function hexToRgb(hex) {
+                const h = hex.replace('#','');
+                const r = parseInt(h.length===3?h[0]+h[0]:h.slice(0,2),16);
+                const g = parseInt(h.length===3?h[1]+h[1]:h.slice(2,4),16);
+                const b = parseInt(h.length===3?h[2]+h[2]:h.slice(4,6),16);
+                return [r,g,b];
+            }
+            function rgbToHsl(r,g,b){
+                r/=255; g/=255; b/=255;
+                const max=Math.max(r,g,b), min=Math.min(r,g,b);
+                let h,s,l=(max+min)/2;
+                if(max===min){ h=0; s=0; }
+                else{
+                    const d=max-min;
+                    s=l>0.5? d/(2-max-min) : d/(max+min);
+                    switch(max){
+                        case r: h=(g-b)/d+(g<b?6:0); break;
+                        case g: h=(b-r)/d+2; break;
+                        case b: h=(r-g)/d+4; break;
+                    }
+                    h/=6;
+                }
+                return [h*360,s,l];
+            }
+            function hslToRgb(h,s,l){
+                h/=360;
+                let r,g,b;
+                if(s===0){ r=g=b=l; }
+                else{
+                    const hue2rgb=(p,q,t)=>{
+                        if(t<0) t+=1;
+                        if(t>1) t-=1;
+                        if(t<1/6) return p+(q-p)*6*t;
+                        if(t<1/2) return q;
+                        if(t<2/3) return p+(q-p)*(2/3-t)*6;
+                        return p;
+                    };
+                    const q = l<0.5 ? l*(1+s) : l+s-l*s;
+                    const p = 2*l-q;
+                    r=hue2rgb(p,q,h+1/3);
+                    g=hue2rgb(p,q,h);
+                    b=hue2rgb(p,q,h-1/3);
+                }
+                return [Math.round(r*255),Math.round(g*255),Math.round(b*255)];
+            }
+            function clamp(v,min,max){ return v<min?min:(v>max?max:v); }
+            function mix(a,b,t){ return [Math.round(a[0]+(b[0]-a[0])*t),Math.round(a[1]+(b[1]-a[1])*t),Math.round(a[2]+(b[2]-a[2])*t)]; }
+            function adjustLightness(rgb, delta){
+                const hsl = rgbToHsl(rgb[0],rgb[1],rgb[2]);
+                const l = clamp(hsl[2]+delta,0,1);
+                const out = hslToRgb(hsl[0],hsl[1],l);
+                return out;
+            }
+            function classifyPixel(r,g,b){
+                const [h,s,l] = rgbToHsl(r,g,b);
+                if (l < 0.12 || s < 0.15) return 'other';
+                if (l > 0.92 || s < 0.06) return 'other';
+                if ((h>=350 || h<=15) && s>0.30 && l>0.15) return 'body';
+                if (h>=210 && h<=255 && s>0.30 && l>0.12) return 'accent';
+                if (h>=95 && h<=135 && s>0.20 && l>0.12) return 'visor';
+                return 'other';
+            }
+            async function drawCrewmate(canvas, colorHex){
+                await ensureCrewmateBase();
+                const ctx = canvas.getContext('2d');
+                const w = 100, h = 100;
+                canvas.width = w; canvas.height = h;
+                ctx.clearRect(0,0,w,h );
+                ctx.drawImage(crewmateBaseImg,0,0,w,h);
+                const imgData = ctx.getImageData(0,0,w,h);
+                const data = imgData.data;
+                const main = hexToRgb(colorHex);
+                const [mh, ms, ml] = rgbToHsl(main[0], main[1], main[2]);
+                const accentBase = hslToRgb(mh, ms, clamp(ml-0.18, 0, 1));
+                const visorLight = hexToRgb('#C8F8FF');
+                const visorDark = hexToRgb('#74D7FF');
+                for(let i=0;i<data.length;i+=4){
+                    const r=data[i], g=data[i+1], b=data[i+2], a=data[i+3];
+                    if(a===0) continue;
+                    const cls = classifyPixel(r,g,b);
+                    if(cls==='body'){
+                        const [, , l] = rgbToHsl(r,g,b);
+                        const targetL = clamp(l, 0.15, 0.85);
+                        const tinted = hslToRgb(mh, ms, targetL);
+                        data[i]=tinted[0]; data[i+1]=tinted[1]; data[i+2]=tinted[2];
+                    } else if(cls==='accent'){
+                        const [, , l] = rgbToHsl(r,g,b);
+                        const base = accentBase;
+                        const dark = hslToRgb(mh, ms, clamp(ml-0.28, 0, 1));
+                        const c = mix(dark, base, clamp((l-0.12)/0.6,0,1));
+                        data[i]=c[0]; data[i+1]=c[1]; data[i+2]=c[2];
+                    } else if(cls==='visor'){
+                        const [, , l] = rgbToHsl(r,g,b);
+                        const c = mix(visorDark, visorLight, clamp((l-0.2)/0.6,0,1));
+                        data[i]=c[0]; data[i+1]=c[1]; data[i+2]=c[2];
+                    }
+                }
+                ctx.putImageData(imgData,0,0);
+            }
             function getCrewmateSVG(color) {
-                const tintOpacity = 0.9;
-                return `
-                <svg viewBox="0 0 100 100" class="crewmate-svg" style="width: 100%; height: 100%; filter: drop-shadow(0 0 2px rgba(0,0,0,0.5)); overflow: visible;">
-                    <defs>
-                        <mask id="crewmateTintMask">
-                            <rect x="0" y="0" width="100" height="100" fill="black" />
-                            <rect x="8" y="32" width="26" height="42" rx="8" fill="white" />
-                            <path 
-                                d="M28,40 
-                                A22,22 0 1,1 72,40 
-                                L72,82 
-                                A8,8 0 0,1 56,82 
-                                L56,70 
-                                L44,70 
-                                L44,82 
-                                A8,8 0 0,1 28,82 
-                                Z"
-                                fill="white" />
-                            <rect x="45" y="30" width="44" height="28" rx="14" ry="14" fill="black" />
-                        </mask>
-                    </defs>
-                    <image href="Media/Crewmate.png" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid meet" />
-                    <g style="mix-blend-mode: multiply;" mask="url(#crewmateTintMask)">
-                        <rect class="crewmate-body" x="8" y="32" width="26" height="42" rx="8" fill="${color}" opacity="${tintOpacity}" />
-                        <path class="crewmate-body" 
-                            d="M28,40 
-                            A22,22 0 1,1 72,40 
-                            L72,82 
-                            A8,8 0 0,1 56,82 
-                            L56,70 
-                            L44,70 
-                            L44,82 
-                            A8,8 0 0,1 28,82 
-                            Z"
-                            fill="${color}" opacity="${tintOpacity}" />
-                    </g>
-                </svg>
-                `;
+                return `<canvas class="crewmate-canvas" width="100" height="100" data-color="${color}" style="width:100%; height:100%;"></canvas>`;
             }
 
         function render() {
@@ -1885,19 +2107,13 @@ function getModifierImageUrl(iconName) {
                 card.style.setProperty('--card-theme', themeColor);
                 card.style.setProperty('--card-shadow', shadowColor);
                 
-                const tagsHtml = (p.guesses || []).map(role => {
+                const iconsHtml = (p.guesses || []).map(role => {
                     let color = "#fff";
                     if (roleColors[role]) color = roleColors[role];
                     else if (modifierColors[role]) color = modifierColors[role];
-                    
                     const entity = allEntitiesData.find(e => e.name === role);
                     const iconUrl = entity ? getRoleImageUrl(entity.icon) : 'placeholder.png';
-
-                    return `<span class="role-tag" style="border-left: 3px solid ${color};" onclick="removeGuess(${p.id}, '${role}')">
-                        <img src="${iconUrl}" onerror="this.style.display='none'">
-                        <span style="color: ${color}; font-weight: bold; text-shadow: 0 0 5px rgba(0,0,0,0.5);">${role}</span>
-                        <span class="remove-x">&times;</span>
-                    </span>`;
+                    return `<img class="role-icon" src="${iconUrl}" style="filter:drop-shadow(0 0 12px ${color});" onclick="removeGuess(${p.id}, '${role}')" onerror="this.style.display='none'">`;
                 }).join('');
 
                 card.innerHTML = `
@@ -1914,9 +2130,13 @@ function getModifierImageUrl(iconName) {
                                 oninput="
                                     this.closest('.player-card').style.setProperty('--card-theme', this.value); 
                                     this.closest('.player-card').style.setProperty('--card-shadow', hexToRgba(this.value, 0.3));
-                                    this.closest('.player-card').querySelectorAll('.crewmate-body').forEach(el => el.setAttribute('fill', this.value));
+                                    this.closest('.player-card').querySelectorAll('.crewmate-canvas').forEach(el => { el.dataset.color = this.value; drawCrewmate(el, this.value); });
                                 "
                                 onchange="update(${p.id}, 'color', this.value)">
+                        </div>
+                        <div class="status-toggle">
+                            <button class="btn-toggle alive ${p.alive !== false ? 'active' : ''}" onclick="setAlive(${p.id}, true)">Alive</button>
+                            <button class="btn-toggle dead ${p.alive === false ? 'active' : ''}" onclick="setAlive(${p.id}, false)">Dead</button>
                         </div>
                     </div>
                     <div class="player-content">
@@ -1924,13 +2144,36 @@ function getModifierImageUrl(iconName) {
                                placeholder="Player Name..." oninput="update(${p.id}, 'name', this.value)">
                         <textarea class="player-notes" placeholder="Notes..." 
                                   oninput="update(${p.id}, 'notes', this.value)">${p.notes}</textarea>
-                        
-                        <div class="tag-container">${tagsHtml}</div>
+                        <div class="roles-box">
+                            ${(() => {
+                                const firstRole = (p.guesses || []).map(g => allEntitiesData.find(e => e.name === g)).find(e => e && !e.team.toLowerCase().includes('modifier'));
+                                if (!firstRole) return '';
+                                let teamLabel = 'Crewmate';
+                                let teamColor = '#50f2ff';
+                                const t = firstRole.team.toLowerCase();
+                                if (t.includes('impostor')) { teamLabel = 'Impostor'; teamColor = '#ff4d4d'; }
+                                else if (t.includes('neutral')) { teamLabel = 'Neutral'; teamColor = '#f2ff50'; }
+                                else { teamLabel = 'Crewmate'; teamColor = '#50f2ff'; }
+                                return ``;
+                            })()}
+                            <div class="icon-stack">${iconsHtml}</div>
+                        </div>
                     </div>
                 `;
+                if (p.alive === false) {
+                    card.classList.add('dead');
+                }
                 container.appendChild(card);
+                const canvas = card.querySelector('.crewmate-canvas');
+                if (canvas) drawCrewmate(canvas, themeColor);
             });
             save();
+        }
+        function hydrateCrewmateCanvases(){
+            document.querySelectorAll('.crewmate-canvas').forEach(c=>{
+                const color = c.dataset.color || '#ff1a1a';
+                drawCrewmate(c, color);
+            });
         }
 
         let currentSearchTerm = '';
@@ -1980,25 +2223,35 @@ function getModifierImageUrl(iconName) {
                 if (!player.guesses) player.guesses = [];
                 if (player.guesses.includes(entity.name)) item.classList.add('selected');
                 let teamColor = "#fff";
-                let factionColor = "#fff";
-                if (entity.team.includes("Crewmate")) factionColor = "#50f2ff";
-                else if (entity.team.includes("Impostor")) factionColor = "#ff4d4d";
-                else if (entity.team.includes("Neutral")) factionColor = "#3f3f3f"; 
-                else if (entity.team.includes("Modifier")) teamColor = "#b0b0b0";
+                let factionColor = "#50f2ff";
+                let teamLabel = "Crewmate";
+                const lowerTeam = entity.team.toLowerCase();
+                if (lowerTeam.includes("impostor")) { factionColor = "#ff4d4d"; teamLabel = "Impostor"; }
+                else if (lowerTeam.includes("neutral")) { factionColor = "#f2ff50"; teamLabel = "Neutral"; }
+                else { factionColor = "#50f2ff"; teamLabel = "Crewmate"; }
                 if (roleColors[entity.name]) {
                     teamColor = roleColors[entity.name];
                 } else if (modifierColors[entity.name]) {
                     teamColor = modifierColors[entity.name];
                 }
                 const iconUrl = getRoleImageUrl(entity.icon);
+                 const teamStyle = teamColors[entity.team] || { dotColor: '#00FFFF', boxBg: 'rgba(0, 255, 255, 0.2)', boxShadow: '0 0 8px #00ffff' };
                 const glowStyle = `filter: drop-shadow(0 0 5px ${teamColor})`;
                 item.innerHTML = `
                     <img src="${iconUrl}" onerror="this.src='placeholder.png'" style="${glowStyle}">
                     <div class="role-info">
                         <div class="role-name" style="color: ${teamColor}">${entity.name}</div>
-                        <div class="role-team" style="color: ${factionColor}">${entity.team}</div>
+                        <span class="team-display-box" style="
+            background-color: ${teamStyle.boxBg};
+            box-shadow: ${teamStyle.boxShadow};
+            color: ${teamStyle.dotColor};
+            border: 1px solid ${teamStyle.dotColor};
+        ">
+            ${entity.team.toUpperCase()}
+        </span>
                     </div>
                 `;
+                item.style.borderColor = 'teamColor';
                 item.onclick = () => toggleGuess(entity.name, item);
                 grid.appendChild(item);
             });
@@ -2031,7 +2284,7 @@ function getModifierImageUrl(iconName) {
         }
 
         function addPlayer() {
-            players.push({ id: Date.now(), name: '', notes: '', guesses: [] });
+            players.push({ id: Date.now(), name: '', notes: '', guesses: [], alive: true });
             render();
         }
 
@@ -2050,15 +2303,19 @@ function getModifierImageUrl(iconName) {
 
         function save() { localStorage.setItem('tou_tracker_data', JSON.stringify(players)); }
 
+        function setAlive(id, alive) {
+            const p = players.find(x => x.id === id);
+            if (p) { p.alive = alive; render(); save(); }
+        }
         function resetAll() {
             if(confirm("Clear all player notes?")) { players = []; render(); }
         }
 
-        async function syncWithLog() {
-            try {
-                const response = await fetch('/latest-players');
-                if (!response.ok) return; 
-                const logPlayers = await response.json();
+         async function syncWithLog() {
+             try {
+                 const response = await fetch('/latest-players');
+                 if (!response.ok) return; 
+                 const logPlayers = await response.json();
                 
                 if (!logPlayers || logPlayers.length === 0) return;
 
@@ -2071,17 +2328,18 @@ function getModifierImageUrl(iconName) {
                             existing.color = lp.color;
                             updated = true;
                         }
-                    } else {
-                        players.push({
-                            id: Date.now() + Math.floor(Math.random() * 1000),
-                            name: lp.name,
-                            color: lp.color,
-                            notes: '',
-                            guesses: []
-                        });
-                        updated = true;
-                    }
-                });
+                     } else {
+                         players.push({
+                             id: Date.now() + Math.floor(Math.random() * 1000),
+                             name: lp.name,
+                             color: lp.color,
+                             notes: '',
+                             guesses: [],
+                             alive: true
+                         });
+                         updated = true;
+                     }
+                 });
 
                 if (updated) {
                     render();
