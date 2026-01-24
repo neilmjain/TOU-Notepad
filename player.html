@@ -15,7 +15,7 @@
         :root {
             --primary-red: #ff1a1a;
             --dark-bg: #1e1e19;
-            --card-bg: rgba(28, 27, 27, 0.9);
+            --card-bg: rgba(28, 27, 27, 0.925);
             --font-main: 'Amatic SC', sans-serif;
         }
 
@@ -221,10 +221,9 @@
 
         .player-notes {
             background: rgba(0,0,0,0.4);
-            border: 1px solid var(--card-theme);
+            color: var(--card-theme);
             opacity: 0.8;
             border-radius: 6px;
-            color: #ccc;
             padding: 8px;
             font-size: 20px;
             width: 100%;
@@ -2094,7 +2093,13 @@ function getModifierImageUrl(iconName) {
             const container = document.getElementById('playerContainer');
             container.innerHTML = '';
 
-            players.forEach(p => {
+            const ordered = [...players].sort((a, b) => {
+                const aAlive = a.alive !== false;
+                const bAlive = b.alive !== false;
+                return (bAlive ? 1 : 0) - (aAlive ? 1 : 0);
+            });
+
+            ordered.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'player-card';
                 card.id = `player-${p.id}`;
@@ -2324,10 +2329,10 @@ function getModifierImageUrl(iconName) {
                 logPlayers.forEach(lp => {
                     const existing = players.find(p => p.name === lp.name);
                     if (existing) {
-                        if (existing.color !== lp.color) {
-                            existing.color = lp.color;
-                            updated = true;
-                        }
+                        let ch = false;
+                        if (lp.color && existing.color !== lp.color) { existing.color = lp.color; ch = true; }
+                        if (typeof lp.alive !== 'undefined' && existing.alive !== lp.alive) { existing.alive = lp.alive; ch = true; }
+                        if (ch) updated = true;
                      } else {
                          players.push({
                              id: Date.now() + Math.floor(Math.random() * 1000),
@@ -2335,7 +2340,7 @@ function getModifierImageUrl(iconName) {
                              color: lp.color,
                              notes: '',
                              guesses: [],
-                             alive: true
+                             alive: typeof lp.alive !== 'undefined' ? lp.alive : true
                          });
                          updated = true;
                      }
@@ -2352,6 +2357,7 @@ function getModifierImageUrl(iconName) {
 
         // Run sync on load
         syncWithLog();
+        setInterval(syncWithLog, 2000);
 
         render();
     </script>

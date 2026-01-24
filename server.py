@@ -23,28 +23,22 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 if os.path.exists(LOG_PATH):
                     with open(LOG_PATH, 'r', encoding='utf-8', errors='ignore') as f:
                         content = f.read()
-                        # Find the last "Game Started" block
-                        # We look for "=== Game Started:"
-                        # Splitting by it gives us chunks, the last chunk is the latest game
-                        games = content.split('=== Game Started:')
-                        if len(games) > 1:
-                            last_game = games[-1]
-                            # Parse players
-                            # Format example: Player: NeiL | Color: 1FA49FFF
-                            # Regex to capture Name and Color
-                            # Name can contain spaces
-                            matches = re.findall(r'Player:\s*(.+?)\s*\|\s*Color:\s*([0-9A-Fa-f]+)', last_game)
-                            
-                            for name, color_hex in matches:
-                                # Convert RRGGBBAA to #RRGGBB
-                                # The log seems to use RRGGBBAA
-                                # HTML color input expects #RRGGBB
-                                if len(color_hex) >= 6:
-                                    color = '#' + color_hex[:6]
-                                else:
-                                    color = '#ff1a1a' # fallback red
-                                
-                                players_data.append({'name': name.strip(), 'color': color})
+                        meeting_pos = content.rfind('=== Meeting Started')
+                        if meeting_pos != -1:
+                            tail = content[meeting_pos:]
+                            matches = re.findall(r'Player:\s*(.+?)\s*\|\s*Color:\s*([0-9A-Fa-f]{6,8})\s*\|\s*Status:\s*(Alive|Dead)', tail)
+                            for name, color_hex, status in matches:
+                                color = '#' + color_hex[:6] if len(color_hex) >= 6 else '#ff1a1a'
+                                alive = True if status.strip().lower() == 'alive' else False
+                                players_data.append({'name': name.strip(), 'color': color, 'alive': alive})
+                        else:
+                            games = content.split('=== Game Started:')
+                            if len(games) > 1:
+                                last_game = games[-1]
+                                matches = re.findall(r'Player:\s*(.+?)\s*\|\s*Color:\s*([0-9A-Fa-f]+)', last_game)
+                                for name, color_hex in matches:
+                                    color = '#' + color_hex[:6] if len(color_hex) >= 6 else '#ff1a1a'
+                                    players_data.append({'name': name.strip(), 'color': color, 'alive': True})
             except Exception as e:
                 print(f"Error processing log file: {e}")
                 # Return empty list on error
