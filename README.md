@@ -1,4 +1,4 @@
-<img src="Media/Notepadicon.png" alt="Alt text" width="500px"/>
+<img src="Media/Notepadicon-removebg-preview.png" alt="Alt text" width="500px"/>
 <img src="Media/toulogo.png" alt="Alt text" width="500px"/>
 # TOU Notepad Mod
 
