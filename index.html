@@ -35,7 +35,7 @@
         /* dropdown chevron removed as it overlapped text */
         @font-face {
             font-family: 'Amatic SC';
-            src: url('0a1915693ca58e3e-s.p.woff') format('woff');
+            src: url('Media/0a1915693ca58e3e-s.p.woff') format('woff');
             font-weight: normal;
         }
 
@@ -426,8 +426,8 @@
     </style>
 </head>
 <body>
-    <video autoplay muted loop src="videoplayback.mp4">
-        <source src="videoplayback.mp4" type="video/mp4">
+    <video autoplay muted loop src="Media/videoplayback.mp4">
+        <source src="Media/videoplayback.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     <a class="side-nav left" href="player.html" aria-label="Go to Player Tracker"><span class="nav-arrow left"></span></a>
@@ -435,11 +435,11 @@
 <div class="container mx-auto p-8 rounded-lg shadow-xl relative z-10 w-[95%] sm:w-2/3 md:w-3/4 lg:w-2/3 xl:w-2/3 min-h-[75vh] flex flex-col justify-between">
     <div class="flex justify-between items-center mb-4">
         <div class="flex items-center space-x-4">
-            <img src="MiraNotepadLogo.png" alt="TOU Logo" style="border-radius: 9px;" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24">
-            <h1><img src="toulogo.png" style="height: 120px;"></h1>
+            <img src="Media/MiraNotepadLogo.png" alt="TOU Logo" style="border-radius: 9px;" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24">
+            <h1><img src="Media/toulogo.png" style="height: 120px;"></h1>
         </div>
         <div class="relative inline-block text-left" id="dropdownMenu">
-            <button href="wiki.html" style="font-size: 25px; width: 100%; letter-spacing: 1.2px; font-weight: 700; color:#fa5858; "target="_blank" role="menuitem" onclick="openIframe('wiki.html')"><img src="wikiButton.png" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24" style="filter: drop-shadow(0 0 2px black);"> Wiki</button>
+            <button href="wiki.html" style="font-size: 25px; width: 100%; letter-spacing: 1.2px; font-weight: 700; color:#fa5858; "target="_blank" role="menuitem" onclick="openIframe('wiki.html')"><img src="Media/wikiButton.png" class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24" style="filter: drop-shadow(0 0 2px black);"> Wiki</button>
             <div style="background-color: #2a2a26;" class="absolute right-0 mt-2 w-48 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 hidden z-40">
             </div>
         </div>
@@ -1902,7 +1902,7 @@
 
     function getRoleImageUrl(iconName) {
     // Make sure your role images are in the 'img/roles/' folder and named like 'Aurial.png'
-    return `Media/${iconName}.png`;
+    return `Media/RoleIcons/${iconName}.png`;
 }
 
 /**
@@ -1913,7 +1913,7 @@
  */
 function getModifierImageUrl(iconName) {
     // Make sure your modifier images are in the 'img/modifiers/' folder and named like 'Telepath.png'
-    return `Media/${iconName}.png`;
+    return `Media/ModifierIcons/${iconName}.png`;
 }
 
     function findRoleData(roleName) {
