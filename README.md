@@ -1,3 +1,5 @@
+<img src="Media/NotepadIcon.png" alt="Alt text" width="500px"/>
+<img src="Media/toulogo.png" alt="Alt text" width="500px"/>
 # TOU Notepad Mod
 
 This mod adds an in-game Notepad Minigame to Among Us, integrated with Town of Us Mira (and other MiraAPI mods).
