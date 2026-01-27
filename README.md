@@ -6,6 +6,7 @@
 </p>
 <p align="center"> 
   This mod adds an in-game Notepad to Among Us, integrated with specifically Town of Us Mira.
+  This repo also contains a website version of this mod for players who want it
 </p>
 
 ## Features
